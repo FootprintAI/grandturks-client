@@ -8,6 +8,7 @@ STORAGE_PREFIX = "demo/realtimequery"
 STORAGE_QUERY_OBJECT_NAME = "forquery"
 STORAGE_QUERY_OBJECT_INDEX= "objectindex"
 DEFAULT_MODEL_NAME = "carreid13032"
+DEFAULT_CLI_VERSION="v1.2.3"
 
 def load_json(output: str) -> list:
     import json
@@ -25,8 +26,7 @@ def ensure_cli():
 
     logging.info('local cli does not exist, downloading it from web')
     sys_name = platform.system().lower()
-    cli_version = "v1.2.2"
-    cli_uri = """https://github.com/FootprintAI/grandturks-client/releases/download/{0}/grandturks-cli.{1}""".format(cli_version, sys_name)
+    cli_uri = """https://github.com/FootprintAI/grandturks-client/releases/download/{0}/grandturks-cli.{1}""".format(DEFAULT_CLI_VERSION, sys_name)
 
     wget.download(cli_uri, LOCAL_BIN_PATH)
     ensure_runable(LOCAL_BIN_PATH)
