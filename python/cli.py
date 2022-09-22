@@ -8,7 +8,7 @@ STORAGE_PREFIX = "demo/realtimequery"
 STORAGE_QUERY_OBJECT_NAME = "forquery"
 STORAGE_QUERY_OBJECT_INDEX= "objectindex"
 DEFAULT_MODEL_NAME = "carreid13032"
-DEFAULT_CLI_VERSION="v1.2.3"
+DEFAULT_CLI_VERSION="v1.2.4"
 
 def load_json(output: str) -> list:
     import json
@@ -120,7 +120,7 @@ def ensure_datasource_exists(project: dict) -> dict :
 
     # datasource not found, create one
     _exec("""
-    create datasource --project_id={0} --bucket={1} --format=json
+    create datasource --project_id={0} --bucket_name={1} --format=json
     --index_object={2}
     """.format(project_id, project_private_bucket, target_index_object))
     return ensure_datasource_exists(project)
@@ -174,8 +174,7 @@ def create_job_running(project: dict, datasource: dict, inference:dict):
     inference_id = inference['model_inference_id']
     _exec("""
     create job --project_id={0} --inference_id={1} --datasource_id={2}
-    --output_tsdb_name=p13carreid --output_stream_name=p13carreid
-    --outout_storage_prefix=p13carreid --format=json
+    --output_stream_name=p13carreid --outout_storage_prefix=p13carreid --format=json
     """.format(project_id, inference_id, datasource_id))
 
 def run_demo(target_filename: str):
