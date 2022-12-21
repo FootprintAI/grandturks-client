@@ -15,3 +15,39 @@ Kafeido can be deployed on top of [multikf](https://github.com/footprintai/multi
 
 The minimum hardware requirements for server is 8 Core+ CPU, 18G+ system memory, 50G+ Disk spaces, and GPU accelerators. There are no hardware requirements for its client.
 
+
+## Usage
+
+#### Create Project
+
+```
+create project --name $projectname \
+--desc "project for demonstration"
+```
+
+#### Create Datasource
+
+```
+./cli create datasource --project_id=$project_id \
+ --bucket_name=$project_bucket \
+ --index_object="videos/<some-video-prefix>.mp4" \
+ --duration_per_frame=1s \
+ --fps=1 \
+ --type=VIDEO
+```
+
+#### Create Model
+
+```
+./cli create inference --project_id=$project_id \
+ --bucket_name=$project_bucket \
+ --model_uri=kafeido:///$project_bucket/$object_path
+```
+
+#### Create Prediction
+
+```
+ ./cli create predict --project_id=$project_id \
+ --inference_id=$inference_id \
+ --query_file=example.wav --query_type=audio --query_lang=en
+```
