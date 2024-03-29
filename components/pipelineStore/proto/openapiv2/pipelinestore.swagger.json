@@ -1,0 +1,450 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Grandturk/pipelinestore API Documentations",
+    "version": "1.0",
+    "contact": {
+      "name": "Grandturk/pipelinestore API Documentations",
+      "url": "https://github.com/footprintai/grandturk"
+    },
+    "license": {
+      "name": "BSD 3-Clause License",
+      "url": "https://github.com/footprintai/grandturk/blob/master/LICENSE.txt"
+    }
+  },
+  "tags": [
+    {
+      "name": "namedPipeline"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/pipeline": {
+      "get": {
+        "operationId": "namedPipeline_ListNamedPipeline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pipelinestoreListNamedPipelineResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ownershipInfo.ownerResourceType",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PROJECT"
+            ],
+            "default": "NONE"
+          },
+          {
+            "name": "ownershipInfo.ownerReferenceId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "namedPipeline"
+        ]
+      },
+      "post": {
+        "operationId": "namedPipeline_CreateNamedPipeline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pipelinestoreCreateNamedPipelineResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pipelinestoreCreateNamedPipelineRequest"
+            }
+          }
+        ],
+        "tags": [
+          "namedPipeline"
+        ]
+      }
+    },
+    "/v1/pipeline/{namedPipelineId}": {
+      "get": {
+        "operationId": "namedPipeline_GetNamedPipeline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pipelinestoreGetNamedPipelineResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "namedPipelineId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ownershipInfo.ownerResourceType",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PROJECT"
+            ],
+            "default": "NONE"
+          },
+          {
+            "name": "ownershipInfo.ownerReferenceId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "namedPipeline"
+        ]
+      },
+      "delete": {
+        "operationId": "namedPipeline_DeleteNamedPipeline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pipelinestoreDeleteNamedPipelineResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "namedPipelineId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ownershipInfo.ownerResourceType",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PROJECT"
+            ],
+            "default": "NONE"
+          },
+          {
+            "name": "ownershipInfo.ownerReferenceId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "namedPipeline"
+        ]
+      },
+      "put": {
+        "operationId": "namedPipeline_PutNamedPipeline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pipelinestorePutNamedPipelineResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "namedPipelineId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "kubeflowPipelineManifest": {
+                  "type": "string",
+                  "format": "byte"
+                },
+                "ownershipInfo": {
+                  "$ref": "#/definitions/commonOwnershipInfo"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "namedPipeline"
+        ]
+      }
+    },
+    "/v1/pipeline/{namedPipelineName}:named": {
+      "get": {
+        "operationId": "namedPipeline_GetNamedPipelineByName",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pipelinestoreGetNamedPipelineResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "namedPipelineName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ownershipInfo.ownerResourceType",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PROJECT"
+            ],
+            "default": "NONE"
+          },
+          {
+            "name": "ownershipInfo.ownerReferenceId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "namedPipeline"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "OwnershipInfoOwnerResourceType": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "PROJECT"
+      ],
+      "default": "NONE"
+    },
+    "commonOwnershipInfo": {
+      "type": "object",
+      "properties": {
+        "ownerResourceType": {
+          "$ref": "#/definitions/OwnershipInfoOwnerResourceType"
+        },
+        "ownerReferenceId": {
+          "type": "string"
+        }
+      }
+    },
+    "pipelinestoreCreateNamedPipelineRequest": {
+      "type": "object",
+      "properties": {
+        "namedPipelineName": {
+          "type": "string"
+        },
+        "namedPipelineDesc": {
+          "type": "string"
+        },
+        "kubeflowPipelineManifest": {
+          "type": "string",
+          "format": "byte"
+        },
+        "ownershipInfo": {
+          "$ref": "#/definitions/commonOwnershipInfo"
+        },
+        "namedPipelineType": {
+          "$ref": "#/definitions/pipelinestoreNamedPipelineType"
+        }
+      }
+    },
+    "pipelinestoreCreateNamedPipelineResponse": {
+      "type": "object",
+      "properties": {
+        "namedPipelineId": {
+          "type": "string"
+        }
+      }
+    },
+    "pipelinestoreDeleteNamedPipelineResponse": {
+      "type": "object"
+    },
+    "pipelinestoreGetNamedPipelineResponse": {
+      "type": "object",
+      "properties": {
+        "namedPipelineId": {
+          "type": "string"
+        },
+        "namedPipelineName": {
+          "type": "string"
+        },
+        "namedPipelineDesc": {
+          "type": "string"
+        },
+        "namedPipelineType": {
+          "$ref": "#/definitions/pipelinestoreNamedPipelineType"
+        },
+        "kubeflowPipelineId": {
+          "type": "string"
+        },
+        "kubeflowPipelineVersionId": {
+          "type": "string"
+        },
+        "kubeflowPipelineManifest": {
+          "type": "string",
+          "format": "byte"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pipelinestoreListNamedPipelineResponse": {
+      "type": "object",
+      "properties": {
+        "namedPipelineId": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pipelinestoreNamedPipelineType": {
+      "type": "string",
+      "enum": [
+        "SYSTEM",
+        "USER"
+      ],
+      "default": "SYSTEM"
+    },
+    "pipelinestorePutNamedPipelineResponse": {
+      "type": "object",
+      "properties": {
+        "namedPipelineId": {
+          "type": "string"
+        },
+        "kubeflowPipelineId": {
+          "type": "string"
+        },
+        "kubeflowPipelineVersionId": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "externalDocs": {
+    "description": "restapi",
+    "url": "https://github.com/footprintai/grandturk"
+  }
+}

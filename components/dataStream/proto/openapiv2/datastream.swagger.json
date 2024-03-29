@@ -1,0 +1,648 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Grandturk/datainput API Documentations",
+    "version": "1.0",
+    "contact": {
+      "name": "Grandturk/datainput API Documentations",
+      "url": "https://github.com/footprintai/grandturk"
+    },
+    "license": {
+      "name": "BSD 3-Clause License",
+      "url": "https://github.com/footprintai/grandturk/blob/master/LICENSE.txt"
+    }
+  },
+  "tags": [
+    {
+      "name": "dataStream"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/datasource": {
+      "get": {
+        "operationId": "dataStream_ListDataSource",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/datastreamListDataSourceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ownershipInfo.ownerResourceType",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PROJECT"
+            ],
+            "default": "NONE"
+          },
+          {
+            "name": "ownershipInfo.ownerReferenceId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "dataStream"
+        ]
+      },
+      "post": {
+        "operationId": "dataStream_CreateDataSource",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/datastreamCreateDataSourceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/datastreamCreateDataSourceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "dataStream"
+        ]
+      }
+    },
+    "/v1/datasource/{dataSourceId}": {
+      "get": {
+        "operationId": "dataStream_GetDataSource",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/datastreamGetDataSourceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "dataSourceId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ownershipInfo.ownerResourceType",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PROJECT"
+            ],
+            "default": "NONE"
+          },
+          {
+            "name": "ownershipInfo.ownerReferenceId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "dataStream"
+        ]
+      },
+      "delete": {
+        "operationId": "dataStream_DeleteDataSource",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/datastreamDeleteDataSourceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "dataSourceId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ownershipInfo.ownerResourceType",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PROJECT"
+            ],
+            "default": "NONE"
+          },
+          {
+            "name": "ownershipInfo.ownerReferenceId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "dataStream"
+        ]
+      }
+    },
+    "/v1/datasource/{dataSourceId}:stream": {
+      "get": {
+        "operationId": "dataStream_GetStream",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/datastreamGetStreamResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of datastreamGetStreamResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "dataSourceId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ownershipInfo.ownerResourceType",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PROJECT"
+            ],
+            "default": "NONE"
+          },
+          {
+            "name": "ownershipInfo.ownerReferenceId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "outputFormat.width",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "outputFormat.height",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "outputFormat.encoding",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "None",
+              "BASE64"
+            ],
+            "default": "None"
+          },
+          {
+            "name": "outputFormat.photoFormat",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "JEPG",
+              "PNG"
+            ],
+            "default": "JEPG"
+          },
+          {
+            "name": "maxStreamTimeout",
+            "description": "maxStreamTimeout defines the maximum duration for the streaming can get.\nfor example, if the value was setted as 1 hour, that is the maximum duration of this streaming can run",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "firstFrameTimeout",
+            "description": "firstFrameTimeout defines the timeout for the very first frame",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "dataStream"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "OutputFormatEncodingType": {
+      "type": "string",
+      "enum": [
+        "None",
+        "BASE64"
+      ],
+      "default": "None"
+    },
+    "OutputFormatPhotoFormat": {
+      "type": "string",
+      "enum": [
+        "JEPG",
+        "PNG"
+      ],
+      "default": "JEPG"
+    },
+    "OwnershipInfoOwnerResourceType": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "PROJECT"
+      ],
+      "default": "NONE"
+    },
+    "StreamingInfoProtocol": {
+      "type": "string",
+      "enum": [
+        "STREAMING_PROTOCOL_NONE",
+        "STREAMING_PROTOCOL_RTSP",
+        "STREAMING_PROTOCOL_RTMP",
+        "STREAMING_PROTOCOL_RTSPS",
+        "STREAMING_PROTOCOL_RTMPS"
+      ],
+      "default": "STREAMING_PROTOCOL_NONE"
+    },
+    "commonOwnershipInfo": {
+      "type": "object",
+      "properties": {
+        "ownerResourceType": {
+          "$ref": "#/definitions/OwnershipInfoOwnerResourceType"
+        },
+        "ownerReferenceId": {
+          "type": "string"
+        }
+      }
+    },
+    "datastreamCreateDataSourceRequest": {
+      "type": "object",
+      "properties": {
+        "ownershipInfo": {
+          "$ref": "#/definitions/commonOwnershipInfo"
+        },
+        "delayInDurationForNextFrame": {
+          "type": "string"
+        },
+        "dataSourceType": {
+          "$ref": "#/definitions/datastreamDataSource"
+        },
+        "photoDataSource": {
+          "$ref": "#/definitions/datastreamPhotoDataSource"
+        },
+        "videoDataSource": {
+          "$ref": "#/definitions/datastreamVideoDataSource"
+        },
+        "streamingDataSource": {
+          "$ref": "#/definitions/datastreamStreamingDataSource"
+        },
+        "youtubeDataSource": {
+          "$ref": "#/definitions/datastreamYoutubeDataSource"
+        },
+        "imageUrlDataSource": {
+          "$ref": "#/definitions/datastreamImageUrlDataSource"
+        }
+      }
+    },
+    "datastreamCreateDataSourceResponse": {
+      "type": "object",
+      "properties": {
+        "dataSourceId": {
+          "type": "string"
+        }
+      }
+    },
+    "datastreamDataSource": {
+      "type": "string",
+      "enum": [
+        "DATASOURCE_NONE",
+        "DATASOURCE_PHOTO",
+        "DATASOURCE_VIDEO",
+        "DATASOURCE_STREAMING",
+        "DATASOURCE_YOUTUBE",
+        "DATASOURCE_IMAGEURL"
+      ],
+      "default": "DATASOURCE_NONE"
+    },
+    "datastreamDeleteDataSourceResponse": {
+      "type": "object"
+    },
+    "datastreamGetDataSourceResponse": {
+      "type": "object",
+      "properties": {
+        "dataSourceId": {
+          "type": "string"
+        },
+        "dataSourceType": {
+          "$ref": "#/definitions/datastreamDataSource"
+        },
+        "delayInDurationForNextFrame": {
+          "type": "string"
+        },
+        "photoDataSource": {
+          "$ref": "#/definitions/datastreamPhotoDataSource"
+        },
+        "videoDataSource": {
+          "$ref": "#/definitions/datastreamVideoDataSource"
+        },
+        "streamingDataSource": {
+          "$ref": "#/definitions/datastreamStreamingDataSource"
+        },
+        "youtubeDataSource": {
+          "$ref": "#/definitions/datastreamYoutubeDataSource"
+        },
+        "imageUrlDataSource": {
+          "$ref": "#/definitions/datastreamImageUrlDataSource"
+        }
+      }
+    },
+    "datastreamGetStreamResponse": {
+      "type": "object",
+      "properties": {
+        "outputFormat": {
+          "$ref": "#/definitions/datastreamOutputFormat"
+        },
+        "photoBytes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      }
+    },
+    "datastreamImageUrlDataSource": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "title": "https://example.com/1.jpg"
+        },
+        "streamingDuration": {
+          "type": "string"
+        }
+      }
+    },
+    "datastreamListDataSourceResponse": {
+      "type": "object",
+      "properties": {
+        "dataSourceId": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "datastreamMinioInfo": {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "userSecret": {
+          "type": "string"
+        }
+      }
+    },
+    "datastreamOutputFormat": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "encoding": {
+          "$ref": "#/definitions/OutputFormatEncodingType"
+        },
+        "photoFormat": {
+          "$ref": "#/definitions/OutputFormatPhotoFormat"
+        }
+      }
+    },
+    "datastreamPhotoDataSource": {
+      "type": "object",
+      "properties": {
+        "storageInfo": {
+          "$ref": "#/definitions/datastreamStorageInfo"
+        },
+        "bucketName": {
+          "type": "string",
+          "title": "photo bucket uri"
+        },
+        "indexObject": {
+          "type": "string",
+          "title": "usually contains file names per line"
+        },
+        "repeatedTimes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "datastreamStorageInfo": {
+      "type": "object",
+      "properties": {
+        "minioInfo": {
+          "$ref": "#/definitions/datastreamMinioInfo"
+        }
+      }
+    },
+    "datastreamStreamingDataSource": {
+      "type": "object",
+      "properties": {
+        "streamingInfo": {
+          "$ref": "#/definitions/datastreamStreamingInfo"
+        },
+        "channelName": {
+          "type": "string"
+        },
+        "framesPerSecond": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "datastreamStreamingInfo": {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "$ref": "#/definitions/StreamingInfoProtocol",
+          "title": "rtsp"
+        },
+        "endpoint": {
+          "type": "string",
+          "title": "hostname:port"
+        },
+        "account": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "datastreamVideoDataSource": {
+      "type": "object",
+      "properties": {
+        "storageInfo": {
+          "$ref": "#/definitions/datastreamStorageInfo"
+        },
+        "bucketName": {
+          "type": "string"
+        },
+        "videoPath": {
+          "type": "string"
+        },
+        "repeatedTimes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "framesPerSecond": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "datastreamYoutubeDataSource": {
+      "type": "object",
+      "properties": {
+        "videoId": {
+          "type": "string",
+          "title": "ex: https://www.youtube.com/watch?v=Ndo_8RuefH4, the id would be Ndo_8RuefH4"
+        },
+        "streamingDuration": {
+          "type": "string"
+        },
+        "framesPerSecond": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "externalDocs": {
+    "description": "restapi",
+    "url": "https://github.com/footprintai/grandturk"
+  }
+}

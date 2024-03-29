@@ -1,0 +1,529 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Grandturk/taskWorker API Documentations",
+    "version": "1.0",
+    "contact": {
+      "name": "Grandturk/taskWorker API Documentations",
+      "url": "https://github.com/footprintai/grandturk"
+    },
+    "license": {
+      "name": "BSD 3-Clause License",
+      "url": "https://github.com/footprintai/grandturk/blob/master/LICENSE.txt"
+    }
+  },
+  "tags": [
+    {
+      "name": "model"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/modelinferencejob": {
+      "get": {
+        "operationId": "model_ListInferenceJob",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/taskworkerListInferenceJobResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ownershipInfo.ownerResourceType",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PROJECT"
+            ],
+            "default": "NONE"
+          },
+          {
+            "name": "ownershipInfo.ownerReferenceId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "model"
+        ]
+      },
+      "post": {
+        "operationId": "model_CreateInferenceJob",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/taskworkerCreateInferenceJobResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/taskworkerCreateInferenceJobRequst"
+            }
+          }
+        ],
+        "tags": [
+          "model"
+        ]
+      }
+    },
+    "/v1/modelinferencejob/{inferenceJobId}": {
+      "get": {
+        "operationId": "model_GetInferenceJob",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/taskworkerGetInferenceJobResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "inferenceJobId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ownershipInfo.ownerResourceType",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PROJECT"
+            ],
+            "default": "NONE"
+          },
+          {
+            "name": "ownershipInfo.ownerReferenceId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "model"
+        ]
+      },
+      "delete": {
+        "operationId": "model_DeleteInferenceJob",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/taskworkerDeleteInferenceJobResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "inferenceJobId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ownershipInfo.ownerResourceType",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PROJECT"
+            ],
+            "default": "NONE"
+          },
+          {
+            "name": "ownershipInfo.ownerReferenceId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "model"
+        ]
+      }
+    },
+    "/v1/modelinferencejob:cancel": {
+      "post": {
+        "operationId": "model_CancelInferenceJob",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/taskworkerCancelInferenceJobResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/taskworkerCancelInferenceJobRequest"
+            }
+          }
+        ],
+        "tags": [
+          "model"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "OutputFormatEncodingType": {
+      "type": "string",
+      "enum": [
+        "None",
+        "BASE64"
+      ],
+      "default": "None"
+    },
+    "OutputFormatPhotoFormat": {
+      "type": "string",
+      "enum": [
+        "JEPG",
+        "PNG"
+      ],
+      "default": "JEPG"
+    },
+    "OwnershipInfoOwnerResourceType": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "PROJECT"
+      ],
+      "default": "NONE"
+    },
+    "commonOwnershipInfo": {
+      "type": "object",
+      "properties": {
+        "ownerResourceType": {
+          "$ref": "#/definitions/OwnershipInfoOwnerResourceType"
+        },
+        "ownerReferenceId": {
+          "type": "string"
+        }
+      }
+    },
+    "comptaskworkerMinioInfo": {
+      "type": "object",
+      "properties": {
+        "endpoint": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "userSecret": {
+          "type": "string"
+        },
+        "useTls": {
+          "type": "boolean"
+        }
+      }
+    },
+    "datastreamOutputFormat": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "encoding": {
+          "$ref": "#/definitions/OutputFormatEncodingType"
+        },
+        "photoFormat": {
+          "$ref": "#/definitions/OutputFormatPhotoFormat"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "taskworkerAppDataSink": {
+      "type": "object",
+      "properties": {
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/taskworkerAppDataSinkLabel"
+          }
+        }
+      }
+    },
+    "taskworkerAppDataSinkLabel": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "taskworkerCancelInferenceJobRequest": {
+      "type": "object",
+      "properties": {
+        "inferenceJobId": {
+          "type": "string"
+        },
+        "ownershipInfo": {
+          "$ref": "#/definitions/commonOwnershipInfo"
+        }
+      }
+    },
+    "taskworkerCancelInferenceJobResponse": {
+      "type": "object"
+    },
+    "taskworkerCreateInferenceJobRequst": {
+      "type": "object",
+      "properties": {
+        "dataSourceId": {
+          "type": "string"
+        },
+        "modelInferenceId": {
+          "type": "string"
+        },
+        "dataSink": {
+          "$ref": "#/definitions/taskworkerDataSink"
+        },
+        "kubeflowInfo": {
+          "$ref": "#/definitions/taskworkerKubeflowInfo"
+        },
+        "ownershipInfo": {
+          "$ref": "#/definitions/commonOwnershipInfo"
+        },
+        "concurrentRequests": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "prometheusJobLabel": {
+          "type": "string"
+        },
+        "outputFormat": {
+          "$ref": "#/definitions/datastreamOutputFormat"
+        }
+      }
+    },
+    "taskworkerCreateInferenceJobResponse": {
+      "type": "object",
+      "properties": {
+        "inferenceJobId": {
+          "type": "string"
+        }
+      }
+    },
+    "taskworkerDataSink": {
+      "type": "object",
+      "properties": {
+        "minioDataSink": {
+          "$ref": "#/definitions/taskworkerMinioDataSink"
+        },
+        "redisDataSink": {
+          "$ref": "#/definitions/taskworkerRedisStreamSink"
+        },
+        "appDataSink": {
+          "$ref": "#/definitions/taskworkerAppDataSink"
+        }
+      }
+    },
+    "taskworkerDeleteInferenceJobResponse": {
+      "type": "object"
+    },
+    "taskworkerGetInferenceJobResponse": {
+      "type": "object",
+      "properties": {
+        "inferenceJobId": {
+          "type": "string"
+        },
+        "inferenceJobStatus": {
+          "type": "string"
+        },
+        "dataSourceId": {
+          "type": "string"
+        },
+        "modelInferenceId": {
+          "type": "string"
+        },
+        "concurrentRequests": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "StartedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "EndedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataSink": {
+          "$ref": "#/definitions/taskworkerDataSink"
+        },
+        "kubeflowInfo": {
+          "$ref": "#/definitions/taskworkerKubeflowInfo"
+        },
+        "prometheusJobLabel": {
+          "type": "string"
+        }
+      }
+    },
+    "taskworkerKubeflowInfo": {
+      "type": "object",
+      "properties": {
+        "modelOwner": {
+          "$ref": "#/definitions/taskworkerKubeflowUser"
+        },
+        "inferenceModelName": {
+          "type": "string"
+        }
+      }
+    },
+    "taskworkerKubeflowUser": {
+      "type": "object",
+      "properties": {
+        "userEmail": {
+          "type": "string"
+        },
+        "userNamespace": {
+          "type": "string"
+        }
+      }
+    },
+    "taskworkerListInferenceJobResponse": {
+      "type": "object",
+      "properties": {
+        "inferenceJobId": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "taskworkerMinioDataSink": {
+      "type": "object",
+      "properties": {
+        "minioStorage": {
+          "$ref": "#/definitions/comptaskworkerMinioInfo"
+        },
+        "BucketName": {
+          "type": "string"
+        },
+        "ObjectPrefix": {
+          "type": "string"
+        }
+      }
+    },
+    "taskworkerRedisStreamSink": {
+      "type": "object",
+      "properties": {
+        "streamName": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "externalDocs": {
+    "description": "restapi",
+    "url": "https://github.com/footprintai/grandturk"
+  }
+}

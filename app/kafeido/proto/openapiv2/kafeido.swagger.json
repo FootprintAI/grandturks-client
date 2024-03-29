@@ -1,0 +1,1938 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Grandturk/kafeido API Documentations",
+    "version": "1.0",
+    "contact": {
+      "name": "Grandturk/smartciy API Documentations",
+      "url": "https://github.com/footprintai/grandturk"
+    },
+    "license": {
+      "name": "BSD 3-Clause License",
+      "url": "https://github.com/footprintai/grandturk/blob/master/LICENSE.txt"
+    }
+  },
+  "tags": [
+    {
+      "name": "kafeido"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/login": {
+      "post": {
+        "operationId": "kafeido_AppLogin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoAppLoginResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/kafeidoAppLoginRequest"
+            }
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects": {
+      "get": {
+        "operationId": "kafeido_ListProjects",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoListProjectsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "kafeido"
+        ]
+      },
+      "post": {
+        "operationId": "kafeido_CreateProject",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoCreateProjectResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/kafeidoCreateProjectRequest"
+            }
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}": {
+      "get": {
+        "operationId": "kafeido_GetProject",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoGetProjectResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      },
+      "delete": {
+        "summary": "rpc GetProjectModel(GetProjectModelRequest) returns(GetProjectModelResponse) {\n   option (google.api.http) = {\n       get: \"/v1/projects/{projectId}/model:get\"\n   };\n}",
+        "operationId": "kafeido_DeleteProject",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoDeleteProjectResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/datasource": {
+      "get": {
+        "operationId": "kafeido_ListDataSource",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/appkafeidoListDataSourceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      },
+      "post": {
+        "operationId": "kafeido_CreateDataSource",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/appkafeidoCreateDataSourceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataSourceInfo": {
+                  "$ref": "#/definitions/kafeidoDataSourceInfo"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/datasource/{dataSourceId}": {
+      "get": {
+        "operationId": "kafeido_GetDataSource",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/appkafeidoGetDataSourceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataSourceId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      },
+      "delete": {
+        "operationId": "kafeido_DeleteDataSource",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/appkafeidoDeleteDataSourceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataSourceId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/inference": {
+      "get": {
+        "operationId": "kafeido_ListModelInference",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoListModelInferenceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      },
+      "post": {
+        "operationId": "kafeido_CreateModelInference",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoCreateModelInferenceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "namedPipelineId": {
+                  "type": "string"
+                },
+                "modelName": {
+                  "type": "string"
+                },
+                "modelUri": {
+                  "type": "string"
+                },
+                "runtimeVersion": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/inference/{modelInferenceId}": {
+      "get": {
+        "operationId": "kafeido_GetModelInference",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoGetModelInferenceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "modelInferenceId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "timeout",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      },
+      "delete": {
+        "operationId": "kafeido_DeleteModelInference",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoDeleteModelInferenceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "modelInferenceId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "namedPipelineNameForDelete",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/inference/{modelInferenceId}:predict": {
+      "post": {
+        "operationId": "kafeido_CreatePrediction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoCreatePredictionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "modelInferenceId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/kafeidoTypePredictionData"
+                },
+                "imageRequests": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/definitions/kafeidoPredictImageRequestBody"
+                  }
+                },
+                "audioRequests": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/definitions/kafeidoPredictAudioRequestBody"
+                  }
+                },
+                "timeout": {
+                  "type": "string"
+                },
+                "concurrency": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/job": {
+      "get": {
+        "operationId": "kafeido_ListModelInferenceJob",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoListModelInferenceJobResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      },
+      "post": {
+        "operationId": "kafeido_CreateModelInferenceJob",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoCreateModelInferenceJobResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "modelInferenceId": {
+                  "type": "string"
+                },
+                "dataSourceId": {
+                  "type": "string"
+                },
+                "dataSinkConfig": {
+                  "$ref": "#/definitions/kafeidoDataSinkConfig"
+                },
+                "concurrentRequests": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "prometheusJobLabel": {
+                  "type": "string"
+                },
+                "outputFormat": {
+                  "$ref": "#/definitions/datastreamOutputFormat"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/job/{modelInferenceJobId}": {
+      "get": {
+        "operationId": "kafeido_GetModelInferenceJob",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoGetModelInferenceJobResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "modelInferenceJobId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      },
+      "delete": {
+        "operationId": "kafeido_DeleteModelInferenceJob",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoDeleteModelInferenceJobResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "modelInferenceJobId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/job/{modelInferenceJobId}:cancel": {
+      "post": {
+        "operationId": "kafeido_CancelModelInferenceJob",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoCancelModelInferenceJobResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "modelInferenceJobId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/pipelines": {
+      "get": {
+        "operationId": "kafeido_ListProjectPipeline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoListProjectPipelineResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      },
+      "post": {
+        "operationId": "kafeido_CreateProjectPipeline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoCreateProjectPipelineResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "desc": {
+                  "type": "string"
+                },
+                "kfPipelineWorkflow": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/pipelines/{namedPipelineId}": {
+      "get": {
+        "operationId": "kafeido_GetProjectPipeline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoGetProjectPipelineResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "namedPipelineId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      },
+      "delete": {
+        "operationId": "kafeido_DeleteProjectPipeline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoDeleteProjectPipelineResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "namedPipelineId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      },
+      "put": {
+        "operationId": "kafeido_PutProjectPipeline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoPutProjectPipelineResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "namedPipelineId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "pipelineWorkflowInRawYaml": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "raw yaml string"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/pipelines/{namedPipelineId}/run": {
+      "post": {
+        "operationId": "kafeido_RunProjectPipeline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoRunProjectPipelineResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "namedPipelineId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "parameters": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    },
+    "/v1/user": {
+      "post": {
+        "operationId": "kafeido_CreateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoCreateUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/kafeidoCreateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "OutputFormatEncodingType": {
+      "type": "string",
+      "enum": [
+        "None",
+        "BASE64"
+      ],
+      "default": "None"
+    },
+    "OutputFormatPhotoFormat": {
+      "type": "string",
+      "enum": [
+        "JEPG",
+        "PNG"
+      ],
+      "default": "JEPG"
+    },
+    "StreamingInfoProtocol": {
+      "type": "string",
+      "enum": [
+        "STREAMING_PROTOCOL_NONE",
+        "STREAMING_PROTOCOL_RTSP",
+        "STREAMING_PROTOCOL_RTMP",
+        "STREAMING_PROTOCOL_RTSPS",
+        "STREAMING_PROTOCOL_RTMPS"
+      ],
+      "default": "STREAMING_PROTOCOL_NONE"
+    },
+    "appkafeidoCreateDataSourceResponse": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string"
+        },
+        "dataSourceId": {
+          "type": "string"
+        }
+      }
+    },
+    "appkafeidoDataSink": {
+      "type": "object",
+      "properties": {
+        "redisDataSink": {
+          "$ref": "#/definitions/appkafeidoRedisStreamSink"
+        },
+        "minioDataSink": {
+          "$ref": "#/definitions/appkafeidoMinioDataSink"
+        }
+      }
+    },
+    "appkafeidoDeleteDataSourceResponse": {
+      "type": "object"
+    },
+    "appkafeidoGetDataSourceResponse": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string"
+        },
+        "dataSourceId": {
+          "type": "string"
+        },
+        "dataSourceInfo": {
+          "$ref": "#/definitions/kafeidoDataSourceInfo"
+        }
+      }
+    },
+    "appkafeidoListDataSourceResponse": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string"
+        },
+        "dataSourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "appkafeidoMinioDataSink": {
+      "type": "object",
+      "properties": {
+        "BucketName": {
+          "type": "string"
+        },
+        "ObjectPrefix": {
+          "type": "string"
+        }
+      }
+    },
+    "appkafeidoRedisStreamSink": {
+      "type": "object",
+      "properties": {
+        "streamName": {
+          "type": "string"
+        }
+      }
+    },
+    "compdatastreamMinioInfo": {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "userSecret": {
+          "type": "string"
+        }
+      }
+    },
+    "comptaskworkerDataSink": {
+      "type": "object",
+      "properties": {
+        "minioDataSink": {
+          "$ref": "#/definitions/comptaskworkerMinioDataSink"
+        },
+        "redisDataSink": {
+          "$ref": "#/definitions/comptaskworkerRedisStreamSink"
+        },
+        "appDataSink": {
+          "$ref": "#/definitions/taskworkerAppDataSink"
+        }
+      }
+    },
+    "comptaskworkerMinioDataSink": {
+      "type": "object",
+      "properties": {
+        "minioStorage": {
+          "$ref": "#/definitions/comptaskworkerMinioInfo"
+        },
+        "BucketName": {
+          "type": "string"
+        },
+        "ObjectPrefix": {
+          "type": "string"
+        }
+      }
+    },
+    "comptaskworkerMinioInfo": {
+      "type": "object",
+      "properties": {
+        "endpoint": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "userSecret": {
+          "type": "string"
+        },
+        "useTls": {
+          "type": "boolean"
+        }
+      }
+    },
+    "comptaskworkerRedisStreamSink": {
+      "type": "object",
+      "properties": {
+        "streamName": {
+          "type": "string"
+        }
+      }
+    },
+    "datastreamDataSource": {
+      "type": "string",
+      "enum": [
+        "DATASOURCE_NONE",
+        "DATASOURCE_PHOTO",
+        "DATASOURCE_VIDEO",
+        "DATASOURCE_STREAMING",
+        "DATASOURCE_YOUTUBE",
+        "DATASOURCE_IMAGEURL"
+      ],
+      "default": "DATASOURCE_NONE"
+    },
+    "datastreamImageUrlDataSource": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "title": "https://example.com/1.jpg"
+        },
+        "streamingDuration": {
+          "type": "string"
+        }
+      }
+    },
+    "datastreamOutputFormat": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "encoding": {
+          "$ref": "#/definitions/OutputFormatEncodingType"
+        },
+        "photoFormat": {
+          "$ref": "#/definitions/OutputFormatPhotoFormat"
+        }
+      }
+    },
+    "datastreamPhotoDataSource": {
+      "type": "object",
+      "properties": {
+        "storageInfo": {
+          "$ref": "#/definitions/datastreamStorageInfo"
+        },
+        "bucketName": {
+          "type": "string",
+          "title": "photo bucket uri"
+        },
+        "indexObject": {
+          "type": "string",
+          "title": "usually contains file names per line"
+        },
+        "repeatedTimes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "datastreamStorageInfo": {
+      "type": "object",
+      "properties": {
+        "minioInfo": {
+          "$ref": "#/definitions/compdatastreamMinioInfo"
+        }
+      }
+    },
+    "datastreamStreamingDataSource": {
+      "type": "object",
+      "properties": {
+        "streamingInfo": {
+          "$ref": "#/definitions/datastreamStreamingInfo"
+        },
+        "channelName": {
+          "type": "string"
+        },
+        "framesPerSecond": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "datastreamStreamingInfo": {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "$ref": "#/definitions/StreamingInfoProtocol",
+          "title": "rtsp"
+        },
+        "endpoint": {
+          "type": "string",
+          "title": "hostname:port"
+        },
+        "account": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "datastreamVideoDataSource": {
+      "type": "object",
+      "properties": {
+        "storageInfo": {
+          "$ref": "#/definitions/datastreamStorageInfo"
+        },
+        "bucketName": {
+          "type": "string"
+        },
+        "videoPath": {
+          "type": "string"
+        },
+        "repeatedTimes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "framesPerSecond": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "datastreamYoutubeDataSource": {
+      "type": "object",
+      "properties": {
+        "videoId": {
+          "type": "string",
+          "title": "ex: https://www.youtube.com/watch?v=Ndo_8RuefH4, the id would be Ndo_8RuefH4"
+        },
+        "streamingDuration": {
+          "type": "string"
+        },
+        "framesPerSecond": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "kafeidoAppBasicLoginRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoAppBasicLoginResponse": {
+      "type": "object",
+      "properties": {
+        "oauth2Token": {
+          "$ref": "#/definitions/kafeidoOauth2Token"
+        }
+      }
+    },
+    "kafeidoAppLoginRequest": {
+      "type": "object",
+      "properties": {
+        "basic": {
+          "$ref": "#/definitions/kafeidoAppBasicLoginRequest"
+        },
+        "oauth2": {
+          "$ref": "#/definitions/kafeidoAppOauth2LoginRequest"
+        }
+      }
+    },
+    "kafeidoAppLoginResponse": {
+      "type": "object",
+      "properties": {
+        "basic": {
+          "$ref": "#/definitions/kafeidoAppBasicLoginResponse"
+        },
+        "oauth2": {
+          "$ref": "#/definitions/kafeidoAppOauth2LoginResponse"
+        }
+      }
+    },
+    "kafeidoAppOauth2LoginRequest": {
+      "type": "object",
+      "properties": {
+        "localRedirectURL": {
+          "type": "string"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoAppOauth2LoginResponse": {
+      "type": "object",
+      "properties": {
+        "openBrowserURL": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoCancelModelInferenceJobResponse": {
+      "type": "object"
+    },
+    "kafeidoCreateModelInferenceJobResponse": {
+      "type": "object",
+      "properties": {
+        "modelInferenceJobId": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoCreateModelInferenceResponse": {
+      "type": "object",
+      "properties": {
+        "modelInferenceId": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoCreatePredictionResponse": {
+      "type": "object",
+      "properties": {
+        "imageResponses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/kafeidoPredictImageResponseBody"
+          }
+        },
+        "audioResponses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/kafeidoPredictAudioResponseBody"
+          }
+        }
+      }
+    },
+    "kafeidoCreateProjectPipelineResponse": {
+      "type": "object",
+      "properties": {
+        "namedPipelineId": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoCreateProjectRequest": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string",
+          "title": "given when a project has been created"
+        },
+        "name": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "visibility": {
+          "$ref": "#/definitions/kafeidoProjectVisibility",
+          "title": "default public"
+        }
+      }
+    },
+    "kafeidoCreateProjectResponse": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string",
+          "title": "given when a project has been created"
+        }
+      }
+    },
+    "kafeidoCreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "oauth2Token": {
+          "$ref": "#/definitions/kafeidoOauth2Token"
+        }
+      }
+    },
+    "kafeidoCreateUserResponse": {
+      "type": "object",
+      "properties": {
+        "userInfo": {
+          "$ref": "#/definitions/kafeidoUserInfo"
+        }
+      }
+    },
+    "kafeidoDataSinkConfig": {
+      "type": "object",
+      "properties": {
+        "taskWorkerDataSink": {
+          "$ref": "#/definitions/comptaskworkerDataSink"
+        }
+      }
+    },
+    "kafeidoDataSourceInfo": {
+      "type": "object",
+      "properties": {
+        "delayInDurationForNextFrame": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/datastreamDataSource"
+        },
+        "photoDataSource": {
+          "$ref": "#/definitions/datastreamPhotoDataSource"
+        },
+        "videoDataSource": {
+          "$ref": "#/definitions/datastreamVideoDataSource"
+        },
+        "streamingDataSource": {
+          "$ref": "#/definitions/datastreamStreamingDataSource"
+        },
+        "youtubeDataSource": {
+          "$ref": "#/definitions/datastreamYoutubeDataSource"
+        },
+        "imageUrlDataSource": {
+          "$ref": "#/definitions/datastreamImageUrlDataSource"
+        }
+      }
+    },
+    "kafeidoDeleteModelInferenceJobResponse": {
+      "type": "object"
+    },
+    "kafeidoDeleteModelInferenceResponse": {
+      "type": "object"
+    },
+    "kafeidoDeleteProjectPipelineResponse": {
+      "type": "object"
+    },
+    "kafeidoDeleteProjectResponse": {
+      "type": "object"
+    },
+    "kafeidoGetModelInferenceJobResponse": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string"
+        },
+        "dataSourceId": {
+          "type": "string"
+        },
+        "modelInferenceId": {
+          "type": "string"
+        },
+        "modelInferenceJobId": {
+          "type": "string"
+        },
+        "modelInferenceJobStatus": {
+          "type": "string"
+        },
+        "concurrentRequests": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "modelInferenceJobStartedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "modelInferenceJobEndedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sinkDestination": {
+          "$ref": "#/definitions/appkafeidoDataSink"
+        }
+      }
+    },
+    "kafeidoGetModelInferenceResponse": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string"
+        },
+        "namedPipelineId": {
+          "type": "string"
+        },
+        "modelInferenceId": {
+          "type": "string"
+        },
+        "modelName": {
+          "type": "string"
+        },
+        "isModelReady": {
+          "type": "boolean"
+        },
+        "isInputSupported": {
+          "type": "boolean"
+        },
+        "modelUri": {
+          "type": "string"
+        },
+        "runtimeVersion": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoGetProjectPipelineResponse": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string"
+        },
+        "namedPipelineId": {
+          "type": "string"
+        },
+        "namedPipelineName": {
+          "type": "string"
+        },
+        "namedPipelineType": {
+          "type": "string"
+        },
+        "kfPipelineId": {
+          "type": "string"
+        },
+        "kfPipelineVersionId": {
+          "type": "string"
+        },
+        "kfPipelineWorkflow": {
+          "type": "string",
+          "format": "byte"
+        },
+        "runParameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "kafeidoGetProjectResponse": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "visibility": {
+          "$ref": "#/definitions/kafeidoProjectVisibility"
+        },
+        "minioProjectUserKey": {
+          "type": "string"
+        },
+        "minioProjectUserSecret": {
+          "type": "string"
+        },
+        "minioProjectPublicBucketName": {
+          "type": "string"
+        },
+        "minioProjectPrivateBucketName": {
+          "type": "string"
+        },
+        "experimentId": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoListModelInferenceJobResponse": {
+      "type": "object",
+      "properties": {
+        "modelInferenceJobIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "kafeidoListModelInferenceResponse": {
+      "type": "object",
+      "properties": {
+        "modelInferenceId": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "kafeidoListProjectPipelineResponse": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string"
+        },
+        "namedPipelineId": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "kafeidoListProjectsResponse": {
+      "type": "object",
+      "properties": {
+        "projectIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "kafeidoOauth2Token": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoPredictAudioRequestBody": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "audioBytes": {
+          "$ref": "#/definitions/kafeidoRequestInBytes"
+        },
+        "lang": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "kafeidoPredictAudioResponseBody": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "prediction": {
+          "$ref": "#/definitions/kafeidoResponseInJson"
+        }
+      }
+    },
+    "kafeidoPredictImageRequestBody": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "imageBytes": {
+          "$ref": "#/definitions/kafeidoRequestInBytes"
+        }
+      }
+    },
+    "kafeidoPredictImageResponseBody": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "prediction": {
+          "$ref": "#/definitions/kafeidoResponseInJson"
+        }
+      }
+    },
+    "kafeidoProjectVisibility": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "PUBLIC",
+        "GROUP",
+        "PRIVATE"
+      ],
+      "default": "NONE"
+    },
+    "kafeidoPutProjectPipelineResponse": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string"
+        },
+        "namedPipelineId": {
+          "type": "string"
+        },
+        "kfPipelineId": {
+          "type": "string"
+        },
+        "kfPipelineVersionId": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoRequestInBytes": {
+      "type": "object",
+      "properties": {
+        "b64": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoResponseInJson": {
+      "type": "object",
+      "properties": {
+        "json": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoRunProjectPipelineResponse": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string"
+        },
+        "namedPipelineId": {
+          "type": "string"
+        },
+        "kfPipelineId": {
+          "type": "string"
+        },
+        "kfPipelineVersionId": {
+          "type": "string"
+        },
+        "experimentId": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        }
+      }
+    },
+    "kafeidoTypePredictionData": {
+      "type": "string",
+      "enum": [
+        "PHOTO",
+        "AUDIO"
+      ],
+      "default": "PHOTO"
+    },
+    "kafeidoUserInfo": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "taskworkerAppDataSink": {
+      "type": "object",
+      "properties": {
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/taskworkerAppDataSinkLabel"
+          }
+        }
+      }
+    },
+    "taskworkerAppDataSinkLabel": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "externalDocs": {
+    "description": "restapi",
+    "url": "https://github.com/footprintai/grandturk"
+  }
+}
