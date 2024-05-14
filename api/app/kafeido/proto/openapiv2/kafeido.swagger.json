@@ -169,6 +169,49 @@
         "tags": [
           "kafeido"
         ]
+      },
+      "put": {
+        "operationId": "kafeido_PutProject",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoPutProjectResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "description": "given when a project has been created",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "visibility": {
+                  "$ref": "#/definitions/authzTypeVisibility",
+                  "title": "default public"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
       }
     },
     "/v1/projects/{projectId}/datasource": {
@@ -1025,6 +1068,36 @@
           "kafeido"
         ]
       }
+    },
+    "/v1/user/{userId}": {
+      "get": {
+        "operationId": "kafeido_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kafeidoGetUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "kafeido"
+        ]
+      }
     }
   },
   "definitions": {
@@ -1072,8 +1145,8 @@
         "redisDataSink": {
           "$ref": "#/definitions/appkafeidoRedisStreamSink"
         },
-        "minioDataSink": {
-          "$ref": "#/definitions/appkafeidoMinioDataSink"
+        "objectStoreDataSink": {
+          "$ref": "#/definitions/appkafeidoObjectStoreDataSink"
         }
       }
     },
@@ -1108,7 +1181,7 @@
         }
       }
     },
-    "appkafeidoMinioDataSink": {
+    "appkafeidoObjectStoreDataSink": {
       "type": "object",
       "properties": {
         "BucketName": {
@@ -1127,7 +1200,18 @@
         }
       }
     },
-    "compdatastreamMinioInfo": {
+    "authzTypeVisibility": {
+      "type": "string",
+      "enum": [
+        "TypeVisibility_Unknown",
+        "TypeVisibility_Public",
+        "TypeVisibility_Team",
+        "TypeVisibility_OnlyOwner"
+      ],
+      "default": "TypeVisibility_Unknown",
+      "title": "- TypeVisibility_Public: everyone can see it\n - TypeVisibility_Team: limited group of people can see it\n - TypeVisibility_OnlyOwner: only owner can see it"
+    },
+    "compdatastreamObjectStoreInfo": {
       "type": "object",
       "properties": {
         "protocol": {
@@ -1147,22 +1231,25 @@
     "comptaskworkerDataSink": {
       "type": "object",
       "properties": {
-        "minioDataSink": {
-          "$ref": "#/definitions/comptaskworkerMinioDataSink"
+        "objectStoreDataSink": {
+          "$ref": "#/definitions/comptaskworkerObjectStoreDataSink"
         },
         "redisDataSink": {
           "$ref": "#/definitions/comptaskworkerRedisStreamSink"
         },
         "appDataSink": {
           "$ref": "#/definitions/taskworkerAppDataSink"
+        },
+        "restcolDataSink": {
+          "$ref": "#/definitions/taskworkerRestColDataSink"
         }
       }
     },
-    "comptaskworkerMinioDataSink": {
+    "comptaskworkerObjectStoreDataSink": {
       "type": "object",
       "properties": {
-        "minioStorage": {
-          "$ref": "#/definitions/comptaskworkerMinioInfo"
+        "objectStoreInfo": {
+          "$ref": "#/definitions/comptaskworkerObjectStoreInfo"
         },
         "BucketName": {
           "type": "string"
@@ -1172,7 +1259,7 @@
         }
       }
     },
-    "comptaskworkerMinioInfo": {
+    "comptaskworkerObjectStoreInfo": {
       "type": "object",
       "properties": {
         "endpoint": {
@@ -1263,8 +1350,8 @@
     "datastreamStorageInfo": {
       "type": "object",
       "properties": {
-        "minioInfo": {
-          "$ref": "#/definitions/compdatastreamMinioInfo"
+        "objectStoreInfo": {
+          "$ref": "#/definitions/compdatastreamObjectStoreInfo"
         }
       }
     },
@@ -1460,8 +1547,17 @@
           "type": "string"
         },
         "visibility": {
-          "$ref": "#/definitions/kafeidoProjectVisibility",
+          "$ref": "#/definitions/authzTypeVisibility",
           "title": "default public"
+        },
+        "preferredProjectId": {
+          "type": "string"
+        },
+        "preferredPublicBucketName": {
+          "type": "string"
+        },
+        "preferredPrivateBucketName": {
+          "type": "string"
         }
       }
     },
@@ -1486,7 +1582,7 @@
       "type": "object",
       "properties": {
         "userInfo": {
-          "$ref": "#/definitions/kafeidoUserInfo"
+          "$ref": "#/definitions/userstoreUserInfo"
         }
       }
     },
@@ -1649,22 +1745,30 @@
           "type": "string"
         },
         "visibility": {
-          "$ref": "#/definitions/kafeidoProjectVisibility"
+          "$ref": "#/definitions/authzTypeVisibility"
         },
-        "minioProjectUserKey": {
+        "objectStoreProjectUserKey": {
           "type": "string"
         },
-        "minioProjectUserSecret": {
+        "objectStoreProjectUserSecret": {
           "type": "string"
         },
-        "minioProjectPublicBucketName": {
+        "objectStoreProjectPublicBucketName": {
           "type": "string"
         },
-        "minioProjectPrivateBucketName": {
+        "objectStoreProjectPrivateBucketName": {
           "type": "string"
         },
         "experimentId": {
           "type": "string"
+        }
+      }
+    },
+    "kafeidoGetUserResponse": {
+      "type": "object",
+      "properties": {
+        "userInfo": {
+          "$ref": "#/definitions/userstoreUserInfo"
         }
       }
     },
@@ -1773,16 +1877,6 @@
         }
       }
     },
-    "kafeidoProjectVisibility": {
-      "type": "string",
-      "enum": [
-        "NONE",
-        "PUBLIC",
-        "GROUP",
-        "PRIVATE"
-      ],
-      "default": "NONE"
-    },
     "kafeidoPutProjectPipelineResponse": {
       "type": "object",
       "properties": {
@@ -1799,6 +1893,9 @@
           "type": "string"
         }
       }
+    },
+    "kafeidoPutProjectResponse": {
+      "type": "object"
     },
     "kafeidoRequestInBytes": {
       "type": "object",
@@ -1846,26 +1943,6 @@
         "AUDIO"
       ],
       "default": "PHOTO"
-    },
-    "kafeidoUserInfo": {
-      "type": "object",
-      "properties": {
-        "userId": {
-          "type": "string"
-        },
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "email": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
     },
     "protobufAny": {
       "type": "object",
@@ -1915,6 +1992,54 @@
         },
         "value": {
           "type": "string"
+        }
+      }
+    },
+    "taskworkerRestColDataSink": {
+      "type": "object",
+      "properties": {
+        "collectionId": {
+          "type": "string"
+        }
+      }
+    },
+    "userstoreApplicationID": {
+      "type": "string",
+      "enum": [
+        "NoApp",
+        "Kafeido"
+      ],
+      "default": "NoApp"
+    },
+    "userstoreUserInfo": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "$ref": "#/definitions/userstoreApplicationID"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "userName": {
+          "type": "string"
+        },
+        "userEmail": {
+          "type": "string"
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "externalIds": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     }
