@@ -47,6 +47,9 @@ const (
 
 	// DatastreamDataSourceDATASOURCEIMAGEURL captures enum value "DATASOURCE_IMAGEURL"
 	DatastreamDataSourceDATASOURCEIMAGEURL DatastreamDataSource = "DATASOURCE_IMAGEURL"
+
+	// DatastreamDataSourceDATASOURCEAUDIOFILES captures enum value "DATASOURCE_AUDIOFILES"
+	DatastreamDataSourceDATASOURCEAUDIOFILES DatastreamDataSource = "DATASOURCE_AUDIOFILES"
 )
 
 // for schema
@@ -54,7 +57,7 @@ var datastreamDataSourceEnum []interface{}
 
 func init() {
 	var res []DatastreamDataSource
-	if err := json.Unmarshal([]byte(`["DATASOURCE_NONE","DATASOURCE_PHOTO","DATASOURCE_VIDEO","DATASOURCE_STREAMING","DATASOURCE_YOUTUBE","DATASOURCE_IMAGEURL"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["DATASOURCE_NONE","DATASOURCE_PHOTO","DATASOURCE_VIDEO","DATASOURCE_STREAMING","DATASOURCE_YOUTUBE","DATASOURCE_IMAGEURL","DATASOURCE_AUDIOFILES"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
