@@ -18,6 +18,9 @@ import (
 // swagger:model kafeidoDataSourceInfo
 type KafeidoDataSourceInfo struct {
 
+	// audio files data source
+	AudioFilesDataSource *DatastreamAudioFilesDataSource `json:"audioFilesDataSource,omitempty"`
+
 	// delay in duration for next frame
 	DelayInDurationForNextFrame string `json:"delayInDurationForNextFrame,omitempty"`
 
@@ -43,6 +46,10 @@ type KafeidoDataSourceInfo struct {
 // Validate validates this kafeido data source info
 func (m *KafeidoDataSourceInfo) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateAudioFilesDataSource(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateImageURLDataSource(formats); err != nil {
 		res = append(res, err)
@@ -71,6 +78,25 @@ func (m *KafeidoDataSourceInfo) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *KafeidoDataSourceInfo) validateAudioFilesDataSource(formats strfmt.Registry) error {
+	if swag.IsZero(m.AudioFilesDataSource) { // not required
+		return nil
+	}
+
+	if m.AudioFilesDataSource != nil {
+		if err := m.AudioFilesDataSource.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("audioFilesDataSource")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("audioFilesDataSource")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -192,6 +218,10 @@ func (m *KafeidoDataSourceInfo) validateYoutubeDataSource(formats strfmt.Registr
 func (m *KafeidoDataSourceInfo) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateAudioFilesDataSource(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateImageURLDataSource(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -219,6 +249,27 @@ func (m *KafeidoDataSourceInfo) ContextValidate(ctx context.Context, formats str
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *KafeidoDataSourceInfo) contextValidateAudioFilesDataSource(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.AudioFilesDataSource != nil {
+
+		if swag.IsZero(m.AudioFilesDataSource) { // not required
+			return nil
+		}
+
+		if err := m.AudioFilesDataSource.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("audioFilesDataSource")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("audioFilesDataSource")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

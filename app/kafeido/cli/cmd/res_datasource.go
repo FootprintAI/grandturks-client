@@ -28,6 +28,7 @@ func NewCreateDataSourceCommand(logger log.Logger, ioStreams genericclioptions.I
 	cmd.AddCommand(NewCreateStreamingDataSourceCommand(logger, ioStreams))
 	cmd.AddCommand(NewCreateYoutubeDataSourceCommand(logger, ioStreams))
 	cmd.AddCommand(NewCreateImageUrlDataSourceCommand(logger, ioStreams))
+	cmd.AddCommand(NewCreateAudioFileDataSourceCommand(logger, ioStreams))
 	return cmd
 }
 
@@ -314,6 +315,65 @@ func NewCreateImageUrlDataSourceCommand(logger log.Logger, ioStreams genericclio
 
 	return cmd
 
+}
+
+func NewCreateAudioFileDataSourceCommand(logger log.Logger, ioStreams genericclioptions.IOStreams) *cobra.Command {
+	var (
+		projectId                   string
+		protocol                    string
+		endpoint                    string
+		bucketName                  string
+		audioFile                   string
+		repeatedTimes               int32
+		delayInDurationForNextFrame time.Duration
+	)
+
+	handler := func() error {
+		storageInfo := &appmodels.DatastreamStorageInfo{
+			ObjectStoreInfo: &appmodels.CompdatastreamObjectStoreInfo{
+				Endpoint: endpoint,
+				Protocol: protocol,
+			},
+		}
+
+		params := &appservice.KafeidoCreateDataSourceParams{
+			Body: appservice.KafeidoCreateDataSourceBody{
+				DataSourceInfo: &appmodels.KafeidoDataSourceInfo{
+					Type: appmodels.DatastreamDataSourceDATASOURCEAUDIOFILES.Pointer(),
+					AudioFilesDataSource: &appmodels.DatastreamAudioFilesDataSource{
+						BucketName:    bucketName,
+						AudioFilePath: audioFile,
+						RepeatedTimes: repeatedTimes,
+						StorageInfo:   storageInfo,
+					},
+					DelayInDurationForNextFrame: pkgproto.SerializeDuration(delayInDurationForNextFrame),
+				},
+			},
+			ProjectID: projectId,
+		}
+		return runCreateDataSourceCmd(params, ioStreams)
+	}
+
+	cmd := &cobra.Command{
+		Use:   "audiofile",
+		Short: "",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return handler()
+		},
+	}
+
+	cmd.Flags().StringVar(&projectId, "project_id", "", "project Id")
+	cmd.Flags().StringVar(&protocol, "protocol", "http", "data source protocol (default: http")
+	cmd.Flags().StringVar(&endpoint, "endpoint", "", "data source protocol (default: ")
+	cmd.Flags().StringVar(&bucketName, "bucket_name", "", "data source bucket name (default: ")
+	cmd.Flags().StringVar(&audioFile, "audio_file", "", "audio path (default: ")
+	cmd.Flags().Int32Var(&repeatedTimes, "repeated_times", 1, "data source repeated times(default: 1")
+	cmd.Flags().DurationVar(&delayInDurationForNextFrame, "next_frame_delay", time.Second, "duration per frame (default: 1s")
+	cmd.MarkFlagRequired("project_id")
+	cmd.MarkFlagRequired("bucket")
+	cmd.MarkFlagRequired("audio_file")
+
+	return cmd
 }
 
 func NewListDataSourceCommand(logger log.Logger, ioStreams genericclioptions.IOStreams) *cobra.Command {

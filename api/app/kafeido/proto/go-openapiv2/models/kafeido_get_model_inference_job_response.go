@@ -25,6 +25,9 @@ type KafeidoGetModelInferenceJobResponse struct {
 	// data source Id
 	DataSourceID string `json:"dataSourceId,omitempty"`
 
+	// job kind
+	JobKind *TaskworkerInferenceJob `json:"jobKind,omitempty"`
+
 	// model inference Id
 	ModelInferenceID string `json:"modelInferenceId,omitempty"`
 
@@ -53,6 +56,10 @@ type KafeidoGetModelInferenceJobResponse struct {
 func (m *KafeidoGetModelInferenceJobResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateJobKind(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateModelInferenceJobEndedAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -68,6 +75,25 @@ func (m *KafeidoGetModelInferenceJobResponse) Validate(formats strfmt.Registry) 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *KafeidoGetModelInferenceJobResponse) validateJobKind(formats strfmt.Registry) error {
+	if swag.IsZero(m.JobKind) { // not required
+		return nil
+	}
+
+	if m.JobKind != nil {
+		if err := m.JobKind.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("jobKind")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("jobKind")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -118,6 +144,10 @@ func (m *KafeidoGetModelInferenceJobResponse) validateSinkDestination(formats st
 func (m *KafeidoGetModelInferenceJobResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateJobKind(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateSinkDestination(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -125,6 +155,27 @@ func (m *KafeidoGetModelInferenceJobResponse) ContextValidate(ctx context.Contex
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *KafeidoGetModelInferenceJobResponse) contextValidateJobKind(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.JobKind != nil {
+
+		if swag.IsZero(m.JobKind) { // not required
+			return nil
+		}
+
+		if err := m.JobKind.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("jobKind")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("jobKind")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

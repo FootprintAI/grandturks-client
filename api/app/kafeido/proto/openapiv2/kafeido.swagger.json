@@ -662,8 +662,14 @@
                 "prometheusJobLabel": {
                   "type": "string"
                 },
-                "outputFormat": {
-                  "$ref": "#/definitions/datastreamOutputFormat"
+                "imageOutputFormat": {
+                  "$ref": "#/definitions/datastreamImageOutputFormat"
+                },
+                "audioOutputFormat": {
+                  "$ref": "#/definitions/datastreamAudioOutputFormat"
+                },
+                "jobKind": {
+                  "$ref": "#/definitions/taskworkerInferenceJob"
                 }
               }
             }
@@ -1101,15 +1107,15 @@
     }
   },
   "definitions": {
-    "OutputFormatEncodingType": {
+    "AudioOutputFormatAudioFormat": {
       "type": "string",
       "enum": [
-        "None",
-        "BASE64"
+        "NONE",
+        "MPEG"
       ],
-      "default": "None"
+      "default": "NONE"
     },
-    "OutputFormatPhotoFormat": {
+    "ImageOutputFormatPhotoFormat": {
       "type": "string",
       "enum": [
         "JEPG",
@@ -1284,6 +1290,48 @@
         }
       }
     },
+    "datastreamAudioFilesDataSource": {
+      "type": "object",
+      "properties": {
+        "storageInfo": {
+          "$ref": "#/definitions/datastreamStorageInfo"
+        },
+        "bucketName": {
+          "type": "string"
+        },
+        "audioFilePath": {
+          "type": "string"
+        },
+        "repeatedTimes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "datastreamAudioOutputFormat": {
+      "type": "object",
+      "properties": {
+        "encoding": {
+          "$ref": "#/definitions/datastreamAudioOutputFormatEncodingType"
+        },
+        "format": {
+          "$ref": "#/definitions/AudioOutputFormatAudioFormat"
+        },
+        "durationInSecond": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "datastreamAudioOutputFormatEncodingType": {
+      "type": "string",
+      "enum": [
+        "None",
+        "RAW",
+        "BASE64"
+      ],
+      "default": "None"
+    },
     "datastreamDataSource": {
       "type": "string",
       "enum": [
@@ -1292,23 +1340,12 @@
         "DATASOURCE_VIDEO",
         "DATASOURCE_STREAMING",
         "DATASOURCE_YOUTUBE",
-        "DATASOURCE_IMAGEURL"
+        "DATASOURCE_IMAGEURL",
+        "DATASOURCE_AUDIOFILES"
       ],
       "default": "DATASOURCE_NONE"
     },
-    "datastreamImageUrlDataSource": {
-      "type": "object",
-      "properties": {
-        "url": {
-          "type": "string",
-          "title": "https://example.com/1.jpg"
-        },
-        "streamingDuration": {
-          "type": "string"
-        }
-      }
-    },
-    "datastreamOutputFormat": {
+    "datastreamImageOutputFormat": {
       "type": "object",
       "properties": {
         "width": {
@@ -1320,10 +1357,30 @@
           "format": "int32"
         },
         "encoding": {
-          "$ref": "#/definitions/OutputFormatEncodingType"
+          "$ref": "#/definitions/datastreamImageOutputFormatEncodingType"
         },
         "photoFormat": {
-          "$ref": "#/definitions/OutputFormatPhotoFormat"
+          "$ref": "#/definitions/ImageOutputFormatPhotoFormat"
+        }
+      }
+    },
+    "datastreamImageOutputFormatEncodingType": {
+      "type": "string",
+      "enum": [
+        "None",
+        "BASE64"
+      ],
+      "default": "None"
+    },
+    "datastreamImageUrlDataSource": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "title": "https://example.com/1.jpg"
+        },
+        "streamingDuration": {
+          "type": "string"
         }
       }
     },
@@ -1617,6 +1674,9 @@
         },
         "imageUrlDataSource": {
           "$ref": "#/definitions/datastreamImageUrlDataSource"
+        },
+        "audioFilesDataSource": {
+          "$ref": "#/definitions/datastreamAudioFilesDataSource"
         }
       }
     },
@@ -1661,6 +1721,9 @@
         "modelInferenceJobEndedAt": {
           "type": "string",
           "format": "date-time"
+        },
+        "jobKind": {
+          "$ref": "#/definitions/taskworkerInferenceJob"
         },
         "sinkDestination": {
           "$ref": "#/definitions/appkafeidoDataSink"
@@ -1994,6 +2057,15 @@
           "type": "string"
         }
       }
+    },
+    "taskworkerInferenceJob": {
+      "type": "string",
+      "enum": [
+        "INFERENCEJOB_NONE",
+        "INFERENCEJOB_IMAGE",
+        "INFERENCEJOB_AUDIO"
+      ],
+      "default": "INFERENCEJOB_NONE"
     },
     "taskworkerRestColDataSink": {
       "type": "object",

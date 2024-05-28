@@ -10,11 +10,12 @@ import (
 	"path/filepath"
 	"time"
 
-	appmodels "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
-	appswaggermodel "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
-
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/minio/minio-go/v7"
+
+	appmodels "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
+	appswaggermodel "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
+	clihelper "github.com/footprintai/grandturks-client/v2/app/kafeido/cli/helper"
 )
 
 type IdAndMessageFormatter struct {
@@ -288,6 +289,7 @@ func (i *ModelInferenceJobDetailsFormatter) Header() []string {
 		"inference_id",
 		"datasource_id",
 		"job_id",
+		"job_kind",
 		"job_status",
 		"job_concurrency",
 		"job_started_at",
@@ -305,6 +307,7 @@ func (i *ModelInferenceJobDetailsFormatter) Rows() [][]string {
 			pbBody.ModelInferenceID,
 			pbBody.DataSourceID,
 			pbBody.ModelInferenceJobID,
+			clihelper.MakeCliJobType(pbBody.JobKind).String(),
 			pbBody.ModelInferenceJobStatus,
 			fmt.Sprintf("%d", pbBody.ConcurrentRequests),
 			pbBody.ModelInferenceJobStartedAt.String(),
@@ -356,6 +359,8 @@ func (i *DataSourceDetailsFormatter) Rows() [][]string {
 			val = serializedYoutubeDataSource(pbBody)
 		} else if appswaggermodel.DatastreamDataSourceDATASOURCEIMAGEURL == *pbBody.DataSourceInfo.Type {
 			val = serializedImageUrlDataSource(pbBody)
+		} else if appswaggermodel.DatastreamDataSourceDATASOURCEAUDIOFILES == *pbBody.DataSourceInfo.Type {
+			val = serializedAudioFilesDataSource(pbBody)
 		}
 		vals = append(vals, val)
 	}
@@ -428,6 +433,18 @@ func serializedImageUrlDataSource(p *appswaggermodel.AppkafeidoGetDataSourceResp
 		parsedUrl.Host,
 		parsedUrl.Path,
 		fmt.Sprintf("fps:1, streaming duration: %s, next frame: %s\n", p.DataSourceInfo.ImageURLDataSource.StreamingDuration, p.DataSourceInfo.DelayInDurationForNextFrame),
+	}
+}
+
+func serializedAudioFilesDataSource(p *appswaggermodel.AppkafeidoGetDataSourceResponse) []string {
+	return []string{
+		p.ProjectID,
+		p.DataSourceID,
+		DeNormalizedDataSource(*p.DataSourceInfo.Type),
+		p.DataSourceInfo.AudioFilesDataSource.StorageInfo.ObjectStoreInfo.Protocol,
+		p.DataSourceInfo.AudioFilesDataSource.StorageInfo.ObjectStoreInfo.Endpoint,
+		filepath.Join(p.DataSourceInfo.AudioFilesDataSource.BucketName, p.DataSourceInfo.AudioFilesDataSource.AudioFilePath),
+		fmt.Sprintf("repeated: %d, next frame: %s", p.DataSourceInfo.AudioFilesDataSource.RepeatedTimes, p.DataSourceInfo.DelayInDurationForNextFrame),
 	}
 }
 

@@ -13,33 +13,30 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DatastreamOutputFormat datastream output format
+// DatastreamAudioOutputFormat datastream audio output format
 //
-// swagger:model datastreamOutputFormat
-type DatastreamOutputFormat struct {
+// swagger:model datastreamAudioOutputFormat
+type DatastreamAudioOutputFormat struct {
+
+	// duration in second
+	DurationInSecond int32 `json:"durationInSecond,omitempty"`
 
 	// encoding
-	Encoding *OutputFormatEncodingType `json:"encoding,omitempty"`
+	Encoding *DatastreamAudioOutputFormatEncodingType `json:"encoding,omitempty"`
 
-	// height
-	Height int32 `json:"height,omitempty"`
-
-	// photo format
-	PhotoFormat *OutputFormatPhotoFormat `json:"photoFormat,omitempty"`
-
-	// width
-	Width int32 `json:"width,omitempty"`
+	// format
+	Format *AudioOutputFormatAudioFormat `json:"format,omitempty"`
 }
 
-// Validate validates this datastream output format
-func (m *DatastreamOutputFormat) Validate(formats strfmt.Registry) error {
+// Validate validates this datastream audio output format
+func (m *DatastreamAudioOutputFormat) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateEncoding(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validatePhotoFormat(formats); err != nil {
+	if err := m.validateFormat(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -49,7 +46,7 @@ func (m *DatastreamOutputFormat) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DatastreamOutputFormat) validateEncoding(formats strfmt.Registry) error {
+func (m *DatastreamAudioOutputFormat) validateEncoding(formats strfmt.Registry) error {
 	if swag.IsZero(m.Encoding) { // not required
 		return nil
 	}
@@ -68,17 +65,17 @@ func (m *DatastreamOutputFormat) validateEncoding(formats strfmt.Registry) error
 	return nil
 }
 
-func (m *DatastreamOutputFormat) validatePhotoFormat(formats strfmt.Registry) error {
-	if swag.IsZero(m.PhotoFormat) { // not required
+func (m *DatastreamAudioOutputFormat) validateFormat(formats strfmt.Registry) error {
+	if swag.IsZero(m.Format) { // not required
 		return nil
 	}
 
-	if m.PhotoFormat != nil {
-		if err := m.PhotoFormat.Validate(formats); err != nil {
+	if m.Format != nil {
+		if err := m.Format.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("photoFormat")
+				return ve.ValidateName("format")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("photoFormat")
+				return ce.ValidateName("format")
 			}
 			return err
 		}
@@ -87,15 +84,15 @@ func (m *DatastreamOutputFormat) validatePhotoFormat(formats strfmt.Registry) er
 	return nil
 }
 
-// ContextValidate validate this datastream output format based on the context it is used
-func (m *DatastreamOutputFormat) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validate this datastream audio output format based on the context it is used
+func (m *DatastreamAudioOutputFormat) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateEncoding(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.contextValidatePhotoFormat(ctx, formats); err != nil {
+	if err := m.contextValidateFormat(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -105,7 +102,7 @@ func (m *DatastreamOutputFormat) ContextValidate(ctx context.Context, formats st
 	return nil
 }
 
-func (m *DatastreamOutputFormat) contextValidateEncoding(ctx context.Context, formats strfmt.Registry) error {
+func (m *DatastreamAudioOutputFormat) contextValidateEncoding(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Encoding != nil {
 
@@ -126,19 +123,19 @@ func (m *DatastreamOutputFormat) contextValidateEncoding(ctx context.Context, fo
 	return nil
 }
 
-func (m *DatastreamOutputFormat) contextValidatePhotoFormat(ctx context.Context, formats strfmt.Registry) error {
+func (m *DatastreamAudioOutputFormat) contextValidateFormat(ctx context.Context, formats strfmt.Registry) error {
 
-	if m.PhotoFormat != nil {
+	if m.Format != nil {
 
-		if swag.IsZero(m.PhotoFormat) { // not required
+		if swag.IsZero(m.Format) { // not required
 			return nil
 		}
 
-		if err := m.PhotoFormat.ContextValidate(ctx, formats); err != nil {
+		if err := m.Format.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("photoFormat")
+				return ve.ValidateName("format")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("photoFormat")
+				return ce.ValidateName("format")
 			}
 			return err
 		}
@@ -148,7 +145,7 @@ func (m *DatastreamOutputFormat) contextValidatePhotoFormat(ctx context.Context,
 }
 
 // MarshalBinary interface implementation
-func (m *DatastreamOutputFormat) MarshalBinary() ([]byte, error) {
+func (m *DatastreamAudioOutputFormat) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -156,8 +153,8 @@ func (m *DatastreamOutputFormat) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DatastreamOutputFormat) UnmarshalBinary(b []byte) error {
-	var res DatastreamOutputFormat
+func (m *DatastreamAudioOutputFormat) UnmarshalBinary(b []byte) error {
+	var res DatastreamAudioOutputFormat
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

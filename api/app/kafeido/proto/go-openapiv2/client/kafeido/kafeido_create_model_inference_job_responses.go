@@ -190,6 +190,9 @@ swagger:model KafeidoCreateModelInferenceJobBody
 */
 type KafeidoCreateModelInferenceJobBody struct {
 
+	// audio output format
+	AudioOutputFormat *models.DatastreamAudioOutputFormat `json:"audioOutputFormat,omitempty"`
+
 	// concurrent requests
 	ConcurrentRequests int32 `json:"concurrentRequests,omitempty"`
 
@@ -199,11 +202,14 @@ type KafeidoCreateModelInferenceJobBody struct {
 	// data source Id
 	DataSourceID string `json:"dataSourceId,omitempty"`
 
+	// image output format
+	ImageOutputFormat *models.DatastreamImageOutputFormat `json:"imageOutputFormat,omitempty"`
+
+	// job kind
+	JobKind *models.TaskworkerInferenceJob `json:"jobKind,omitempty"`
+
 	// model inference Id
 	ModelInferenceID string `json:"modelInferenceId,omitempty"`
-
-	// output format
-	OutputFormat *models.DatastreamOutputFormat `json:"outputFormat,omitempty"`
 
 	// prometheus job label
 	PrometheusJobLabel string `json:"prometheusJobLabel,omitempty"`
@@ -213,17 +219,44 @@ type KafeidoCreateModelInferenceJobBody struct {
 func (o *KafeidoCreateModelInferenceJobBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := o.validateAudioOutputFormat(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := o.validateDataSinkConfig(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := o.validateOutputFormat(formats); err != nil {
+	if err := o.validateImageOutputFormat(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateJobKind(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (o *KafeidoCreateModelInferenceJobBody) validateAudioOutputFormat(formats strfmt.Registry) error {
+	if swag.IsZero(o.AudioOutputFormat) { // not required
+		return nil
+	}
+
+	if o.AudioOutputFormat != nil {
+		if err := o.AudioOutputFormat.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("body" + "." + "audioOutputFormat")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("body" + "." + "audioOutputFormat")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -246,17 +279,36 @@ func (o *KafeidoCreateModelInferenceJobBody) validateDataSinkConfig(formats strf
 	return nil
 }
 
-func (o *KafeidoCreateModelInferenceJobBody) validateOutputFormat(formats strfmt.Registry) error {
-	if swag.IsZero(o.OutputFormat) { // not required
+func (o *KafeidoCreateModelInferenceJobBody) validateImageOutputFormat(formats strfmt.Registry) error {
+	if swag.IsZero(o.ImageOutputFormat) { // not required
 		return nil
 	}
 
-	if o.OutputFormat != nil {
-		if err := o.OutputFormat.Validate(formats); err != nil {
+	if o.ImageOutputFormat != nil {
+		if err := o.ImageOutputFormat.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("body" + "." + "outputFormat")
+				return ve.ValidateName("body" + "." + "imageOutputFormat")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("body" + "." + "outputFormat")
+				return ce.ValidateName("body" + "." + "imageOutputFormat")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *KafeidoCreateModelInferenceJobBody) validateJobKind(formats strfmt.Registry) error {
+	if swag.IsZero(o.JobKind) { // not required
+		return nil
+	}
+
+	if o.JobKind != nil {
+		if err := o.JobKind.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("body" + "." + "jobKind")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("body" + "." + "jobKind")
 			}
 			return err
 		}
@@ -269,17 +321,46 @@ func (o *KafeidoCreateModelInferenceJobBody) validateOutputFormat(formats strfmt
 func (o *KafeidoCreateModelInferenceJobBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := o.contextValidateAudioOutputFormat(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := o.contextValidateDataSinkConfig(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := o.contextValidateOutputFormat(ctx, formats); err != nil {
+	if err := o.contextValidateImageOutputFormat(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateJobKind(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (o *KafeidoCreateModelInferenceJobBody) contextValidateAudioOutputFormat(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.AudioOutputFormat != nil {
+
+		if swag.IsZero(o.AudioOutputFormat) { // not required
+			return nil
+		}
+
+		if err := o.AudioOutputFormat.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("body" + "." + "audioOutputFormat")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("body" + "." + "audioOutputFormat")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -304,19 +385,40 @@ func (o *KafeidoCreateModelInferenceJobBody) contextValidateDataSinkConfig(ctx c
 	return nil
 }
 
-func (o *KafeidoCreateModelInferenceJobBody) contextValidateOutputFormat(ctx context.Context, formats strfmt.Registry) error {
+func (o *KafeidoCreateModelInferenceJobBody) contextValidateImageOutputFormat(ctx context.Context, formats strfmt.Registry) error {
 
-	if o.OutputFormat != nil {
+	if o.ImageOutputFormat != nil {
 
-		if swag.IsZero(o.OutputFormat) { // not required
+		if swag.IsZero(o.ImageOutputFormat) { // not required
 			return nil
 		}
 
-		if err := o.OutputFormat.ContextValidate(ctx, formats); err != nil {
+		if err := o.ImageOutputFormat.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("body" + "." + "outputFormat")
+				return ve.ValidateName("body" + "." + "imageOutputFormat")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("body" + "." + "outputFormat")
+				return ce.ValidateName("body" + "." + "imageOutputFormat")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *KafeidoCreateModelInferenceJobBody) contextValidateJobKind(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.JobKind != nil {
+
+		if swag.IsZero(o.JobKind) { // not required
+			return nil
+		}
+
+		if err := o.JobKind.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("body" + "." + "jobKind")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("body" + "." + "jobKind")
 			}
 			return err
 		}
