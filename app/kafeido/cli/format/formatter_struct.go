@@ -443,7 +443,7 @@ func serializedAudioFilesDataSource(p *appswaggermodel.AppkafeidoGetDataSourceRe
 		DeNormalizedDataSource(*p.DataSourceInfo.Type),
 		p.DataSourceInfo.AudioFilesDataSource.StorageInfo.ObjectStoreInfo.Protocol,
 		p.DataSourceInfo.AudioFilesDataSource.StorageInfo.ObjectStoreInfo.Endpoint,
-		filepath.Join(p.DataSourceInfo.AudioFilesDataSource.BucketName, p.DataSourceInfo.AudioFilesDataSource.AudioFilePath),
+		filepath.Join(p.DataSourceInfo.AudioFilesDataSource.BucketName, p.DataSourceInfo.AudioFilesDataSource.IndexObject),
 		fmt.Sprintf("repeated: %d, next frame: %s", p.DataSourceInfo.AudioFilesDataSource.RepeatedTimes, p.DataSourceInfo.DelayInDurationForNextFrame),
 	}
 }

@@ -1299,8 +1299,9 @@
         "bucketName": {
           "type": "string"
         },
-        "audioFilePath": {
-          "type": "string"
+        "indexObject": {
+          "type": "string",
+          "description": "indexObject is given, a set of path would be read sequentially."
         },
         "repeatedTimes": {
           "type": "integer",
