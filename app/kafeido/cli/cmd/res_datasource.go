@@ -28,7 +28,7 @@ func NewCreateDataSourceCommand(logger log.Logger, ioStreams genericclioptions.I
 	cmd.AddCommand(NewCreateStreamingDataSourceCommand(logger, ioStreams))
 	cmd.AddCommand(NewCreateYoutubeDataSourceCommand(logger, ioStreams))
 	cmd.AddCommand(NewCreateImageUrlDataSourceCommand(logger, ioStreams))
-	cmd.AddCommand(NewCreateAudioFileDataSourceCommand(logger, ioStreams))
+	cmd.AddCommand(NewCreateAudioFilesDataSourceCommand(logger, ioStreams))
 	return cmd
 }
 
@@ -317,13 +317,13 @@ func NewCreateImageUrlDataSourceCommand(logger log.Logger, ioStreams genericclio
 
 }
 
-func NewCreateAudioFileDataSourceCommand(logger log.Logger, ioStreams genericclioptions.IOStreams) *cobra.Command {
+func NewCreateAudioFilesDataSourceCommand(logger log.Logger, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	var (
 		projectId                   string
 		protocol                    string
 		endpoint                    string
 		bucketName                  string
-		audioFile                   string
+		indexObject                 string // a file path containing a newline delitered file, each line is with an audio file
 		repeatedTimes               int32
 		delayInDurationForNextFrame time.Duration
 	)
@@ -342,7 +342,7 @@ func NewCreateAudioFileDataSourceCommand(logger log.Logger, ioStreams genericcli
 					Type: appmodels.DatastreamDataSourceDATASOURCEAUDIOFILES.Pointer(),
 					AudioFilesDataSource: &appmodels.DatastreamAudioFilesDataSource{
 						BucketName:    bucketName,
-						AudioFilePath: audioFile,
+						IndexObject:   indexObject,
 						RepeatedTimes: repeatedTimes,
 						StorageInfo:   storageInfo,
 					},
@@ -366,12 +366,12 @@ func NewCreateAudioFileDataSourceCommand(logger log.Logger, ioStreams genericcli
 	cmd.Flags().StringVar(&protocol, "protocol", "http", "data source protocol (default: http")
 	cmd.Flags().StringVar(&endpoint, "endpoint", "", "data source protocol (default: ")
 	cmd.Flags().StringVar(&bucketName, "bucket_name", "", "data source bucket name (default: ")
-	cmd.Flags().StringVar(&audioFile, "audio_file", "", "audio path (default: ")
+	cmd.Flags().StringVar(&indexObject, "index_object", "", "audio path (default: ")
 	cmd.Flags().Int32Var(&repeatedTimes, "repeated_times", 1, "data source repeated times(default: 1")
-	cmd.Flags().DurationVar(&delayInDurationForNextFrame, "next_frame_delay", time.Second, "duration per frame (default: 1s")
+	cmd.Flags().DurationVar(&delayInDurationForNextFrame, "next_frame_delay", time.Second, "duration in delay for next streaming frame(default: 1s")
 	cmd.MarkFlagRequired("project_id")
 	cmd.MarkFlagRequired("bucket")
-	cmd.MarkFlagRequired("audio_file")
+	cmd.MarkFlagRequired("index_object")
 
 	return cmd
 }

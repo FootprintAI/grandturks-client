@@ -18,11 +18,11 @@ import (
 // swagger:model datastreamAudioFilesDataSource
 type DatastreamAudioFilesDataSource struct {
 
-	// audio file path
-	AudioFilePath string `json:"audioFilePath,omitempty"`
-
 	// bucket name
 	BucketName string `json:"bucketName,omitempty"`
+
+	// indexObject is given, a set of path would be read sequentially.
+	IndexObject string `json:"indexObject,omitempty"`
 
 	// repeated times
 	RepeatedTimes int32 `json:"repeatedTimes,omitempty"`
