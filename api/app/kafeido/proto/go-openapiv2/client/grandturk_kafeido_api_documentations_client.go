@@ -10,7 +10,7 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido"
+	"github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido_service"
 )
 
 // Default grandturk kafeido API documentations HTTP client.
@@ -55,7 +55,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *GrandturkK
 
 	cli := new(GrandturkKafeidoAPIDocumentations)
 	cli.Transport = transport
-	cli.Kafeido = kafeido.New(transport, formats)
+	cli.KafeidoService = kafeido_service.New(transport, formats)
 	return cli
 }
 
@@ -100,7 +100,7 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 
 // GrandturkKafeidoAPIDocumentations is a client for grandturk kafeido API documentations
 type GrandturkKafeidoAPIDocumentations struct {
-	Kafeido kafeido.ClientService
+	KafeidoService kafeido_service.ClientService
 
 	Transport runtime.ClientTransport
 }
@@ -108,5 +108,5 @@ type GrandturkKafeidoAPIDocumentations struct {
 // SetTransport changes the transport on the client and all its subresources
 func (c *GrandturkKafeidoAPIDocumentations) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
-	c.Kafeido.SetTransport(transport)
+	c.KafeidoService.SetTransport(transport)
 }

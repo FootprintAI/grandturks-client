@@ -3,14 +3,14 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"sigs.k8s.io/kind/pkg/log"
 
-	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido"
+	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido_service"
 	appmodels "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
 	"github.com/footprintai/grandturks-client/v2/app/kafeido/cli/format"
 )
@@ -23,13 +23,13 @@ func NewCreatePipelineCommand(logger log.Logger, ioStreams genericclioptions.IOS
 		manifestPath string // workflow manifest path
 	)
 	handler := func() error {
-		manifestBytes, err := ioutil.ReadFile(manifestPath)
+		manifestBytes, err := os.ReadFile(manifestPath)
 		if err != nil {
 			return fmt.Errorf("failed to read file, err:%+v\n", err)
 		}
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoCreateProjectPipelineParams{
-			Body: appservice.KafeidoCreateProjectPipelineBody{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceCreateProjectPipelineParams{
+			Body: appservice.KafeidoServiceCreateProjectPipelineBody{
 				Name:               pipelineName,
 				Desc:               pipelineDesc,
 				KfPipelineWorkflow: strfmt.Base64(manifestBytes),
@@ -37,7 +37,7 @@ func NewCreatePipelineCommand(logger log.Logger, ioStreams genericclioptions.IOS
 			ProjectID: projectId,
 		}
 
-		kafeidoCreateProjectPipelineOk, err := runCmd.stub.Kafeido.KafeidoCreateProjectPipeline(
+		kafeidoCreateProjectPipelineOk, err := runCmd.stub.KafeidoService.KafeidoServiceCreateProjectPipeline(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -72,13 +72,13 @@ func NewGetPipelineCommand(logger log.Logger, ioStreams genericclioptions.IOStre
 		saveDir         string // workflow manifest save dir
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoGetProjectPipelineParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceGetProjectPipelineParams{
 			ProjectID:       projectId,
 			NamedPipelineID: namedPipelineId,
 		}
 
-		kafeidoGetProjectPipelineOk, err := runCmd.stub.Kafeido.KafeidoGetProjectPipeline(
+		kafeidoGetProjectPipelineOk, err := runCmd.stub.KafeidoService.KafeidoServiceGetProjectPipeline(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -110,11 +110,11 @@ func NewListPipelineCommand(logger log.Logger, ioStreams genericclioptions.IOStr
 		saveDir   string // workflow manifest save dir
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoListProjectPipelineParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceListProjectPipelineParams{
 			ProjectID: projectId,
 		}
-		kafeidoListProjectPipelineOk, err := runCmd.stub.Kafeido.KafeidoListProjectPipeline(
+		kafeidoListProjectPipelineOk, err := runCmd.stub.KafeidoService.KafeidoServiceListProjectPipeline(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -123,11 +123,11 @@ func NewListPipelineCommand(logger log.Logger, ioStreams genericclioptions.IOStr
 		}
 		var listResp []*appmodels.KafeidoGetProjectPipelineResponse
 		for _, namedPipelineId := range kafeidoListProjectPipelineOk.Payload.NamedPipelineID {
-			subParams := &appservice.KafeidoGetProjectPipelineParams{
+			subParams := &appservice.KafeidoServiceGetProjectPipelineParams{
 				ProjectID:       projectId,
 				NamedPipelineID: namedPipelineId,
 			}
-			kafeidoGetProjectPipelineOk, err := runCmd.stub.Kafeido.KafeidoGetProjectPipeline(
+			kafeidoGetProjectPipelineOk, err := runCmd.stub.KafeidoService.KafeidoServiceGetProjectPipeline(
 				subParams.WithTimeout(runCmd.requestTimeout),
 				runCmd.authInformer(),
 			)
@@ -164,16 +164,16 @@ func NewRunPipelineCommand(logger log.Logger, ioStreams genericclioptions.IOStre
 			return err
 		}
 
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoRunProjectPipelineParams{
-			Body: appservice.KafeidoRunProjectPipelineBody{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceRunProjectPipelineParams{
+			Body: appservice.KafeidoServiceRunProjectPipelineBody{
 				Parameters: jsonMap,
 			},
 			ProjectID:       projectId,
 			NamedPipelineID: namedPipelineId,
 		}
 
-		kafeidoRunProjectPipelineOk, err := runCmd.stub.Kafeido.KafeidoRunProjectPipeline(
+		kafeidoRunProjectPipelineOk, err := runCmd.stub.KafeidoService.KafeidoServiceRunProjectPipeline(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -213,20 +213,20 @@ func NewPutPipelineCommand(logger log.Logger, ioStreams genericclioptions.IOStre
 		manifestPath    string // workflow manifest path
 	)
 	handler := func() error {
-		manifestBytes, err := ioutil.ReadFile(manifestPath)
+		manifestBytes, err := os.ReadFile(manifestPath)
 		if err != nil {
 			return fmt.Errorf("failed to read file, err:%+v\n", err)
 		}
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoPutProjectPipelineParams{
-			Body: appservice.KafeidoPutProjectPipelineBody{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServicePutProjectPipelineParams{
+			Body: appservice.KafeidoServicePutProjectPipelineBody{
 				PipelineWorkflowInRawYaml: strfmt.Base64(manifestBytes),
 			},
 			ProjectID:       projectId,
 			NamedPipelineID: namedPipelineId,
 		}
 
-		kafeidoPutProjectPipelineOk, err := runCmd.stub.Kafeido.KafeidoPutProjectPipeline(
+		kafeidoPutProjectPipelineOk, err := runCmd.stub.KafeidoService.KafeidoServicePutProjectPipeline(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -260,13 +260,13 @@ func NewDeletePipelineCommand(logger log.Logger, ioStreams genericclioptions.IOS
 		namedPipelineId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoDeleteProjectPipelineParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceDeleteProjectPipelineParams{
 			ProjectID:       projectId,
 			NamedPipelineID: namedPipelineId,
 		}
 
-		_, err := runCmd.stub.Kafeido.KafeidoDeleteProjectPipeline(
+		_, err := runCmd.stub.KafeidoService.KafeidoServiceDeleteProjectPipeline(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)

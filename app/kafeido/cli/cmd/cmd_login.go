@@ -14,7 +14,7 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"sigs.k8s.io/kind/pkg/log"
 
-	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido"
+	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido_service"
 	appmodels "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
 	"github.com/footprintai/grandturks-client/v2/pkg/encryption"
 )
@@ -27,8 +27,8 @@ func NewBasicLoginCommand(logger log.Logger, ioStreams genericclioptions.IOStrea
 	)
 
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoAppLoginParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceAppLoginParams{
 			Body: &appmodels.KafeidoAppLoginRequest{
 				Basic: &appmodels.KafeidoAppBasicLoginRequest{
 					Email:    email,
@@ -36,7 +36,7 @@ func NewBasicLoginCommand(logger log.Logger, ioStreams genericclioptions.IOStrea
 				},
 			},
 		}
-		kafeidoAppLoginOk, err := runCmd.stub.Kafeido.KafeidoAppLogin(
+		kafeidoAppLoginOk, err := runCmd.stub.KafeidoService.KafeidoServiceAppLogin(
 			params.WithTimeout(runCmd.requestTimeout),
 			nil,
 		)
@@ -89,7 +89,7 @@ func NewOauth2LoginCommand(logger log.Logger, ioStreams genericclioptions.IOStre
 	)
 
 	handler := func() error {
-		runCmd := mustNewRunCmd()
+		runCmd := mustNewRunCmd(logger)
 
 		currentRequestId := uuid.NewString()
 		done := make(chan struct{})
@@ -135,7 +135,7 @@ func NewOauth2LoginCommand(logger log.Logger, ioStreams genericclioptions.IOStre
 			w.Write([]byte("Logined. You can close this windows now."))
 		}))
 
-		params := &appservice.KafeidoAppLoginParams{
+		params := &appservice.KafeidoServiceAppLoginParams{
 			Body: &appmodels.KafeidoAppLoginRequest{
 				Oauth2: &appmodels.KafeidoAppOauth2LoginRequest{
 					LocalRedirectURL: testserver.URL,
@@ -143,7 +143,7 @@ func NewOauth2LoginCommand(logger log.Logger, ioStreams genericclioptions.IOStre
 				},
 			},
 		}
-		kafeidoAppLoginOk, err := runCmd.stub.Kafeido.KafeidoAppLogin(
+		kafeidoAppLoginOk, err := runCmd.stub.KafeidoService.KafeidoServiceAppLogin(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -180,14 +180,14 @@ func NewOauth2LoginCommand(logger log.Logger, ioStreams genericclioptions.IOStre
 }
 
 func (r *RunCmd) createUser(rawAccessToken string) error {
-	params := &appservice.KafeidoCreateUserParams{
+	params := &appservice.KafeidoServiceCreateUserParams{
 		Body: &appmodels.KafeidoCreateUserRequest{
 			Oauth2Token: &appmodels.KafeidoOauth2Token{
 				AccessToken: rawAccessToken,
 			},
 		},
 	}
-	kafeidoCreateUserOk, err := r.stub.Kafeido.KafeidoCreateUser(
+	kafeidoCreateUserOk, err := r.stub.KafeidoService.KafeidoServiceCreateUser(
 		params.WithTimeout(r.requestTimeout),
 		r.authInformer(),
 	)

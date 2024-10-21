@@ -17,8 +17,8 @@ import (
 // swagger:model kafeidoAppOauth2LoginRequest
 type KafeidoAppOauth2LoginRequest struct {
 
-	// local redirect URL
-	LocalRedirectURL string `json:"localRedirectURL,omitempty"`
+	// local redirect Url
+	LocalRedirectURL string `json:"localRedirectUrl,omitempty"`
 
 	// request Id
 	RequestID string `json:"requestId,omitempty"`

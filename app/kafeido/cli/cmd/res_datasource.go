@@ -8,7 +8,7 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"sigs.k8s.io/kind/pkg/log"
 
-	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido"
+	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido_service"
 	appmodels "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
 	"github.com/footprintai/grandturks-client/v2/app/kafeido/cli/format"
 	pkgproto "github.com/footprintai/grandturks-client/v2/pkg/grpc/proto"
@@ -50,8 +50,8 @@ func NewCreateImageDataSourceCommand(logger log.Logger, ioStreams genericcliopti
 				Protocol: protocol,
 			},
 		}
-		params := &appservice.KafeidoCreateDataSourceParams{
-			Body: appservice.KafeidoCreateDataSourceBody{
+		params := &appservice.KafeidoServiceCreateDataSourceParams{
+			Body: appservice.KafeidoServiceCreateDataSourceBody{
 				DataSourceInfo: &appmodels.KafeidoDataSourceInfo{
 					Type: appmodels.DatastreamDataSourceDATASOURCEPHOTO.Pointer(),
 					PhotoDataSource: &appmodels.DatastreamPhotoDataSource{
@@ -65,7 +65,7 @@ func NewCreateImageDataSourceCommand(logger log.Logger, ioStreams genericcliopti
 			},
 			ProjectID: projectId,
 		}
-		return runCreateDataSourceCmd(params, ioStreams)
+		return runCreateDataSourceCmd(logger, params, ioStreams)
 	}
 
 	cmd := &cobra.Command{
@@ -91,9 +91,9 @@ func NewCreateImageDataSourceCommand(logger log.Logger, ioStreams genericcliopti
 
 }
 
-func runCreateDataSourceCmd(params *appservice.KafeidoCreateDataSourceParams, ioStreams genericclioptions.IOStreams) error {
-	runCmd := mustNewRunCmd()
-	kafeidoCreateDataSourceOk, err := runCmd.stub.Kafeido.KafeidoCreateDataSource(
+func runCreateDataSourceCmd(logger log.Logger, params *appservice.KafeidoServiceCreateDataSourceParams, ioStreams genericclioptions.IOStreams) error {
+	runCmd := mustNewRunCmd(logger)
+	kafeidoCreateDataSourceOk, err := runCmd.stub.KafeidoService.KafeidoServiceCreateDataSource(
 		params.WithTimeout(runCmd.requestTimeout),
 		runCmd.authInformer(),
 	)
@@ -123,8 +123,8 @@ func NewCreateVideoDataSourceCommand(logger log.Logger, ioStreams genericcliopti
 			},
 		}
 
-		params := &appservice.KafeidoCreateDataSourceParams{
-			Body: appservice.KafeidoCreateDataSourceBody{
+		params := &appservice.KafeidoServiceCreateDataSourceParams{
+			Body: appservice.KafeidoServiceCreateDataSourceBody{
 				DataSourceInfo: &appmodels.KafeidoDataSourceInfo{
 					Type: appmodels.DatastreamDataSourceDATASOURCEVIDEO.Pointer(),
 					VideoDataSource: &appmodels.DatastreamVideoDataSource{
@@ -139,7 +139,7 @@ func NewCreateVideoDataSourceCommand(logger log.Logger, ioStreams genericcliopti
 			},
 			ProjectID: projectId,
 		}
-		return runCreateDataSourceCmd(params, ioStreams)
+		return runCreateDataSourceCmd(logger, params, ioStreams)
 	}
 
 	cmd := &cobra.Command{
@@ -179,8 +179,8 @@ func NewCreateStreamingDataSourceCommand(logger log.Logger, ioStreams genericcli
 	)
 
 	handler := func() error {
-		params := &appservice.KafeidoCreateDataSourceParams{
-			Body: appservice.KafeidoCreateDataSourceBody{
+		params := &appservice.KafeidoServiceCreateDataSourceParams{
+			Body: appservice.KafeidoServiceCreateDataSourceBody{
 				DataSourceInfo: &appmodels.KafeidoDataSourceInfo{
 					Type: appmodels.DatastreamDataSourceDATASOURCESTREAMING.Pointer(),
 					StreamingDataSource: &appmodels.DatastreamStreamingDataSource{
@@ -198,7 +198,7 @@ func NewCreateStreamingDataSourceCommand(logger log.Logger, ioStreams genericcli
 			},
 			ProjectID: projectId,
 		}
-		return runCreateDataSourceCmd(params, ioStreams)
+		return runCreateDataSourceCmd(logger, params, ioStreams)
 	}
 
 	cmd := &cobra.Command{
@@ -238,8 +238,8 @@ func NewCreateYoutubeDataSourceCommand(logger log.Logger, ioStreams genericcliop
 	)
 
 	handler := func() error {
-		params := &appservice.KafeidoCreateDataSourceParams{
-			Body: appservice.KafeidoCreateDataSourceBody{
+		params := &appservice.KafeidoServiceCreateDataSourceParams{
+			Body: appservice.KafeidoServiceCreateDataSourceBody{
 				DataSourceInfo: &appmodels.KafeidoDataSourceInfo{
 					Type: appmodels.DatastreamDataSourceDATASOURCEYOUTUBE.Pointer(),
 					YoutubeDataSource: &appmodels.DatastreamYoutubeDataSource{
@@ -251,7 +251,7 @@ func NewCreateYoutubeDataSourceCommand(logger log.Logger, ioStreams genericcliop
 			},
 			ProjectID: projectId,
 		}
-		return runCreateDataSourceCmd(params, ioStreams)
+		return runCreateDataSourceCmd(logger, params, ioStreams)
 	}
 
 	cmd := &cobra.Command{
@@ -282,8 +282,8 @@ func NewCreateImageUrlDataSourceCommand(logger log.Logger, ioStreams genericclio
 	)
 
 	handler := func() error {
-		params := &appservice.KafeidoCreateDataSourceParams{
-			Body: appservice.KafeidoCreateDataSourceBody{
+		params := &appservice.KafeidoServiceCreateDataSourceParams{
+			Body: appservice.KafeidoServiceCreateDataSourceBody{
 				DataSourceInfo: &appmodels.KafeidoDataSourceInfo{
 					Type: appmodels.DatastreamDataSourceDATASOURCEIMAGEURL.Pointer(),
 					ImageURLDataSource: &appmodels.DatastreamImageURLDataSource{
@@ -295,7 +295,7 @@ func NewCreateImageUrlDataSourceCommand(logger log.Logger, ioStreams genericclio
 			},
 			ProjectID: projectId,
 		}
-		return runCreateDataSourceCmd(params, ioStreams)
+		return runCreateDataSourceCmd(logger, params, ioStreams)
 	}
 
 	cmd := &cobra.Command{
@@ -336,8 +336,8 @@ func NewCreateAudioFilesDataSourceCommand(logger log.Logger, ioStreams genericcl
 			},
 		}
 
-		params := &appservice.KafeidoCreateDataSourceParams{
-			Body: appservice.KafeidoCreateDataSourceBody{
+		params := &appservice.KafeidoServiceCreateDataSourceParams{
+			Body: appservice.KafeidoServiceCreateDataSourceBody{
 				DataSourceInfo: &appmodels.KafeidoDataSourceInfo{
 					Type: appmodels.DatastreamDataSourceDATASOURCEAUDIOFILES.Pointer(),
 					AudioFilesDataSource: &appmodels.DatastreamAudioFilesDataSource{
@@ -351,7 +351,7 @@ func NewCreateAudioFilesDataSourceCommand(logger log.Logger, ioStreams genericcl
 			},
 			ProjectID: projectId,
 		}
-		return runCreateDataSourceCmd(params, ioStreams)
+		return runCreateDataSourceCmd(logger, params, ioStreams)
 	}
 
 	cmd := &cobra.Command{
@@ -381,11 +381,11 @@ func NewListDataSourceCommand(logger log.Logger, ioStreams genericclioptions.IOS
 		projectId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoListDataSourceParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceListDataSourceParams{
 			ProjectID: projectId,
 		}
-		kafeidoListDataSourceOk, err := runCmd.stub.Kafeido.KafeidoListDataSource(
+		kafeidoListDataSourceOk, err := runCmd.stub.KafeidoService.KafeidoServiceListDataSource(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -394,11 +394,11 @@ func NewListDataSourceCommand(logger log.Logger, ioStreams genericclioptions.IOS
 		}
 		var listResp []*appmodels.AppkafeidoGetDataSourceResponse
 		for _, dataSourceId := range kafeidoListDataSourceOk.Payload.DataSourceIds {
-			subParams := &appservice.KafeidoGetDataSourceParams{
+			subParams := &appservice.KafeidoServiceGetDataSourceParams{
 				ProjectID:    projectId,
 				DataSourceID: dataSourceId,
 			}
-			kafeidoGetDataSourceOk, err := runCmd.stub.Kafeido.KafeidoGetDataSource(
+			kafeidoGetDataSourceOk, err := runCmd.stub.KafeidoService.KafeidoServiceGetDataSource(
 				subParams.WithTimeout(runCmd.requestTimeout),
 				runCmd.authInformer(),
 			)
@@ -431,12 +431,12 @@ func NewGetDataSourceCommand(logger log.Logger, ioStreams genericclioptions.IOSt
 		dataSourceId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoGetDataSourceParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceGetDataSourceParams{
 			ProjectID:    projectId,
 			DataSourceID: dataSourceId,
 		}
-		kafeidoGetDataSourceOk, err := runCmd.stub.Kafeido.KafeidoGetDataSource(
+		kafeidoGetDataSourceOk, err := runCmd.stub.KafeidoService.KafeidoServiceGetDataSource(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -469,13 +469,13 @@ func NewDeleteDataSourceCommand(logger log.Logger, ioStreams genericclioptions.I
 		dataSourceId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
+		runCmd := mustNewRunCmd(logger)
 
-		params := &appservice.KafeidoDeleteDataSourceParams{
+		params := &appservice.KafeidoServiceDeleteDataSourceParams{
 			ProjectID:    projectId,
 			DataSourceID: dataSourceId,
 		}
-		_, err := runCmd.stub.Kafeido.KafeidoDeleteDataSource(
+		_, err := runCmd.stub.KafeidoService.KafeidoServiceDeleteDataSource(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)

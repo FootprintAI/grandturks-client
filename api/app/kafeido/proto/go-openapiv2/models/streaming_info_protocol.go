@@ -30,20 +30,20 @@ func (m StreamingInfoProtocol) Pointer() *StreamingInfoProtocol {
 
 const (
 
-	// StreamingInfoProtocolSTREAMINGPROTOCOLNONE captures enum value "STREAMING_PROTOCOL_NONE"
-	StreamingInfoProtocolSTREAMINGPROTOCOLNONE StreamingInfoProtocol = "STREAMING_PROTOCOL_NONE"
+	// StreamingInfoProtocolPROTOCOLSTREAMINGUNSPECIFIED captures enum value "PROTOCOL_STREAMING_UNSPECIFIED"
+	StreamingInfoProtocolPROTOCOLSTREAMINGUNSPECIFIED StreamingInfoProtocol = "PROTOCOL_STREAMING_UNSPECIFIED"
 
-	// StreamingInfoProtocolSTREAMINGPROTOCOLRTSP captures enum value "STREAMING_PROTOCOL_RTSP"
-	StreamingInfoProtocolSTREAMINGPROTOCOLRTSP StreamingInfoProtocol = "STREAMING_PROTOCOL_RTSP"
+	// StreamingInfoProtocolPROTOCOLSTREAMINGRTSP captures enum value "PROTOCOL_STREAMING_RTSP"
+	StreamingInfoProtocolPROTOCOLSTREAMINGRTSP StreamingInfoProtocol = "PROTOCOL_STREAMING_RTSP"
 
-	// StreamingInfoProtocolSTREAMINGPROTOCOLRTMP captures enum value "STREAMING_PROTOCOL_RTMP"
-	StreamingInfoProtocolSTREAMINGPROTOCOLRTMP StreamingInfoProtocol = "STREAMING_PROTOCOL_RTMP"
+	// StreamingInfoProtocolPROTOCOLSTREAMINGRTMP captures enum value "PROTOCOL_STREAMING_RTMP"
+	StreamingInfoProtocolPROTOCOLSTREAMINGRTMP StreamingInfoProtocol = "PROTOCOL_STREAMING_RTMP"
 
-	// StreamingInfoProtocolSTREAMINGPROTOCOLRTSPS captures enum value "STREAMING_PROTOCOL_RTSPS"
-	StreamingInfoProtocolSTREAMINGPROTOCOLRTSPS StreamingInfoProtocol = "STREAMING_PROTOCOL_RTSPS"
+	// StreamingInfoProtocolPROTOCOLSTREAMINGRTSPS captures enum value "PROTOCOL_STREAMING_RTSPS"
+	StreamingInfoProtocolPROTOCOLSTREAMINGRTSPS StreamingInfoProtocol = "PROTOCOL_STREAMING_RTSPS"
 
-	// StreamingInfoProtocolSTREAMINGPROTOCOLRTMPS captures enum value "STREAMING_PROTOCOL_RTMPS"
-	StreamingInfoProtocolSTREAMINGPROTOCOLRTMPS StreamingInfoProtocol = "STREAMING_PROTOCOL_RTMPS"
+	// StreamingInfoProtocolPROTOCOLSTREAMINGRTMPS captures enum value "PROTOCOL_STREAMING_RTMPS"
+	StreamingInfoProtocolPROTOCOLSTREAMINGRTMPS StreamingInfoProtocol = "PROTOCOL_STREAMING_RTMPS"
 )
 
 // for schema
@@ -51,7 +51,7 @@ var streamingInfoProtocolEnum []interface{}
 
 func init() {
 	var res []StreamingInfoProtocol
-	if err := json.Unmarshal([]byte(`["STREAMING_PROTOCOL_NONE","STREAMING_PROTOCOL_RTSP","STREAMING_PROTOCOL_RTMP","STREAMING_PROTOCOL_RTSPS","STREAMING_PROTOCOL_RTMPS"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["PROTOCOL_STREAMING_UNSPECIFIED","PROTOCOL_STREAMING_RTSP","PROTOCOL_STREAMING_RTMP","PROTOCOL_STREAMING_RTSPS","PROTOCOL_STREAMING_RTMPS"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

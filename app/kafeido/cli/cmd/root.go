@@ -13,8 +13,6 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/mitchellh/go-homedir"
 	commonhttp "github.com/sdinsure/agent/pkg/http"
-
-	//httpflags "github.com/sdinsure/agent/pkg/http/flags"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -231,7 +229,6 @@ func initConfig() {
 		// Find home directory.
 		home, err := homedir.Dir()
 		if err != nil {
-			fmt.Println(err)
 			os.Exit(1)
 		}
 		// Search config in home directory with name ".kafeidoconfig" (without extension).
@@ -244,26 +241,24 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		//fmt.Printf("Using config file: %+v\n", viper.ConfigFileUsed())
 	} else {
 		viper.SafeWriteConfig()
-		//fmt.Printf("Read config file failed, err:%+v\n", err)
 	}
 }
 
-func MustNewRunCmd() *RunCmd {
-	return mustNewRunCmd()
+func MustNewRunCmd(logger log.Logger) *RunCmd {
+	return mustNewRunCmd(logger)
 }
 
-func mustNewRunCmd() *RunCmd {
-	cmd, err := newRunCmd()
+func mustNewRunCmd(logger log.Logger) *RunCmd {
+	cmd, err := newRunCmd(logger)
 	if err != nil {
 		panic(err)
 	}
 	return cmd
 }
 
-func newRunCmd() (*RunCmd, error) {
+func newRunCmd(logger log.Logger) (*RunCmd, error) {
 	hostUrl, err := url.Parse(ConfigKeyApiEndpoint.GetString())
 	if err != nil {
 		return nil, err
@@ -272,11 +267,15 @@ func newRunCmd() (*RunCmd, error) {
 		hostUrl.Host,
 		filepath.Join("api", swaggerclient.DefaultBasePath),
 		[]string{hostUrl.Scheme},
-		commonhttp.NewHttpClient(),
+		commonhttp.NewHttpClient(commonhttp.WithDebug(debug, newPkgLoggerAdaptor(logger))),
 	), nil)
 	authInformer := func() runtime.ClientAuthInfoWriter {
 		return runtime.ClientAuthInfoWriterFunc(func(clientRequest runtime.ClientRequest, registry strfmt.Registry) error {
-			return clientRequest.SetHeaderParam("Authorization", fmt.Sprintf("Bearer %s", ConfigKeyAuthToken.GetString()))
+			authToken := ConfigKeyAuthToken.GetString()
+			if len(authToken) > 0 {
+				return clientRequest.SetHeaderParam("Authorization", fmt.Sprintf("Bearer %s", authToken))
+			}
+			return nil
 		})
 	}
 	r := &RunCmd{

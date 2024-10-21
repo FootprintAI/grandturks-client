@@ -30,11 +30,11 @@ func (m DatastreamImageOutputFormatEncodingType) Pointer() *DatastreamImageOutpu
 
 const (
 
-	// DatastreamImageOutputFormatEncodingTypeNone captures enum value "None"
-	DatastreamImageOutputFormatEncodingTypeNone DatastreamImageOutputFormatEncodingType = "None"
+	// DatastreamImageOutputFormatEncodingTypeENCODINGTYPEUNSPECIFIED captures enum value "ENCODING_TYPE_UNSPECIFIED"
+	DatastreamImageOutputFormatEncodingTypeENCODINGTYPEUNSPECIFIED DatastreamImageOutputFormatEncodingType = "ENCODING_TYPE_UNSPECIFIED"
 
-	// DatastreamImageOutputFormatEncodingTypeBASE64 captures enum value "BASE64"
-	DatastreamImageOutputFormatEncodingTypeBASE64 DatastreamImageOutputFormatEncodingType = "BASE64"
+	// DatastreamImageOutputFormatEncodingTypeENCODINGTYPEBASE64 captures enum value "ENCODING_TYPE_BASE64"
+	DatastreamImageOutputFormatEncodingTypeENCODINGTYPEBASE64 DatastreamImageOutputFormatEncodingType = "ENCODING_TYPE_BASE64"
 )
 
 // for schema
@@ -42,7 +42,7 @@ var datastreamImageOutputFormatEncodingTypeEnum []interface{}
 
 func init() {
 	var res []DatastreamImageOutputFormatEncodingType
-	if err := json.Unmarshal([]byte(`["None","BASE64"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["ENCODING_TYPE_UNSPECIFIED","ENCODING_TYPE_BASE64"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

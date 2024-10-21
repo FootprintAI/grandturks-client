@@ -30,11 +30,14 @@ func (m KafeidoTypePredictionData) Pointer() *KafeidoTypePredictionData {
 
 const (
 
-	// KafeidoTypePredictionDataPHOTO captures enum value "PHOTO"
-	KafeidoTypePredictionDataPHOTO KafeidoTypePredictionData = "PHOTO"
+	// KafeidoTypePredictionDataTYPEPREDICTIONDATAUNSPECIFIED captures enum value "TYPE_PREDICTION_DATA_UNSPECIFIED"
+	KafeidoTypePredictionDataTYPEPREDICTIONDATAUNSPECIFIED KafeidoTypePredictionData = "TYPE_PREDICTION_DATA_UNSPECIFIED"
 
-	// KafeidoTypePredictionDataAUDIO captures enum value "AUDIO"
-	KafeidoTypePredictionDataAUDIO KafeidoTypePredictionData = "AUDIO"
+	// KafeidoTypePredictionDataTYPEPREDICTIONDATAPHOTO captures enum value "TYPE_PREDICTION_DATA_PHOTO"
+	KafeidoTypePredictionDataTYPEPREDICTIONDATAPHOTO KafeidoTypePredictionData = "TYPE_PREDICTION_DATA_PHOTO"
+
+	// KafeidoTypePredictionDataTYPEPREDICTIONDATAAUDIO captures enum value "TYPE_PREDICTION_DATA_AUDIO"
+	KafeidoTypePredictionDataTYPEPREDICTIONDATAAUDIO KafeidoTypePredictionData = "TYPE_PREDICTION_DATA_AUDIO"
 )
 
 // for schema
@@ -42,7 +45,7 @@ var kafeidoTypePredictionDataEnum []interface{}
 
 func init() {
 	var res []KafeidoTypePredictionData
-	if err := json.Unmarshal([]byte(`["PHOTO","AUDIO"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["TYPE_PREDICTION_DATA_UNSPECIFIED","TYPE_PREDICTION_DATA_PHOTO","TYPE_PREDICTION_DATA_AUDIO"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
