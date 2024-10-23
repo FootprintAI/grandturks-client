@@ -14,9 +14,9 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// AuthzTypeVisibility - TypeVisibility_Public: everyone can see it
-//   - TypeVisibility_Team: limited group of people can see it
-//   - TypeVisibility_OnlyOwner: only owner can see it
+// AuthzTypeVisibility - TYPE_VISIBILITY_PUBLIC: everyone can see it
+//   - TYPE_VISIBILITY_TEAM: limited group of people can see it
+//   - TYPE_VISIBILITY_ONLYOWNER: only owner can see it
 //
 // swagger:model authzTypeVisibility
 type AuthzTypeVisibility string
@@ -32,17 +32,17 @@ func (m AuthzTypeVisibility) Pointer() *AuthzTypeVisibility {
 
 const (
 
-	// AuthzTypeVisibilityTypeVisibilityUnknown captures enum value "TypeVisibility_Unknown"
-	AuthzTypeVisibilityTypeVisibilityUnknown AuthzTypeVisibility = "TypeVisibility_Unknown"
+	// AuthzTypeVisibilityTYPEVISIBILITYUNSPECIFIED captures enum value "TYPE_VISIBILITY_UNSPECIFIED"
+	AuthzTypeVisibilityTYPEVISIBILITYUNSPECIFIED AuthzTypeVisibility = "TYPE_VISIBILITY_UNSPECIFIED"
 
-	// AuthzTypeVisibilityTypeVisibilityPublic captures enum value "TypeVisibility_Public"
-	AuthzTypeVisibilityTypeVisibilityPublic AuthzTypeVisibility = "TypeVisibility_Public"
+	// AuthzTypeVisibilityTYPEVISIBILITYPUBLIC captures enum value "TYPE_VISIBILITY_PUBLIC"
+	AuthzTypeVisibilityTYPEVISIBILITYPUBLIC AuthzTypeVisibility = "TYPE_VISIBILITY_PUBLIC"
 
-	// AuthzTypeVisibilityTypeVisibilityTeam captures enum value "TypeVisibility_Team"
-	AuthzTypeVisibilityTypeVisibilityTeam AuthzTypeVisibility = "TypeVisibility_Team"
+	// AuthzTypeVisibilityTYPEVISIBILITYTEAM captures enum value "TYPE_VISIBILITY_TEAM"
+	AuthzTypeVisibilityTYPEVISIBILITYTEAM AuthzTypeVisibility = "TYPE_VISIBILITY_TEAM"
 
-	// AuthzTypeVisibilityTypeVisibilityOnlyOwner captures enum value "TypeVisibility_OnlyOwner"
-	AuthzTypeVisibilityTypeVisibilityOnlyOwner AuthzTypeVisibility = "TypeVisibility_OnlyOwner"
+	// AuthzTypeVisibilityTYPEVISIBILITYONLYOWNER captures enum value "TYPE_VISIBILITY_ONLYOWNER"
+	AuthzTypeVisibilityTYPEVISIBILITYONLYOWNER AuthzTypeVisibility = "TYPE_VISIBILITY_ONLYOWNER"
 )
 
 // for schema
@@ -50,7 +50,7 @@ var authzTypeVisibilityEnum []interface{}
 
 func init() {
 	var res []AuthzTypeVisibility
-	if err := json.Unmarshal([]byte(`["TypeVisibility_Unknown","TypeVisibility_Public","TypeVisibility_Team","TypeVisibility_OnlyOwner"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["TYPE_VISIBILITY_UNSPECIFIED","TYPE_VISIBILITY_PUBLIC","TYPE_VISIBILITY_TEAM","TYPE_VISIBILITY_ONLYOWNER"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

@@ -8,7 +8,7 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"sigs.k8s.io/kind/pkg/log"
 
-	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido"
+	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido_service"
 	appmodels "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
 	"github.com/footprintai/grandturks-client/v2/app/kafeido/cli/format"
 )
@@ -29,8 +29,8 @@ func NewCreateProjectCommand(logger log.Logger, ioStreams genericclioptions.IOSt
 			return err
 		}
 
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoCreateProjectParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceCreateProjectParams{
 			Body: &appmodels.KafeidoCreateProjectRequest{
 				Name:                       projectName,
 				Desc:                       projectDesc,
@@ -40,7 +40,7 @@ func NewCreateProjectCommand(logger log.Logger, ioStreams genericclioptions.IOSt
 				PreferredPublicBucketName:  preferredAnnonymousBucketName,
 			},
 		}
-		kafeidoCreateProjectOk, err := runCmd.stub.Kafeido.KafeidoCreateProject(
+		kafeidoCreateProjectOk, err := runCmd.stub.KafeidoService.KafeidoServiceCreateProject(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -74,13 +74,13 @@ func NewCreateProjectCommand(logger log.Logger, ioStreams genericclioptions.IOSt
 func convertShortVisibilityToFull(s string) (appmodels.AuthzTypeVisibility, error) {
 	switch strings.ToLower(s) {
 	case "owner":
-		return appmodels.AuthzTypeVisibilityTypeVisibilityOnlyOwner, nil
+		return appmodels.AuthzTypeVisibilityTYPEVISIBILITYONLYOWNER, nil
 	case "team":
-		return appmodels.AuthzTypeVisibilityTypeVisibilityTeam, nil
+		return appmodels.AuthzTypeVisibilityTYPEVISIBILITYTEAM, nil
 	case "public":
-		return appmodels.AuthzTypeVisibilityTypeVisibilityPublic, nil
+		return appmodels.AuthzTypeVisibilityTYPEVISIBILITYPUBLIC, nil
 	default:
-		return appmodels.AuthzTypeVisibilityTypeVisibilityUnknown, errors.New("not possible visibility")
+		return appmodels.AuthzTypeVisibilityTYPEVISIBILITYUNSPECIFIED, errors.New("not possible visibility")
 	}
 }
 
@@ -89,7 +89,7 @@ func NewGetProjectCommand(logger log.Logger, ioStreams genericclioptions.IOStrea
 		projectId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
+		runCmd := mustNewRunCmd(logger)
 		kafeidoGetProjectOk, err := getProjectById(runCmd, projectId)
 		if err != nil {
 			return openapiErrorParser(err)
@@ -113,10 +113,10 @@ func NewGetProjectCommand(logger log.Logger, ioStreams genericclioptions.IOStrea
 
 func NewListProjectCommand(logger log.Logger, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoListProjectsParams{}
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceListProjectsParams{}
 
-		kafeidoListProjectsOk, err := runCmd.stub.Kafeido.KafeidoListProjects(
+		kafeidoListProjectsOk, err := runCmd.stub.KafeidoService.KafeidoServiceListProjects(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -126,10 +126,10 @@ func NewListProjectCommand(logger log.Logger, ioStreams genericclioptions.IOStre
 
 		var listResp []*appmodels.KafeidoGetProjectResponse
 		for _, projectId := range kafeidoListProjectsOk.Payload.ProjectIds {
-			subParams := &appservice.KafeidoGetProjectParams{
+			subParams := &appservice.KafeidoServiceGetProjectParams{
 				ProjectID: projectId,
 			}
-			kafeidoGetProjectOk, err := runCmd.stub.Kafeido.KafeidoGetProject(
+			kafeidoGetProjectOk, err := runCmd.stub.KafeidoService.KafeidoServiceGetProject(
 				subParams.WithTimeout(runCmd.requestTimeout),
 				runCmd.authInformer(),
 			)
@@ -157,11 +157,11 @@ func NewDeleteProjectCommand(logger log.Logger, ioStreams genericclioptions.IOSt
 		projectId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoDeleteProjectParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceDeleteProjectParams{
 			ProjectID: projectId,
 		}
-		_, err := runCmd.stub.Kafeido.KafeidoDeleteProject(
+		_, err := runCmd.stub.KafeidoService.KafeidoServiceDeleteProject(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)

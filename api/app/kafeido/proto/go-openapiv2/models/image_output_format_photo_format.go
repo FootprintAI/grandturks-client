@@ -30,11 +30,14 @@ func (m ImageOutputFormatPhotoFormat) Pointer() *ImageOutputFormatPhotoFormat {
 
 const (
 
-	// ImageOutputFormatPhotoFormatJEPG captures enum value "JEPG"
-	ImageOutputFormatPhotoFormatJEPG ImageOutputFormatPhotoFormat = "JEPG"
+	// ImageOutputFormatPhotoFormatPHOTOFORMATUNSPECIFIED captures enum value "PHOTO_FORMAT_UNSPECIFIED"
+	ImageOutputFormatPhotoFormatPHOTOFORMATUNSPECIFIED ImageOutputFormatPhotoFormat = "PHOTO_FORMAT_UNSPECIFIED"
 
-	// ImageOutputFormatPhotoFormatPNG captures enum value "PNG"
-	ImageOutputFormatPhotoFormatPNG ImageOutputFormatPhotoFormat = "PNG"
+	// ImageOutputFormatPhotoFormatPHOTOFORMATJEPG captures enum value "PHOTO_FORMAT_JEPG"
+	ImageOutputFormatPhotoFormatPHOTOFORMATJEPG ImageOutputFormatPhotoFormat = "PHOTO_FORMAT_JEPG"
+
+	// ImageOutputFormatPhotoFormatPHOTOFORMATPNG captures enum value "PHOTO_FORMAT_PNG"
+	ImageOutputFormatPhotoFormatPHOTOFORMATPNG ImageOutputFormatPhotoFormat = "PHOTO_FORMAT_PNG"
 )
 
 // for schema
@@ -42,7 +45,7 @@ var imageOutputFormatPhotoFormatEnum []interface{}
 
 func init() {
 	var res []ImageOutputFormatPhotoFormat
-	if err := json.Unmarshal([]byte(`["JEPG","PNG"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["PHOTO_FORMAT_UNSPECIFIED","PHOTO_FORMAT_JEPG","PHOTO_FORMAT_PNG"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

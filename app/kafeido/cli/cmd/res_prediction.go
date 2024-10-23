@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido"
+	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido_service"
 	appmodels "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
 	pkgio "github.com/footprintai/grandturks-client/v2/pkg/io"
 	"github.com/spf13/cobra"
@@ -32,16 +32,16 @@ func NewCreatePredictionCommand(logger log.Logger, ioStreams genericclioptions.I
 		}
 		defer rc.Close()
 
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoCreatePredictionParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceCreatePredictionParams{
 			ProjectID:        projectId,
 			ModelInferenceID: modelInferenceId,
-			Body: appservice.KafeidoCreatePredictionBody{
+			Body: appservice.KafeidoServiceCreatePredictionBody{
 				Concurrency: 1,
 			},
 		}
 		if queryType == "image" {
-			params.Body.Type = appmodels.KafeidoTypePredictionDataPHOTO.Pointer()
+			params.Body.Type = appmodels.KafeidoTypePredictionDataTYPEPREDICTIONDATAPHOTO.Pointer()
 			params.Body.ImageRequests = []*appmodels.KafeidoPredictImageRequestBody{
 				&appmodels.KafeidoPredictImageRequestBody{
 					Key: filepath.Base(queryFile),
@@ -51,7 +51,7 @@ func NewCreatePredictionCommand(logger log.Logger, ioStreams genericclioptions.I
 				},
 			}
 		} else if queryType == "audio" {
-			params.Body.Type = appmodels.KafeidoTypePredictionDataAUDIO.Pointer()
+			params.Body.Type = appmodels.KafeidoTypePredictionDataTYPEPREDICTIONDATAAUDIO.Pointer()
 			params.Body.AudioRequests = []*appmodels.KafeidoPredictAudioRequestBody{
 				&appmodels.KafeidoPredictAudioRequestBody{
 					Key:  filepath.Base(queryFile),
@@ -63,7 +63,7 @@ func NewCreatePredictionCommand(logger log.Logger, ioStreams genericclioptions.I
 			}
 		}
 		started := time.Now()
-		kafeidoCreatePredictionOk, err := runCmd.stub.Kafeido.KafeidoCreatePrediction(
+		kafeidoCreatePredictionOk, err := runCmd.stub.KafeidoService.KafeidoServiceCreatePrediction(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)

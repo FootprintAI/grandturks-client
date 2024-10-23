@@ -30,26 +30,26 @@ func (m DatastreamDataSource) Pointer() *DatastreamDataSource {
 
 const (
 
-	// DatastreamDataSourceDATASOURCENONE captures enum value "DATASOURCE_NONE"
-	DatastreamDataSourceDATASOURCENONE DatastreamDataSource = "DATASOURCE_NONE"
+	// DatastreamDataSourceDATASOURCEUNSPECIFIED captures enum value "DATA_SOURCE_UNSPECIFIED"
+	DatastreamDataSourceDATASOURCEUNSPECIFIED DatastreamDataSource = "DATA_SOURCE_UNSPECIFIED"
 
-	// DatastreamDataSourceDATASOURCEPHOTO captures enum value "DATASOURCE_PHOTO"
-	DatastreamDataSourceDATASOURCEPHOTO DatastreamDataSource = "DATASOURCE_PHOTO"
+	// DatastreamDataSourceDATASOURCEPHOTO captures enum value "DATA_SOURCE_PHOTO"
+	DatastreamDataSourceDATASOURCEPHOTO DatastreamDataSource = "DATA_SOURCE_PHOTO"
 
-	// DatastreamDataSourceDATASOURCEVIDEO captures enum value "DATASOURCE_VIDEO"
-	DatastreamDataSourceDATASOURCEVIDEO DatastreamDataSource = "DATASOURCE_VIDEO"
+	// DatastreamDataSourceDATASOURCEVIDEO captures enum value "DATA_SOURCE_VIDEO"
+	DatastreamDataSourceDATASOURCEVIDEO DatastreamDataSource = "DATA_SOURCE_VIDEO"
 
-	// DatastreamDataSourceDATASOURCESTREAMING captures enum value "DATASOURCE_STREAMING"
-	DatastreamDataSourceDATASOURCESTREAMING DatastreamDataSource = "DATASOURCE_STREAMING"
+	// DatastreamDataSourceDATASOURCESTREAMING captures enum value "DATA_SOURCE_STREAMING"
+	DatastreamDataSourceDATASOURCESTREAMING DatastreamDataSource = "DATA_SOURCE_STREAMING"
 
-	// DatastreamDataSourceDATASOURCEYOUTUBE captures enum value "DATASOURCE_YOUTUBE"
-	DatastreamDataSourceDATASOURCEYOUTUBE DatastreamDataSource = "DATASOURCE_YOUTUBE"
+	// DatastreamDataSourceDATASOURCEYOUTUBE captures enum value "DATA_SOURCE_YOUTUBE"
+	DatastreamDataSourceDATASOURCEYOUTUBE DatastreamDataSource = "DATA_SOURCE_YOUTUBE"
 
-	// DatastreamDataSourceDATASOURCEIMAGEURL captures enum value "DATASOURCE_IMAGEURL"
-	DatastreamDataSourceDATASOURCEIMAGEURL DatastreamDataSource = "DATASOURCE_IMAGEURL"
+	// DatastreamDataSourceDATASOURCEIMAGEURL captures enum value "DATA_SOURCE_IMAGEURL"
+	DatastreamDataSourceDATASOURCEIMAGEURL DatastreamDataSource = "DATA_SOURCE_IMAGEURL"
 
-	// DatastreamDataSourceDATASOURCEAUDIOFILES captures enum value "DATASOURCE_AUDIOFILES"
-	DatastreamDataSourceDATASOURCEAUDIOFILES DatastreamDataSource = "DATASOURCE_AUDIOFILES"
+	// DatastreamDataSourceDATASOURCEAUDIOFILES captures enum value "DATA_SOURCE_AUDIOFILES"
+	DatastreamDataSourceDATASOURCEAUDIOFILES DatastreamDataSource = "DATA_SOURCE_AUDIOFILES"
 )
 
 // for schema
@@ -57,7 +57,7 @@ var datastreamDataSourceEnum []interface{}
 
 func init() {
 	var res []DatastreamDataSource
-	if err := json.Unmarshal([]byte(`["DATASOURCE_NONE","DATASOURCE_PHOTO","DATASOURCE_VIDEO","DATASOURCE_STREAMING","DATASOURCE_YOUTUBE","DATASOURCE_IMAGEURL","DATASOURCE_AUDIOFILES"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["DATA_SOURCE_UNSPECIFIED","DATA_SOURCE_PHOTO","DATA_SOURCE_VIDEO","DATA_SOURCE_STREAMING","DATA_SOURCE_YOUTUBE","DATA_SOURCE_IMAGEURL","DATA_SOURCE_AUDIOFILES"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

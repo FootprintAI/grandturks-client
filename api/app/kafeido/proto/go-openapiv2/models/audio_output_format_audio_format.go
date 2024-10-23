@@ -30,11 +30,11 @@ func (m AudioOutputFormatAudioFormat) Pointer() *AudioOutputFormatAudioFormat {
 
 const (
 
-	// AudioOutputFormatAudioFormatNONE captures enum value "NONE"
-	AudioOutputFormatAudioFormatNONE AudioOutputFormatAudioFormat = "NONE"
+	// AudioOutputFormatAudioFormatAUDIOFORMATUNSPECIFIED captures enum value "AUDIO_FORMAT_UNSPECIFIED"
+	AudioOutputFormatAudioFormatAUDIOFORMATUNSPECIFIED AudioOutputFormatAudioFormat = "AUDIO_FORMAT_UNSPECIFIED"
 
-	// AudioOutputFormatAudioFormatMPEG captures enum value "MPEG"
-	AudioOutputFormatAudioFormatMPEG AudioOutputFormatAudioFormat = "MPEG"
+	// AudioOutputFormatAudioFormatAUDIOFORMATMPEG captures enum value "AUDIO_FORMAT_MPEG"
+	AudioOutputFormatAudioFormatAUDIOFORMATMPEG AudioOutputFormatAudioFormat = "AUDIO_FORMAT_MPEG"
 )
 
 // for schema
@@ -42,7 +42,7 @@ var audioOutputFormatAudioFormatEnum []interface{}
 
 func init() {
 	var res []AudioOutputFormatAudioFormat
-	if err := json.Unmarshal([]byte(`["NONE","MPEG"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["AUDIO_FORMAT_UNSPECIFIED","AUDIO_FORMAT_MPEG"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

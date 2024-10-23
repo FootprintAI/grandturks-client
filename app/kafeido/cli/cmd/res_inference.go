@@ -5,7 +5,7 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"sigs.k8s.io/kind/pkg/log"
 
-	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido"
+	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido_service"
 	appmodels "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
 	"github.com/footprintai/grandturks-client/v2/app/kafeido/cli/format"
 )
@@ -19,9 +19,9 @@ func NewCreateInferenceCommand(logger log.Logger, ioStreams genericclioptions.IO
 		namedPipelineId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoCreateModelInferenceParams{
-			Body: appservice.KafeidoCreateModelInferenceBody{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceCreateModelInferenceParams{
+			Body: appservice.KafeidoServiceCreateModelInferenceBody{
 				ModelName:       modelName,
 				NamedPipelineID: namedPipelineId,
 				ModelURI:        modelUri,
@@ -29,7 +29,7 @@ func NewCreateInferenceCommand(logger log.Logger, ioStreams genericclioptions.IO
 			},
 			ProjectID: projectId,
 		}
-		kafeidoCreateModelInferenceOk, err := runCmd.stub.Kafeido.KafeidoCreateModelInference(
+		kafeidoCreateModelInferenceOk, err := runCmd.stub.KafeidoService.KafeidoServiceCreateModelInference(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -64,12 +64,12 @@ func NewGetInferenceCommand(logger log.Logger, ioStreams genericclioptions.IOStr
 		modelInferenceId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoGetModelInferenceParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceGetModelInferenceParams{
 			ProjectID:        projectId,
 			ModelInferenceID: modelInferenceId,
 		}
-		kafeidoGetModelInferenceOk, err := runCmd.stub.Kafeido.KafeidoGetModelInference(
+		kafeidoGetModelInferenceOk, err := runCmd.stub.KafeidoService.KafeidoServiceGetModelInference(
 			params.WithRequestTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -100,11 +100,11 @@ func NewListInferenceCommand(logger log.Logger, ioStreams genericclioptions.IOSt
 		projectId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoListModelInferenceParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceListModelInferenceParams{
 			ProjectID: projectId,
 		}
-		kafeidoListModelInferenceOk, err := runCmd.stub.Kafeido.KafeidoListModelInference(
+		kafeidoListModelInferenceOk, err := runCmd.stub.KafeidoService.KafeidoServiceListModelInference(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -113,11 +113,11 @@ func NewListInferenceCommand(logger log.Logger, ioStreams genericclioptions.IOSt
 		}
 		var listResp []*appmodels.KafeidoGetModelInferenceResponse
 		for _, modelInferenceId := range kafeidoListModelInferenceOk.Payload.ModelInferenceID {
-			subParams := &appservice.KafeidoGetModelInferenceParams{
+			subParams := &appservice.KafeidoServiceGetModelInferenceParams{
 				ProjectID:        projectId,
 				ModelInferenceID: modelInferenceId,
 			}
-			kafeidoGetModelInferenceOk, err := runCmd.stub.Kafeido.KafeidoGetModelInference(
+			kafeidoGetModelInferenceOk, err := runCmd.stub.KafeidoService.KafeidoServiceGetModelInference(
 				subParams.WithRequestTimeout(runCmd.requestTimeout),
 				runCmd.authInformer(),
 			)
@@ -149,12 +149,12 @@ func NewDeleteInferenceCommand(logger log.Logger, ioStreams genericclioptions.IO
 		modelInferenceId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoDeleteModelInferenceParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceDeleteModelInferenceParams{
 			ProjectID:        projectId,
 			ModelInferenceID: modelInferenceId,
 		}
-		_, err := runCmd.stub.Kafeido.KafeidoDeleteModelInference(
+		_, err := runCmd.stub.KafeidoService.KafeidoServiceDeleteModelInference(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)

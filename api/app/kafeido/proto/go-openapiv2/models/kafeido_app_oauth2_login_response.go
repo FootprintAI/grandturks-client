@@ -17,8 +17,8 @@ import (
 // swagger:model kafeidoAppOauth2LoginResponse
 type KafeidoAppOauth2LoginResponse struct {
 
-	// open browser URL
-	OpenBrowserURL string `json:"openBrowserURL,omitempty"`
+	// open browser Url
+	OpenBrowserURL string `json:"openBrowserUrl,omitempty"`
 }
 
 // Validate validates this kafeido app oauth2 login response

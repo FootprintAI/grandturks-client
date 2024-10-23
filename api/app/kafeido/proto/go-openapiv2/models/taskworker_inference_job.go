@@ -30,14 +30,14 @@ func (m TaskworkerInferenceJob) Pointer() *TaskworkerInferenceJob {
 
 const (
 
-	// TaskworkerInferenceJobINFERENCEJOBNONE captures enum value "INFERENCEJOB_NONE"
-	TaskworkerInferenceJobINFERENCEJOBNONE TaskworkerInferenceJob = "INFERENCEJOB_NONE"
+	// TaskworkerInferenceJobINFERENCEJOBUNSPECIFIED captures enum value "INFERENCE_JOB_UNSPECIFIED"
+	TaskworkerInferenceJobINFERENCEJOBUNSPECIFIED TaskworkerInferenceJob = "INFERENCE_JOB_UNSPECIFIED"
 
-	// TaskworkerInferenceJobINFERENCEJOBIMAGE captures enum value "INFERENCEJOB_IMAGE"
-	TaskworkerInferenceJobINFERENCEJOBIMAGE TaskworkerInferenceJob = "INFERENCEJOB_IMAGE"
+	// TaskworkerInferenceJobINFERENCEJOBIMAGE captures enum value "INFERENCE_JOB_IMAGE"
+	TaskworkerInferenceJobINFERENCEJOBIMAGE TaskworkerInferenceJob = "INFERENCE_JOB_IMAGE"
 
-	// TaskworkerInferenceJobINFERENCEJOBAUDIO captures enum value "INFERENCEJOB_AUDIO"
-	TaskworkerInferenceJobINFERENCEJOBAUDIO TaskworkerInferenceJob = "INFERENCEJOB_AUDIO"
+	// TaskworkerInferenceJobINFERENCEJOBAUDIO captures enum value "INFERENCE_JOB_AUDIO"
+	TaskworkerInferenceJobINFERENCEJOBAUDIO TaskworkerInferenceJob = "INFERENCE_JOB_AUDIO"
 )
 
 // for schema
@@ -45,7 +45,7 @@ var taskworkerInferenceJobEnum []interface{}
 
 func init() {
 	var res []TaskworkerInferenceJob
-	if err := json.Unmarshal([]byte(`["INFERENCEJOB_NONE","INFERENCEJOB_IMAGE","INFERENCEJOB_AUDIO"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["INFERENCE_JOB_UNSPECIFIED","INFERENCE_JOB_IMAGE","INFERENCE_JOB_AUDIO"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

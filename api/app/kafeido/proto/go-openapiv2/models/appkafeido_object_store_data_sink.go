@@ -18,10 +18,10 @@ import (
 type AppkafeidoObjectStoreDataSink struct {
 
 	// bucket name
-	BucketName string `json:"BucketName,omitempty"`
+	BucketName string `json:"bucketName,omitempty"`
 
 	// object prefix
-	ObjectPrefix string `json:"ObjectPrefix,omitempty"`
+	ObjectPrefix string `json:"objectPrefix,omitempty"`
 }
 
 // Validate validates this appkafeido object store data sink

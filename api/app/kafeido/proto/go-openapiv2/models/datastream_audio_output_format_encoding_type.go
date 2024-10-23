@@ -30,14 +30,14 @@ func (m DatastreamAudioOutputFormatEncodingType) Pointer() *DatastreamAudioOutpu
 
 const (
 
-	// DatastreamAudioOutputFormatEncodingTypeNone captures enum value "None"
-	DatastreamAudioOutputFormatEncodingTypeNone DatastreamAudioOutputFormatEncodingType = "None"
+	// DatastreamAudioOutputFormatEncodingTypeENCODINGTYPEUNSPECIFIED captures enum value "ENCODING_TYPE_UNSPECIFIED"
+	DatastreamAudioOutputFormatEncodingTypeENCODINGTYPEUNSPECIFIED DatastreamAudioOutputFormatEncodingType = "ENCODING_TYPE_UNSPECIFIED"
 
-	// DatastreamAudioOutputFormatEncodingTypeRAW captures enum value "RAW"
-	DatastreamAudioOutputFormatEncodingTypeRAW DatastreamAudioOutputFormatEncodingType = "RAW"
+	// DatastreamAudioOutputFormatEncodingTypeENCODINGTYPERAW captures enum value "ENCODING_TYPE_RAW"
+	DatastreamAudioOutputFormatEncodingTypeENCODINGTYPERAW DatastreamAudioOutputFormatEncodingType = "ENCODING_TYPE_RAW"
 
-	// DatastreamAudioOutputFormatEncodingTypeBASE64 captures enum value "BASE64"
-	DatastreamAudioOutputFormatEncodingTypeBASE64 DatastreamAudioOutputFormatEncodingType = "BASE64"
+	// DatastreamAudioOutputFormatEncodingTypeENCODINGTYPEBASE64 captures enum value "ENCODING_TYPE_BASE64"
+	DatastreamAudioOutputFormatEncodingTypeENCODINGTYPEBASE64 DatastreamAudioOutputFormatEncodingType = "ENCODING_TYPE_BASE64"
 )
 
 // for schema
@@ -45,7 +45,7 @@ var datastreamAudioOutputFormatEncodingTypeEnum []interface{}
 
 func init() {
 	var res []DatastreamAudioOutputFormatEncodingType
-	if err := json.Unmarshal([]byte(`["None","RAW","BASE64"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["ENCODING_TYPE_UNSPECIFIED","ENCODING_TYPE_RAW","ENCODING_TYPE_BASE64"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

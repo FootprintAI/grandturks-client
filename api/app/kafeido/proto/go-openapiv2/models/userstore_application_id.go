@@ -30,11 +30,11 @@ func (m UserstoreApplicationID) Pointer() *UserstoreApplicationID {
 
 const (
 
-	// UserstoreApplicationIDNoApp captures enum value "NoApp"
-	UserstoreApplicationIDNoApp UserstoreApplicationID = "NoApp"
+	// UserstoreApplicationIDAPPLICATIONIDUNSPECIFIED captures enum value "APPLICATION_ID_UNSPECIFIED"
+	UserstoreApplicationIDAPPLICATIONIDUNSPECIFIED UserstoreApplicationID = "APPLICATION_ID_UNSPECIFIED"
 
-	// UserstoreApplicationIDKafeido captures enum value "Kafeido"
-	UserstoreApplicationIDKafeido UserstoreApplicationID = "Kafeido"
+	// UserstoreApplicationIDAPPLICATIONIDKAFEIDO captures enum value "APPLICATION_ID_KAFEIDO"
+	UserstoreApplicationIDAPPLICATIONIDKAFEIDO UserstoreApplicationID = "APPLICATION_ID_KAFEIDO"
 )
 
 // for schema
@@ -42,7 +42,7 @@ var userstoreApplicationIdEnum []interface{}
 
 func init() {
 	var res []UserstoreApplicationID
-	if err := json.Unmarshal([]byte(`["NoApp","Kafeido"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["APPLICATION_ID_UNSPECIFIED","APPLICATION_ID_KAFEIDO"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

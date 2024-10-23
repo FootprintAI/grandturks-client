@@ -19,10 +19,10 @@ import (
 type ComptaskworkerObjectStoreDataSink struct {
 
 	// bucket name
-	BucketName string `json:"BucketName,omitempty"`
+	BucketName string `json:"bucketName,omitempty"`
 
 	// object prefix
-	ObjectPrefix string `json:"ObjectPrefix,omitempty"`
+	ObjectPrefix string `json:"objectPrefix,omitempty"`
 
 	// object store info
 	ObjectStoreInfo *ComptaskworkerObjectStoreInfo `json:"objectStoreInfo,omitempty"`

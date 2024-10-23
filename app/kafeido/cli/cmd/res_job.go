@@ -5,7 +5,7 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"sigs.k8s.io/kind/pkg/log"
 
-	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido"
+	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido_service"
 	appmodels "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
 	"github.com/footprintai/grandturks-client/v2/app/kafeido/cli/format"
 	clihelper "github.com/footprintai/grandturks-client/v2/app/kafeido/cli/helper"
@@ -24,9 +24,9 @@ func NewCreateInferenceJobCommand(logger log.Logger, ioStreams genericclioptions
 		outputKey string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoCreateModelInferenceJobParams{
-			Body: appservice.KafeidoCreateModelInferenceJobBody{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceCreateModelInferenceJobParams{
+			Body: appservice.KafeidoServiceCreateModelInferenceJobBody{
 				JobKind: clihelper.MakeOpenAPIModelInferenceJob(clihelper.CliJobType(jobKind)),
 				DataSinkConfig: &appmodels.KafeidoDataSinkConfig{
 					TaskWorkerDataSink: &appmodels.ComptaskworkerDataSink{
@@ -54,20 +54,20 @@ func NewCreateInferenceJobCommand(logger log.Logger, ioStreams genericclioptions
 				ConcurrentRequests: int32(concurrentRequests),
 				PrometheusJobLabel: outputKey,
 				ImageOutputFormat: &appmodels.DatastreamImageOutputFormat{
-					Encoding:    appmodels.NewDatastreamImageOutputFormatEncodingType(appmodels.DatastreamImageOutputFormatEncodingTypeNone /*hsiny: no encoding from datastream*/),
-					PhotoFormat: appmodels.NewImageOutputFormatPhotoFormat(appmodels.ImageOutputFormatPhotoFormatPNG),
+					Encoding:    appmodels.NewDatastreamImageOutputFormatEncodingType(appmodels.DatastreamImageOutputFormatEncodingTypeENCODINGTYPEUNSPECIFIED /*hsiny: no encoding from datastream*/),
+					PhotoFormat: appmodels.NewImageOutputFormatPhotoFormat(appmodels.ImageOutputFormatPhotoFormatPHOTOFORMATPNG),
 					Width:       int32(outputWidth),
 					Height:      int32(outputHeight),
 				},
 				AudioOutputFormat: &appmodels.DatastreamAudioOutputFormat{
-					Encoding: appmodels.NewDatastreamAudioOutputFormatEncodingType(appmodels.DatastreamAudioOutputFormatEncodingTypeNone /*hsiny: no encoding from datastream*/),
-					Format:   appmodels.NewAudioOutputFormatAudioFormat(appmodels.AudioOutputFormatAudioFormatMPEG),
+					Encoding: appmodels.NewDatastreamAudioOutputFormatEncodingType(appmodels.DatastreamAudioOutputFormatEncodingTypeENCODINGTYPEUNSPECIFIED /*hsiny: no encoding from datastream*/),
+					Format:   appmodels.NewAudioOutputFormatAudioFormat(appmodels.AudioOutputFormatAudioFormatAUDIOFORMATMPEG),
 				},
 			},
 			ProjectID: projectId,
 		}
 
-		kafeidoCreateModelInferenceJobOk, err := runCmd.stub.Kafeido.KafeidoCreateModelInferenceJob(
+		kafeidoCreateModelInferenceJobOk, err := runCmd.stub.KafeidoService.KafeidoServiceCreateModelInferenceJob(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -107,12 +107,12 @@ func NewListInferenceJobCommand(logger log.Logger, ioStreams genericclioptions.I
 		projectId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoListModelInferenceJobParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceListModelInferenceJobParams{
 			ProjectID: projectId,
 		}
 
-		kafeidoListModelInferenceJobOk, err := runCmd.stub.Kafeido.KafeidoListModelInferenceJob(
+		kafeidoListModelInferenceJobOk, err := runCmd.stub.KafeidoService.KafeidoServiceListModelInferenceJob(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -121,11 +121,11 @@ func NewListInferenceJobCommand(logger log.Logger, ioStreams genericclioptions.I
 		}
 		var listResp []*appmodels.KafeidoGetModelInferenceJobResponse
 		for _, modelInferenceJobId := range kafeidoListModelInferenceJobOk.Payload.ModelInferenceJobIds {
-			subParams := &appservice.KafeidoGetModelInferenceJobParams{
+			subParams := &appservice.KafeidoServiceGetModelInferenceJobParams{
 				ProjectID:           projectId,
 				ModelInferenceJobID: modelInferenceJobId,
 			}
-			kafeidoGetModelInferenceJobOk, err := runCmd.stub.Kafeido.KafeidoGetModelInferenceJob(
+			kafeidoGetModelInferenceJobOk, err := runCmd.stub.KafeidoService.KafeidoServiceGetModelInferenceJob(
 				subParams.WithTimeout(runCmd.requestTimeout),
 				runCmd.authInformer(),
 			)
@@ -157,12 +157,12 @@ func NewGetInferenceJobCommand(logger log.Logger, ioStreams genericclioptions.IO
 		modelInferenceJobId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoGetModelInferenceJobParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceGetModelInferenceJobParams{
 			ProjectID:           projectId,
 			ModelInferenceJobID: modelInferenceJobId,
 		}
-		kafeidoGetModelInferenceJobOk, err := runCmd.stub.Kafeido.KafeidoGetModelInferenceJob(
+		kafeidoGetModelInferenceJobOk, err := runCmd.stub.KafeidoService.KafeidoServiceGetModelInferenceJob(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
@@ -194,12 +194,12 @@ func NewCancelInferenceJobCommand(logger log.Logger, ioStreams genericclioptions
 		modelInferenceJobId string
 	)
 	handler := func() error {
-		runCmd := mustNewRunCmd()
-		params := &appservice.KafeidoCancelModelInferenceJobParams{
+		runCmd := mustNewRunCmd(logger)
+		params := &appservice.KafeidoServiceCancelModelInferenceJobParams{
 			ProjectID:           projectId,
 			ModelInferenceJobID: modelInferenceJobId,
 		}
-		_, err := runCmd.stub.Kafeido.KafeidoCancelModelInferenceJob(
+		_, err := runCmd.stub.KafeidoService.KafeidoServiceCancelModelInferenceJob(
 			params.WithTimeout(runCmd.requestTimeout),
 			runCmd.authInformer(),
 		)
