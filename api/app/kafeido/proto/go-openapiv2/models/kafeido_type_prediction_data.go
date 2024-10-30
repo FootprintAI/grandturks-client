@@ -38,6 +38,12 @@ const (
 
 	// KafeidoTypePredictionDataTYPEPREDICTIONDATAAUDIO captures enum value "TYPE_PREDICTION_DATA_AUDIO"
 	KafeidoTypePredictionDataTYPEPREDICTIONDATAAUDIO KafeidoTypePredictionData = "TYPE_PREDICTION_DATA_AUDIO"
+
+	// KafeidoTypePredictionDataTYPEPREDICTIONDATATEXT captures enum value "TYPE_PREDICTION_DATA_TEXT"
+	KafeidoTypePredictionDataTYPEPREDICTIONDATATEXT KafeidoTypePredictionData = "TYPE_PREDICTION_DATA_TEXT"
+
+	// KafeidoTypePredictionDataTYPEPREDICTIONDATAMULTIMODAL captures enum value "TYPE_PREDICTION_DATA_MULTIMODAL"
+	KafeidoTypePredictionDataTYPEPREDICTIONDATAMULTIMODAL KafeidoTypePredictionData = "TYPE_PREDICTION_DATA_MULTIMODAL"
 )
 
 // for schema
@@ -45,7 +51,7 @@ var kafeidoTypePredictionDataEnum []interface{}
 
 func init() {
 	var res []KafeidoTypePredictionData
-	if err := json.Unmarshal([]byte(`["TYPE_PREDICTION_DATA_UNSPECIFIED","TYPE_PREDICTION_DATA_PHOTO","TYPE_PREDICTION_DATA_AUDIO"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["TYPE_PREDICTION_DATA_UNSPECIFIED","TYPE_PREDICTION_DATA_PHOTO","TYPE_PREDICTION_DATA_AUDIO","TYPE_PREDICTION_DATA_TEXT","TYPE_PREDICTION_DATA_MULTIMODAL"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
