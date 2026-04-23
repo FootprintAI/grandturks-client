@@ -69,12 +69,13 @@ var (
 
 func tableStructFormatFunc(w io.Writer, headers []string, items [][]string) error {
 	table := tablewriter.NewWriter(w)
-	table.SetHeader(headers)
+	table.Header(headers)
 	for _, item := range items {
-		table.Append(lint(item))
+		if err := table.Append(lint(item)); err != nil {
+			return err
+		}
 	}
-	table.Render()
-	return nil
+	return table.Render()
 }
 
 func lint(s []string) []string {
