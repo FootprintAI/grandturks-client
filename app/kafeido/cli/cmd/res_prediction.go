@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/google/uuid"
+
 	appservice "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client/kafeido_service"
 	appmodels "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
 	pkgio "github.com/footprintai/grandturks-client/v2/pkg/io"
@@ -23,6 +25,7 @@ func NewCreatePredictionCommand(logger log.Logger, ioStreams genericclioptions.I
 		queryFile        string
 		queryLang        string
 		queryType        string
+		queryText        string
 	)
 	handler := func() error {
 
@@ -43,7 +46,7 @@ func NewCreatePredictionCommand(logger log.Logger, ioStreams genericclioptions.I
 		if queryType == "image" {
 			params.Body.Type = appmodels.KafeidoTypePredictionDataTYPEPREDICTIONDATAPHOTO.Pointer()
 			params.Body.ImageRequests = []*appmodels.KafeidoPredictImageRequestBody{
-				&appmodels.KafeidoPredictImageRequestBody{
+				{
 					Key: filepath.Base(queryFile),
 					ImageBytes: &appmodels.KafeidoRequestInBytes{
 						B64: pkgio.MustReadAll2Base64(rc),
@@ -53,12 +56,23 @@ func NewCreatePredictionCommand(logger log.Logger, ioStreams genericclioptions.I
 		} else if queryType == "audio" {
 			params.Body.Type = appmodels.KafeidoTypePredictionDataTYPEPREDICTIONDATAAUDIO.Pointer()
 			params.Body.AudioRequests = []*appmodels.KafeidoPredictAudioRequestBody{
-				&appmodels.KafeidoPredictAudioRequestBody{
+				{
 					Key:  filepath.Base(queryFile),
 					Lang: []string{queryLang},
 					AudioBytes: &appmodels.KafeidoRequestInBytes{
 						B64: pkgio.MustReadAll2Base64(rc),
 					},
+				},
+			}
+		} else if queryType == "multimodal" {
+			params.Body.Type = appmodels.KafeidoTypePredictionDataTYPEPREDICTIONDATAMULTIMODAL.Pointer()
+			params.Body.MultimodalRequests = []*appmodels.KafeidoPredictMultiModalRequestBody{
+				{
+					Key: uuid.NewString(),
+					ImageBytes: &appmodels.KafeidoRequestInBytes{
+						B64: pkgio.MustReadAll2Base64(rc),
+					},
+					Text: queryText,
 				},
 			}
 		}
@@ -98,8 +112,9 @@ func NewCreatePredictionCommand(logger log.Logger, ioStreams genericclioptions.I
 	cmd.Flags().StringVar(&projectId, "project_id", "", "project Id")
 	cmd.Flags().StringVar(&modelInferenceId, "inference_id", "", "inference id")
 	cmd.Flags().StringVar(&queryFile, "query_file", "", "query file path")
-	cmd.Flags().StringVar(&queryType, "query_type", "image", "query type: image or audio (default: image")
+	cmd.Flags().StringVar(&queryType, "query_type", "image", "query type: image or audio or multimodal (default: image")
 	cmd.Flags().StringVar(&queryLang, "query_lang", "en", "query lang: en or zh(default: en")
+	cmd.Flags().StringVar(&queryText, "query_text", "", "query text")
 	cmd.MarkFlagRequired("project_id")
 	cmd.MarkFlagRequired("inference_id")
 	cmd.MarkFlagRequired("query_type")
