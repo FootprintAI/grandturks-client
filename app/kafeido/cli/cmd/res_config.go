@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"net"
 	"net/url"
 	"strings"
 	"time"
@@ -60,15 +61,57 @@ func NewConfigSetEndpointCommand(logger log.Logger, ioStreams genericclioptions.
 	return cmd
 }
 
+// isValidEndpoint refuses any endpoint that would send the CLI's bearer token
+// over plaintext to somewhere other than this machine.
+//
+// https is required for remote hosts, and that is the point of this check: the
+// CLI attaches a bearer token to every call, so an http endpoint pointed at a
+// remote host leaks credentials to anything on the path.
+//
+// http to LOOPBACK is allowed, because it is not that risk and forbidding it
+// made the CLI unusable against the project's own stacks - the sandbox binds
+// SeaweedFS S3 on 127.0.0.1:8333 and the demo webportal on 127.0.0.1:3000, both
+// plain HTTP. With a scheme-only check there was no way to point the CLI at
+// either through `config set endpoint`; you had to hand-write
+// ~/.kafeidoconfig.json or set env vars whose names contain a literal dot
+// (grandturks#901).
 func isValidEndpoint(endpoint string) error {
 	u, err := url.Parse(endpoint)
 	if err != nil {
 		return err
 	}
-	if strings.ToLower(u.Scheme) != "https" {
+
+	switch strings.ToLower(u.Scheme) {
+	case "https":
+		return nil
+	case "http":
+		if isLoopbackHost(u.Hostname()) {
+			return nil
+		}
+		return fmt.Errorf(
+			"require https for %q: plaintext http is allowed only for loopback "+
+				"(127.0.0.0/8, ::1, localhost), because the CLI sends a bearer token",
+			u.Host)
+	default:
 		return errors.New("require https")
 	}
-	return nil
+}
+
+// isLoopbackHost reports whether a URL host refers to this machine.
+//
+// The host is parsed and compared, never matched by prefix or substring:
+// `127.0.0.1.evil.com` and `localhost.evil.com` are ordinary remote names that
+// a naive check would wave through, handing the bearer token to whoever owns
+// them. u.Hostname() is what strips the port and the IPv6 brackets, so `::1`
+// still parses as an address here.
+func isLoopbackHost(host string) bool {
+	if strings.EqualFold(host, "localhost") {
+		return true
+	}
+	if ip := net.ParseIP(host); ip != nil {
+		return ip.IsLoopback()
+	}
+	return false
 }
 
 func NewConfigGetCommand(logger log.Logger, ioStreams genericclioptions.IOStreams) *cobra.Command {
