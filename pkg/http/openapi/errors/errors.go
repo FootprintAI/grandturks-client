@@ -10,8 +10,15 @@ type openapiError interface {
 	Error() string
 }
 
+// errRedacted stands in for the underlying error when the caller asked not to
+// surface details. It reaches the user verbatim, inside "(details:...)", so it
+// is a user-facing string despite looking like an internal sentinel.
+//
+// Was "<detained>", which is not a word that applies to a suppressed error
+// detail and read as a bug in its own right to anyone who quoted it
+// (grandturks-client#18).
 var (
-	errDetained = errors.New("<detained>")
+	errRedacted = errors.New("<redacted>")
 )
 
 func Parse(err error, hasDetail bool) error {
@@ -21,7 +28,7 @@ func Parse(err error, hasDetail bool) error {
 	}
 	var actualErr error = err
 	if !hasDetail {
-		actualErr = errDetained
+		actualErr = errRedacted
 	}
 	openapierr := err.(openapiError)
 	switch openapierr.Code() {
@@ -38,7 +45,7 @@ func Parse(err error, hasDetail bool) error {
 	case 409:
 		return newError("Status Conflicted.", actualErr)
 	case 500:
-		return newError("Internal error. Please contact your system adminstrator.", actualErr)
+		return newError("Internal error. Please contact your system administrator.", actualErr)
 	case 504:
 		return newError("Bad Gateway. Please try later.", actualErr)
 	default:
