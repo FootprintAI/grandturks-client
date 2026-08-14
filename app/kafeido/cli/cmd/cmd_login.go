@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-openapi/runtime"
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -83,6 +84,15 @@ func populateUserInfo2ViperConfig(userInfo *appmodels.UserstoreUserInfo) {
 	ConfigKeyUserId.Set(userInfo.UserID)
 }
 
+// oauth2LoginRequestAuthInformer returns the auth info writer for the
+// initial oauth2 login request. It must always be nil: the user is not
+// authenticated yet, and attaching a saved (possibly expired) token from
+// ~/.kafeidoconfig makes AuthN reject the login request itself before the
+// login handler runs (grandturks#273).
+func oauth2LoginRequestAuthInformer() runtime.ClientAuthInfoWriter {
+	return nil
+}
+
 func NewOauth2LoginCommand(logger log.Logger, ioStreams genericclioptions.IOStreams) *cobra.Command {
 	var (
 		save2Config bool
@@ -145,7 +155,7 @@ func NewOauth2LoginCommand(logger log.Logger, ioStreams genericclioptions.IOStre
 		}
 		kafeidoAppLoginOk, err := runCmd.stub.KafeidoService.KafeidoServiceAppLogin(
 			params.WithTimeout(runCmd.requestTimeout),
-			runCmd.authInformer(),
+			oauth2LoginRequestAuthInformer(),
 		)
 		if err != nil {
 			return openapiErrorParser(err)
