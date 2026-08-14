@@ -24,6 +24,12 @@ type KafeidoCreatePredictionResponse struct {
 
 	// image responses
 	ImageResponses []*KafeidoPredictImageResponseBody `json:"imageResponses"`
+
+	// multimodal responses
+	MultimodalResponses []*KafeidoPredictMultiModalResponseBody `json:"multimodalResponses"`
+
+	// text responses
+	TextResponses []*KafeidoPredictTextResponseBody `json:"textResponses"`
 }
 
 // Validate validates this kafeido create prediction response
@@ -35,6 +41,14 @@ func (m *KafeidoCreatePredictionResponse) Validate(formats strfmt.Registry) erro
 	}
 
 	if err := m.validateImageResponses(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMultimodalResponses(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTextResponses(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -96,6 +110,58 @@ func (m *KafeidoCreatePredictionResponse) validateImageResponses(formats strfmt.
 	return nil
 }
 
+func (m *KafeidoCreatePredictionResponse) validateMultimodalResponses(formats strfmt.Registry) error {
+	if swag.IsZero(m.MultimodalResponses) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.MultimodalResponses); i++ {
+		if swag.IsZero(m.MultimodalResponses[i]) { // not required
+			continue
+		}
+
+		if m.MultimodalResponses[i] != nil {
+			if err := m.MultimodalResponses[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("multimodalResponses" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("multimodalResponses" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *KafeidoCreatePredictionResponse) validateTextResponses(formats strfmt.Registry) error {
+	if swag.IsZero(m.TextResponses) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.TextResponses); i++ {
+		if swag.IsZero(m.TextResponses[i]) { // not required
+			continue
+		}
+
+		if m.TextResponses[i] != nil {
+			if err := m.TextResponses[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("textResponses" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("textResponses" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 // ContextValidate validate this kafeido create prediction response based on the context it is used
 func (m *KafeidoCreatePredictionResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -105,6 +171,14 @@ func (m *KafeidoCreatePredictionResponse) ContextValidate(ctx context.Context, f
 	}
 
 	if err := m.contextValidateImageResponses(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMultimodalResponses(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTextResponses(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -154,6 +228,56 @@ func (m *KafeidoCreatePredictionResponse) contextValidateImageResponses(ctx cont
 					return ve.ValidateName("imageResponses" + "." + strconv.Itoa(i))
 				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("imageResponses" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *KafeidoCreatePredictionResponse) contextValidateMultimodalResponses(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.MultimodalResponses); i++ {
+
+		if m.MultimodalResponses[i] != nil {
+
+			if swag.IsZero(m.MultimodalResponses[i]) { // not required
+				return nil
+			}
+
+			if err := m.MultimodalResponses[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("multimodalResponses" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("multimodalResponses" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *KafeidoCreatePredictionResponse) contextValidateTextResponses(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.TextResponses); i++ {
+
+		if m.TextResponses[i] != nil {
+
+			if swag.IsZero(m.TextResponses[i]) { // not required
+				return nil
+			}
+
+			if err := m.TextResponses[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("textResponses" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("textResponses" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

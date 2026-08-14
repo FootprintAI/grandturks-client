@@ -205,6 +205,9 @@ type KafeidoServiceCreatePredictionBody struct {
 	// image requests
 	ImageRequests []*models.KafeidoPredictImageRequestBody `json:"imageRequests"`
 
+	// multimodal requests
+	MultimodalRequests []*models.KafeidoPredictMultiModalRequestBody `json:"multimodalRequests"`
+
 	// timeout
 	Timeout string `json:"timeout,omitempty"`
 
@@ -221,6 +224,10 @@ func (o *KafeidoServiceCreatePredictionBody) Validate(formats strfmt.Registry) e
 	}
 
 	if err := o.validateImageRequests(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateMultimodalRequests(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -286,6 +293,32 @@ func (o *KafeidoServiceCreatePredictionBody) validateImageRequests(formats strfm
 	return nil
 }
 
+func (o *KafeidoServiceCreatePredictionBody) validateMultimodalRequests(formats strfmt.Registry) error {
+	if swag.IsZero(o.MultimodalRequests) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.MultimodalRequests); i++ {
+		if swag.IsZero(o.MultimodalRequests[i]) { // not required
+			continue
+		}
+
+		if o.MultimodalRequests[i] != nil {
+			if err := o.MultimodalRequests[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("body" + "." + "multimodalRequests" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("body" + "." + "multimodalRequests" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (o *KafeidoServiceCreatePredictionBody) validateType(formats strfmt.Registry) error {
 	if swag.IsZero(o.Type) { // not required
 		return nil
@@ -314,6 +347,10 @@ func (o *KafeidoServiceCreatePredictionBody) ContextValidate(ctx context.Context
 	}
 
 	if err := o.contextValidateImageRequests(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateMultimodalRequests(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -367,6 +404,31 @@ func (o *KafeidoServiceCreatePredictionBody) contextValidateImageRequests(ctx co
 					return ve.ValidateName("body" + "." + "imageRequests" + "." + strconv.Itoa(i))
 				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("body" + "." + "imageRequests" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *KafeidoServiceCreatePredictionBody) contextValidateMultimodalRequests(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.MultimodalRequests); i++ {
+
+		if o.MultimodalRequests[i] != nil {
+
+			if swag.IsZero(o.MultimodalRequests[i]) { // not required
+				return nil
+			}
+
+			if err := o.MultimodalRequests[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("body" + "." + "multimodalRequests" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("body" + "." + "multimodalRequests" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
