@@ -11,9 +11,12 @@ package cmd
 // server gets GTE1. Neither side has to know which the other is.
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"strings"
 	"testing"
 
+	appmodels "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
 	"github.com/footprintai/grandturks-client/v2/pkg/encryption"
 )
 
@@ -224,4 +227,58 @@ func sealedToAnotherKey(t *testing.T) string {
 		t.Fatalf("SealCredential: %v", err)
 	}
 	return sealed
+}
+
+// TestNewOauth2LoginRequestSendsTheCredentialPublicKey is the last line of #29
+// step 3: the server seals to this key only if the CLI actually sends it, and
+// a field dropped here is indistinguishable from a CLI too old to have one -
+// the login would silently keep using the legacy format forever.
+func TestNewOauth2LoginRequestSendsTheCredentialPublicKey(t *testing.T) {
+	key, err := encryption.NewCredentialKey()
+	if err != nil {
+		t.Fatalf("NewCredentialKey: %v", err)
+	}
+
+	req := newOauth2LoginRequest("http://127.0.0.1:53211", testCallbackRequestID, key)
+
+	if req.LocalRedirectURL != "http://127.0.0.1:53211" {
+		t.Errorf("LocalRedirectURL = %q", req.LocalRedirectURL)
+	}
+	if req.RequestID != testCallbackRequestID {
+		t.Errorf("RequestID = %q", req.RequestID)
+	}
+	if got := []byte(req.CredentialPublicKey); string(got) != string(key.PublicKey()) {
+		t.Errorf("CredentialPublicKey = %x, want %x", got, key.PublicKey())
+	}
+	if len(req.CredentialPublicKey) != 32 {
+		t.Errorf("len(CredentialPublicKey) = %d, want 32 - the server rejects any other length",
+			len(req.CredentialPublicKey))
+	}
+}
+
+// TestNewOauth2LoginRequestRoundTripsThroughTheWire: the field is bytes on the
+// wire and base64 in JSON, and what comes back out has to be the key the
+// server can seal to. Marshalled with the generated model's own encoder, so
+// this fails if the contract's representation ever changes underneath.
+func TestNewOauth2LoginRequestRoundTripsThroughTheWire(t *testing.T) {
+	key, err := encryption.NewCredentialKey()
+	if err != nil {
+		t.Fatalf("NewCredentialKey: %v", err)
+	}
+
+	blob, err := json.Marshal(newOauth2LoginRequest("http://127.0.0.1:1", testCallbackRequestID, key))
+	if err != nil {
+		t.Fatalf("Marshal: %v", err)
+	}
+	if !strings.Contains(string(blob), base64.StdEncoding.EncodeToString(key.PublicKey())) {
+		t.Errorf("marshalled request does not carry the key: %s", blob)
+	}
+
+	var decoded appmodels.KafeidoAppOauth2LoginRequest
+	if err := json.Unmarshal(blob, &decoded); err != nil {
+		t.Fatalf("Unmarshal: %v", err)
+	}
+	if string([]byte(decoded.CredentialPublicKey)) != string(key.PublicKey()) {
+		t.Error("the key did not survive a JSON round trip")
+	}
 }

@@ -3,6 +3,9 @@ package cmd
 import (
 	"errors"
 
+	"github.com/go-openapi/strfmt"
+
+	appmodels "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
 	"github.com/footprintai/grandturks-client/v2/pkg/encryption"
 )
 
@@ -36,4 +39,20 @@ func decodeCallbackCredential(key *encryption.CredentialKey, requestID, credenti
 		return key.OpenCredential(requestID, credentials)
 	}
 	return encryption.NewEncryption(GetEncryptor()).DecodeStr(credentials)
+}
+
+// newOauth2LoginRequest builds the login request, including the public half of
+// this login's ephemeral keypair.
+//
+// Sending the key is what asks the server for the sealed callback format: a
+// request without one is how every CLI older than #29 looks, and gets the
+// legacy AES-CBC blob in reply. So this field is both the key and the
+// capability signal, and dropping it silently downgrades the login rather than
+// failing it - which is why it has a test of its own.
+func newOauth2LoginRequest(localRedirectURL, requestID string, key *encryption.CredentialKey) *appmodels.KafeidoAppOauth2LoginRequest {
+	return &appmodels.KafeidoAppOauth2LoginRequest{
+		LocalRedirectURL:    localRedirectURL,
+		RequestID:           requestID,
+		CredentialPublicKey: strfmt.Base64(key.PublicKey()),
+	}
 }

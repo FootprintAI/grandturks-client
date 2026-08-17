@@ -157,10 +157,7 @@ func NewOauth2LoginCommand(logger log.Logger, ioStreams genericclioptions.IOStre
 
 		params := &appservice.KafeidoServiceAppLoginParams{
 			Body: &appmodels.KafeidoAppLoginRequest{
-				Oauth2: &appmodels.KafeidoAppOauth2LoginRequest{
-					LocalRedirectURL: testserver.URL,
-					RequestID:        currentRequestId,
-				},
+				Oauth2: newOauth2LoginRequest(testserver.URL, currentRequestId, credentialKey),
 			},
 		}
 		kafeidoAppLoginOk, err := runCmd.stub.KafeidoService.KafeidoServiceAppLogin(
