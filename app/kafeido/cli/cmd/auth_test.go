@@ -151,3 +151,33 @@ func TestNewAuthInformerRejectsAMalformedApiKey(t *testing.T) {
 		t.Errorf("headers = %v, want none set when the key is rejected", req.headers)
 	}
 }
+
+// TestLoginAuthInformerIgnoresAnApiKey covers a regression the api key work
+// introduced: every command's informer now prefers an api key, and the login
+// flow's own createUser call went through it.
+//
+// So `kafeido login` in a shell that happens to export KAFEIDO_API_KEY would
+// register the user as the KEY's project identity rather than as the human who
+// just authenticated - and keys deliberately cannot manage users, so it comes
+// back as a permission error on a request whose whole purpose is to finish
+// logging in. The same shape of bug as grandturks#273, one credential later.
+//
+// The login flow has just obtained a bearer token. That is the credential it
+// must use.
+func TestLoginAuthInformerIgnoresAnApiKey(t *testing.T) {
+	t.Setenv(apiKeyEnvVar, testAPIKey)
+	t.Cleanup(func() { apiKeyFlag = "" })
+	apiKeyFlag = testAPIKey
+
+	req := newCaptureRequest()
+	if err := loginAuthInformer("fresh-access-token").AuthenticateRequest(req, strfmt.Default); err != nil {
+		t.Fatalf("AuthenticateRequest: %v", err)
+	}
+
+	if got := req.headers.Get("Authorization"); got != "Bearer fresh-access-token" {
+		t.Errorf("Authorization = %q, want the token the login just obtained", got)
+	}
+	if got := req.headers.Get(apiKeyHeader); got != "" {
+		t.Errorf("%s = %q, want the api key to be ignored during login", apiKeyHeader, got)
+	}
+}

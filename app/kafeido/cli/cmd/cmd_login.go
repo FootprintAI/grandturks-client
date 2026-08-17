@@ -199,7 +199,7 @@ func (r *RunCmd) createUser(rawAccessToken string) error {
 	}
 	kafeidoCreateUserOk, err := r.stub.KafeidoService.KafeidoServiceCreateUser(
 		params.WithTimeout(r.requestTimeout),
-		r.authInformer(),
+		loginAuthInformer(rawAccessToken),
 	)
 	if err != nil {
 		return openapiErrorParser(err)

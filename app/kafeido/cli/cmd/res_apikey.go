@@ -106,10 +106,17 @@ func NewCreateApiKeyCommand(logger log.Logger, ioStreams genericclioptions.IOStr
 		if err != nil {
 			return openapiErrorParser(err)
 		}
-		return format.NewCreatedApiKeyFormatter(
+		if err := format.NewCreatedApiKeyFormatter(
 			createApiKeyOk.Payload.Key,
 			createApiKeyOk.Payload.Token,
-		).Write(ioStreams.Out)
+		).Write(ioStreams.Out); err != nil {
+			return err
+		}
+		// On stderr, so `--format=json | jq` still parses. The warning is for
+		// the human; the token is the output.
+		fmt.Fprintln(ioStreams.ErrOut,
+			"Save the token now: it is shown once and cannot be retrieved again.")
+		return nil
 	}
 
 	cmd := &cobra.Command{

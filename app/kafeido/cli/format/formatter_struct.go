@@ -527,10 +527,18 @@ func (a *CreatedApiKeyFormatter) Write(w io.Writer) error {
 	if err := NewDefaultFormatter(a).Write(w); err != nil {
 		return err
 	}
-	// Deliberately outside the formatted table, so it survives --format=json
-	// being piped somewhere and the token being the only thing read.
-	_, err := fmt.Fprintln(w, "Save the token now: it is shown once and cannot be retrieved again.")
-	return err
+	// The table formatter truncates every cell to --lint_length (20 by
+	// default), so the table alone prints "gtk_0123456789abcdef..." - an
+	// unusable credential for the one command that can ever show it. Repeat it
+	// in full underneath, in table form only: json and csv are not linted, and
+	// an extra line there would break the parser an integration is piping this
+	// into.
+	if DefaultTypeFormatter == TypeFormatTable {
+		if _, err := fmt.Fprintf(w, "token: %s\n", a.token); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func NewCreatedApiKeyFormatter(key *appswaggermodel.AppkafeidoAPIKeyInfo, token string) *CreatedApiKeyFormatter {

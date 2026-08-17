@@ -67,3 +67,16 @@ func newAuthInformer(apiKeyToken, authToken string) runtime.ClientAuthInfoWriter
 		return nil
 	})
 }
+
+// loginAuthInformer authenticates a request with the token a login has just
+// obtained, and with nothing else.
+//
+// The login flow's createUser call used to go through the ordinary informer,
+// which prefers an api key - so `kafeido login` in a shell that exports
+// KAFEIDO_API_KEY would register the user as the KEY's project identity rather
+// than as the human who just authenticated. Keys deliberately cannot manage
+// users, so it surfaces as a permission error on the request that finishes
+// logging in: the same shape as grandturks#273, one credential later.
+func loginAuthInformer(rawAccessToken string) runtime.ClientAuthInfoWriter {
+	return newAuthInformer("", rawAccessToken)
+}
