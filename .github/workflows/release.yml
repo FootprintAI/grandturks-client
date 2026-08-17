@@ -94,8 +94,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          # A pre-release tag carries a suffix - v2.4.0-rc.0 - and must not be
+          # presented as the latest release. Spelled out rather than inlined as
+          # a command substitution, whose exit status under `set -e` is easy to
+          # get wrong when the grep does not match.
+          prerelease=""
+          case "${GITHUB_REF_NAME}" in
+            *-*) prerelease="--prerelease" ;;
+          esac
           gh release create "${GITHUB_REF_NAME}" \
             --title "${GITHUB_REF_NAME}" \
             --generate-notes \
-            $( printf '%s' "${GITHUB_REF_NAME}" | grep -q -- '-' && echo --prerelease ) \
+            ${prerelease} \
             dist/*

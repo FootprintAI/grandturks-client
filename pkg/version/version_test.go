@@ -101,3 +101,30 @@ func TestGetVersionSurvivesAnUnparseableOverride(t *testing.T) {
 		t.Errorf("GetVersion() = %q, want the raw string back rather than a panic or an empty value", got)
 	}
 }
+
+// TestGreatThanWithAnUnparseableVersion: GreatThan discarded both parse
+// errors and then dereferenced the results, so any caller comparing a version
+// string it did not construct itself - a value from a server, a config file,
+// or a release tag someone mistyped - panicked with a nil pointer instead of
+// getting an answer.
+//
+// The answer for input that is not a version is false: an unknown version is
+// not greater than anything.
+func TestGreatThanWithAnUnparseableVersion(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		v1   string
+		v2   string
+	}{
+		{"first is garbage", "not a version", "2.0.0"},
+		{"second is garbage", "2.0.0", "not a version"},
+		{"both are garbage", "not a version", "also not one"},
+		{"empty", "", ""},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := GreatThan(tc.v1, tc.v2); got != false {
+				t.Errorf("GreatThan(%q, %q) = %v, want false", tc.v1, tc.v2, got)
+			}
+		})
+	}
+}

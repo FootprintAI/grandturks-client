@@ -23,10 +23,21 @@ var (
 	declaredVersion = "2.4.0"
 )
 
+// GreatThan reports whether v1 is a later version than v2.
+//
+// Input that is not a version answers false rather than panicking. Both parse
+// errors used to be discarded and the results dereferenced, so comparing
+// against anything a caller had not constructed itself - a value from a
+// server, a config file, a mistyped tag - was a nil pointer dereference.
 func GreatThan(v1, v2 string) bool {
-	v1v, _ := goversion.NewVersion(v1)
-	v2v, _ := goversion.NewVersion(v2)
-
+	v1v, err := goversion.NewVersion(v1)
+	if err != nil {
+		return false
+	}
+	v2v, err := goversion.NewVersion(v2)
+	if err != nil {
+		return false
+	}
 	return v1v.GreaterThan(v2v)
 }
 
