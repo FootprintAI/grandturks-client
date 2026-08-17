@@ -20,7 +20,7 @@ var (
 	// grandturks-client#22: build metadata is not permitted in a module
 	// version, so the matching tag was invisible to the proxy and consumers
 	// fell back to pseudo-versions. A release candidate is "2.4.0-rc.0".
-	declaredVersion = "2.4.0"
+	declaredVersion = "2.5.0"
 )
 
 // GreatThan reports whether v1 is a later version than v2.
