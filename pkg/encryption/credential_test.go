@@ -333,3 +333,36 @@ func TestGoldenVectors(t *testing.T) {
 		})
 	}
 }
+
+// TestHasCredentialMarker: dispatch is by MARKER, while IsSealedCredential
+// also requires the blob to be long enough to be one. The difference matters
+// for exactly one case - a value that carries the marker and is too short -
+// and getting it wrong routes that value to the LEGACY decoder, which reports
+// a misleading error and is a downgrade path something could aim for.
+func TestHasCredentialMarker(t *testing.T) {
+	k := mustKey(t)
+	sealed := mustSeal(t, k, testRequestID, []byte("x"))
+	truncated := base64.URLEncoding.EncodeToString([]byte(CredentialMagic))
+
+	for _, tc := range []struct {
+		name           string
+		input          string
+		wantMarker     bool
+		wantWellFormed bool
+	}{
+		{"sealed", sealed, true, true},
+		{"marker but too short", truncated, true, false},
+		{"legacy cbc", base64.URLEncoding.EncodeToString(bytes.Repeat([]byte{0x11}, 2*aes.BlockSize)), false, false},
+		{"empty", "", false, false},
+		{"not base64", "not base64!!", false, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := HasCredentialMarker(tc.input); got != tc.wantMarker {
+				t.Errorf("HasCredentialMarker(%q) = %v, want %v", tc.input, got, tc.wantMarker)
+			}
+			if got := IsSealedCredential(tc.input); got != tc.wantWellFormed {
+				t.Errorf("IsSealedCredential(%q) = %v, want %v", tc.input, got, tc.wantWellFormed)
+			}
+		})
+	}
+}
