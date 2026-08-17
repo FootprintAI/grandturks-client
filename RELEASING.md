@@ -71,10 +71,16 @@ the way its author intended.
    ```
 
 4. **The `release` workflow does the rest**: it validates the tag shape,
-   checks it against `declaredVersion`, re-runs build/vet/test, builds the CLI
-   for linux and darwin on amd64 and arm64 with `SHA256SUMS`, and publishes a
-   GitHub Release. A tag with a pre-release suffix is published as a
-   pre-release.
+   checks it against `declaredVersion`, re-runs build/vet/test at that commit,
+   and publishes a GitHub Release. A tag with a pre-release suffix is published
+   as a pre-release.
+
+   These are **library releases** - a tag grandturks can pin. No CLI binaries
+   are attached, because this module cannot build a working one: the kafeido
+   CLI is assembled in grandturks, whose `main` injects the oauth2 callback
+   decryptor (the key is shared with the authentication service) and registers
+   the storage subcommands. See #33, and FootprintAI/grandturks#902 for
+   publishing the CLI itself.
 5. **Move the consumer.** In grandturks:
 
    ```bash

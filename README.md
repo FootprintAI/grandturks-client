@@ -103,3 +103,9 @@ metadata.
 
 [RELEASING.md](RELEASING.md) has the procedure and the rules a tag has to
 satisfy before the release workflow will publish it.
+
+These are library releases. The `kafeido` CLI you run is built from
+[grandturks](https://github.com/FootprintAI/grandturks), which supplies the
+oauth2 callback decryptor and the storage subcommands that this module's own
+`main` does not; a binary built from this repository alone cannot complete an
+oauth2 login.

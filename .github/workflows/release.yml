@@ -1,5 +1,14 @@
 # Publishes a release for a pushed tag (#22).
 #
+# A LIBRARY release: a tag grandturks can pin, and nothing else. This lane
+# attached CLI binaries until #33, which is a promise this repository cannot
+# keep - the kafeido CLI is built from grandturks, whose main injects the
+# oauth2 callback decryptor (the key is shared with the authentication
+# service) and registers the storage subcommands. A binary built from THIS
+# module's four-line main has neither, so its `login` died in a handler
+# goroutine on a nil Encryptor. Publishing the CLI is grandturks' job and is
+# tracked as FootprintAI/grandturks#902.
+#
 # A tag is only worth pinning if it asserts something, so this lane refuses to
 # publish one that does not:
 #
@@ -11,8 +20,8 @@
 #   3. build, vet and test must pass at that commit - the same gate as ci.yml,
 #      re-run here because a tag can point anywhere
 #
-# Only then are binaries built and a GitHub Release created. Nothing here
-# creates a tag: cutting a release stays a human decision (see RELEASING.md).
+# Only then is a GitHub Release created. Nothing here creates a tag: cutting a
+# release stays a human decision (see RELEASING.md).
 name: release
 
 on:
@@ -73,22 +82,6 @@ jobs:
       - name: go test
         run: go test ./...
 
-      - name: build the cli for every published platform
-        run: |
-          set -euo pipefail
-          mkdir -p dist
-          for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64; do
-            os="${target%/*}"
-            arch="${target#*/}"
-            GOOS="$os" GOARCH="$arch" CGO_ENABLED=0 \
-              go build -trimpath -o "dist/kafeido-${GITHUB_REF_NAME}-${os}-${arch}" ./app/kafeido/cli
-          done
-          # The tags this repo published in 2024 carried binaries and the ones
-          # since carried nothing, which is half of why they stopped being
-          # consumed. Checksums so a download can be verified.
-          ( cd dist && sha256sum kafeido-* > SHA256SUMS )
-          ls -l dist
-
       - name: publish the release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -105,5 +98,4 @@ jobs:
           gh release create "${GITHUB_REF_NAME}" \
             --title "${GITHUB_REF_NAME}" \
             --generate-notes \
-            ${prerelease} \
-            dist/*
+            ${prerelease}
