@@ -22,6 +22,7 @@ import (
 	swaggerclient "github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/client"
 	"github.com/footprintai/grandturks-client/v2/app/kafeido/cli/format"
 	openapierrors "github.com/footprintai/grandturks-client/v2/pkg/http/openapi/errors"
+	openapitransport "github.com/footprintai/grandturks-client/v2/pkg/http/openapi/transport"
 )
 
 var (
@@ -263,11 +264,36 @@ func newRunCmd(logger log.Logger) (*RunCmd, error) {
 	if err != nil {
 		return nil, err
 	}
+	httpClient := commonhttp.NewHttpClient(commonhttp.WithDebug(debug, newPkgLoggerAdaptor(logger)))
+	// grandturks#1092. Every generated reader DROPS the status code when the
+	// response body will not deserialize into models.RPCStatus:
+	//
+	//	default:
+	//	    result := NewXDefault(response.Code())
+	//	    if err := result.readResponse(response, consumer, o.formats); err != nil {
+	//	        return nil, err            // <- status dropped
+	//	    }
+	//
+	// so openapiErrorParser below - which switches on Code() - never sees one,
+	// and returns the go-openapi consumer error verbatim:
+	//
+	//	Error: &{0 [] } (*models.RPCStatus) is not supported by the
+	//	       TextConsumer, can be resolved by supporting TextUnmarshaler
+	//	       interface
+	//
+	// which is what an expired token looked like to every user of this CLI.
+	// The transport wrapper hands the reader a body it can read, after which
+	// "Token Expired. Require Login first." - and every other message in that
+	// switch - is reachable again.
+	//
+	// Wrapping rather than replacing, so --debug keeps dumping the response
+	// the server actually sent.
+	httpClient.Transport = openapitransport.New(httpClient.Transport)
 	stub := swaggerclient.New(httptransport.NewWithClient(
 		hostUrl.Host,
 		filepath.Join("api", swaggerclient.DefaultBasePath),
 		[]string{hostUrl.Scheme},
-		commonhttp.NewHttpClient(commonhttp.WithDebug(debug, newPkgLoggerAdaptor(logger))),
+		httpClient,
 	), nil)
 	authInformer := func() runtime.ClientAuthInfoWriter {
 		return runtime.ClientAuthInfoWriterFunc(func(clientRequest runtime.ClientRequest, registry strfmt.Registry) error {
