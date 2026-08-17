@@ -28,6 +28,22 @@ type KafeidoAppOauth2LoginRequest struct {
 	// already proxies to. Unset behaves exactly as before.
 	ConnectorID string `json:"connectorId,omitempty"`
 
+	// X25519 public key, 32 bytes, minted by the CLI for THIS login and
+	// discarded after it (FootprintAI/grandturks-client#29).
+	//
+	// When present, the callback credential is sealed to it with AES-256-GCM
+	// in the GTE1 format; when absent, the legacy AES-CBC blob is returned
+	// exactly as before. So this field doubles as the capability signal: a
+	// client that sends a key is one that can open the new format, and every
+	// deployed CLI that does not is unaffected. That is what avoids a flag
+	// day - there is no telemetry that could tell us which CLI versions are
+	// out there.
+	//
+	// Public, so it is harmless in the oauth state that travels through the
+	// browser. Forwarded verbatim to AuthenticationService.LoginWithRedirect.
+	// Format: byte
+	CredentialPublicKey strfmt.Base64 `json:"credentialPublicKey,omitempty"`
+
 	// local redirect Url
 	LocalRedirectURL string `json:"localRedirectUrl,omitempty"`
 

@@ -28,6 +28,24 @@ type KafeidoDataSourceInfo struct {
 	// image Url data source
 	ImageURLDataSource *DatastreamImageURLDataSource `json:"imageUrlDataSource,omitempty"`
 
+	// Build the index object from everything under this prefix, instead of
+	// naming one that already exists (grandturks#1193).
+	//
+	// Set it and kafeido lists the prefix in the bucket the type-specific
+	// message names, writes the index, and fills in that message's
+	// index_object with the key it wrote. An empty string means the whole
+	// bucket; unset means the caller supplies index_object itself, which is
+	// what the CLI does via `kafeido upload index`.
+	//
+	// Valid only for PHOTO and AUDIOFILES - the two types that read an index.
+	// Supplying this AND a non-empty index_object is refused: two ways to name
+	// one index is how they drift.
+	//
+	// This exists because producing an index was otherwise a client-side
+	// capability only (common/minio.WriteIndexObject, reachable through the
+	// CLI), so a browser had no path to a working datasource at all.
+	IndexFromPrefix string `json:"indexFromPrefix,omitempty"`
+
 	// photo data source
 	PhotoDataSource *DatastreamPhotoDataSource `json:"photoDataSource,omitempty"`
 
