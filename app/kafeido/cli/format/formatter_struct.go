@@ -491,3 +491,123 @@ func (i *ListObjectFormatter) Rows() [][]string {
 func (i *ListObjectFormatter) Write(w io.Writer) error {
 	return NewDefaultFormatter(i).Write(w)
 }
+
+// CreatedApiKeyFormatter prints a freshly minted api key.
+//
+// The token is on its own row, labelled, because this is the ONLY time it is
+// ever printed: the server returns it once at creation and the listing
+// endpoint deliberately cannot return it. Someone who does not notice it here
+// has to revoke the key and mint another.
+type CreatedApiKeyFormatter struct {
+	key   *appswaggermodel.AppkafeidoAPIKeyInfo
+	token string
+}
+
+func (a *CreatedApiKeyFormatter) Header() []string {
+	return []string{"key_id", "name", "role", "expires_at", "token"}
+}
+
+func (a *CreatedApiKeyFormatter) Rows() [][]string {
+	var keyId, name, role, expiresAt string
+	if a.key != nil {
+		keyId = a.key.KeyID
+		name = a.key.Name
+		role = apiKeyRoleString(a.key.Role)
+		expiresAt = a.key.ExpiresAt
+		if len(expiresAt) == 0 {
+			expiresAt = "never"
+		}
+	}
+	return [][]string{
+		{keyId, name, role, expiresAt, a.token},
+	}
+}
+
+func (a *CreatedApiKeyFormatter) Write(w io.Writer) error {
+	if err := NewDefaultFormatter(a).Write(w); err != nil {
+		return err
+	}
+	// Deliberately outside the formatted table, so it survives --format=json
+	// being piped somewhere and the token being the only thing read.
+	_, err := fmt.Fprintln(w, "Save the token now: it is shown once and cannot be retrieved again.")
+	return err
+}
+
+func NewCreatedApiKeyFormatter(key *appswaggermodel.AppkafeidoAPIKeyInfo, token string) *CreatedApiKeyFormatter {
+	return &CreatedApiKeyFormatter{key: key, token: token}
+}
+
+// ListApiKeyDetailsFormatter lists keys without their secrets, which the
+// server cannot return in the first place.
+type ListApiKeyDetailsFormatter struct {
+	keys []*appswaggermodel.AppkafeidoAPIKeyInfo
+}
+
+func (a *ListApiKeyDetailsFormatter) Header() []string {
+	return []string{
+		"key_id",
+		"name",
+		"role",
+		"created_at",
+		"created_by",
+		"expires_at",
+		"last_used_at",
+		"revoked_at",
+	}
+}
+
+func (a *ListApiKeyDetailsFormatter) Rows() [][]string {
+	var vals [][]string
+	for _, key := range a.keys {
+		if key == nil {
+			continue
+		}
+		expiresAt := key.ExpiresAt
+		if len(expiresAt) == 0 {
+			expiresAt = "never"
+		}
+		// An empty last_used_at means a key that has never been presented,
+		// which is worth reading as such when deciding whether to revoke it.
+		lastUsedAt := key.LastUsedAt
+		if len(lastUsedAt) == 0 {
+			lastUsedAt = "never"
+		}
+		vals = append(vals, []string{
+			key.KeyID,
+			key.Name,
+			apiKeyRoleString(key.Role),
+			key.CreatedAt,
+			key.CreatedBy,
+			expiresAt,
+			lastUsedAt,
+			key.RevokedAt,
+		})
+	}
+	return vals
+}
+
+func (a *ListApiKeyDetailsFormatter) Write(w io.Writer) error {
+	return NewDefaultFormatter(a).Write(w)
+}
+
+func NewListApiKeyDetailsFormatter(keys []*appswaggermodel.AppkafeidoAPIKeyInfo) *ListApiKeyDetailsFormatter {
+	return &ListApiKeyDetailsFormatter{keys: keys}
+}
+
+// apiKeyRoleString renders the enum as the word a user types into --role,
+// rather than as API_KEY_ROLE_READWRITE.
+func apiKeyRoleString(role *appswaggermodel.KafeidocommonpbAPIKeyRole) string {
+	if role == nil {
+		return ""
+	}
+	switch *role {
+	case appswaggermodel.KafeidocommonpbAPIKeyRoleAPIKEYROLEREAD:
+		return "read"
+	case appswaggermodel.KafeidocommonpbAPIKeyRoleAPIKEYROLEREADWRITE:
+		return "readwrite"
+	case appswaggermodel.KafeidocommonpbAPIKeyRoleAPIKEYROLEADMIN:
+		return "admin"
+	default:
+		return string(*role)
+	}
+}

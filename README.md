@@ -51,3 +51,38 @@ create project --name $projectname \
  --inference_id=$inference_id \
  --query_file=example.wav --query_type=audio --query_lang=en
 ```
+#### Api Keys
+
+An api key lets an external party — CI, an institution's own service, anything
+without a human at a browser — call the API without an interactive login. The
+token is returned **once**, at creation, and cannot be retrieved afterwards.
+
+```
+# mint one, read-only, valid for 30 days
+./cli create apikey --project_id=$project_id \
+ --name=acme-ci \
+ --role=read \
+ --ttl=720h
+
+# see what exists (never the secrets - the server cannot return them)
+./cli list apikey --project_id=$project_id
+
+# revoke one
+./cli delete apikey --project_id=$project_id --key_id=$key_id
+```
+
+Roles are `read` and `readwrite`. `admin` is refused: it has no project tier
+distinct from `readwrite`, so a key that claimed it would grant less than its
+name suggests.
+
+Authenticate with a key by passing `--api_key` to any command, or by setting
+`KAFEIDO_API_KEY`:
+
+```
+export KAFEIDO_API_KEY=gtk_...
+./cli list project
+```
+
+A key supplied through the environment is never written to the config file.
+The CLI sends it in the `X-Api-Key` header — an api key in `Authorization` is
+rejected at the ingress, which parses that header as a JWT.

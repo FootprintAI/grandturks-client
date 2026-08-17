@@ -21,6 +21,7 @@ func NewCreateCommand(logger log.Logger, ioStreams genericclioptions.IOStreams, 
 	cmd.AddCommand(NewCreateDataSourceCommand(logger, ioStreams))
 	cmd.AddCommand(NewCreatePipelineCommand(logger, ioStreams))
 	cmd.AddCommand(NewCreatePredictionCommand(logger, ioStreams))
+	cmd.AddCommand(NewCreateApiKeyCommand(logger, ioStreams))
 	for _, newCmdFunc := range newCmdFuncs {
 		cmd.AddCommand(newCmdFunc(logger, ioStreams))
 	}
