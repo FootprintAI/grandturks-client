@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -56,11 +57,15 @@ func (m *DatastreamImageOutputFormat) validateEncoding(formats strfmt.Registry) 
 
 	if m.Encoding != nil {
 		if err := m.Encoding.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("encoding")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("encoding")
 			}
+
 			return err
 		}
 	}
@@ -75,11 +80,15 @@ func (m *DatastreamImageOutputFormat) validatePhotoFormat(formats strfmt.Registr
 
 	if m.PhotoFormat != nil {
 		if err := m.PhotoFormat.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("photoFormat")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("photoFormat")
 			}
+
 			return err
 		}
 	}
@@ -114,11 +123,15 @@ func (m *DatastreamImageOutputFormat) contextValidateEncoding(ctx context.Contex
 		}
 
 		if err := m.Encoding.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("encoding")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("encoding")
 			}
+
 			return err
 		}
 	}
@@ -135,11 +148,15 @@ func (m *DatastreamImageOutputFormat) contextValidatePhotoFormat(ctx context.Con
 		}
 
 		if err := m.PhotoFormat.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("photoFormat")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("photoFormat")
 			}
+
 			return err
 		}
 	}

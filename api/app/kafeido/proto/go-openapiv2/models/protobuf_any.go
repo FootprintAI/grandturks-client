@@ -22,7 +22,7 @@ type ProtobufAny struct {
 	AtType string `json:"@type,omitempty"`
 
 	// protobuf any
-	ProtobufAny map[string]interface{} `json:"-"`
+	ProtobufAny map[string]any `json:"-"`
 }
 
 // UnmarshalJSON unmarshals this object with additional properties from JSON
@@ -50,9 +50,9 @@ func (m *ProtobufAny) UnmarshalJSON(data []byte) error {
 	delete(stage2, "@type")
 	// stage 3, add additional properties values
 	if len(stage2) > 0 {
-		result := make(map[string]interface{})
+		result := make(map[string]any)
 		for k, v := range stage2 {
-			var toadd interface{}
+			var toadd any
 			if err := json.Unmarshal(v, &toadd); err != nil {
 				return err
 			}

@@ -58,6 +58,8 @@ type ClientService interface {
 
 	KafeidoServiceCancelModelInferenceJob(params *KafeidoServiceCancelModelInferenceJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCancelModelInferenceJobOK, error)
 
+	KafeidoServiceCreateAPIKey(params *KafeidoServiceCreateAPIKeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateAPIKeyOK, error)
+
 	KafeidoServiceCreateDataSource(params *KafeidoServiceCreateDataSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateDataSourceOK, error)
 
 	KafeidoServiceCreateModelInference(params *KafeidoServiceCreateModelInferenceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateModelInferenceOK, error)
@@ -68,7 +70,11 @@ type ClientService interface {
 
 	KafeidoServiceCreateProject(params *KafeidoServiceCreateProjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateProjectOK, error)
 
+	KafeidoServiceCreateProjectDownloadURL(params *KafeidoServiceCreateProjectDownloadURLParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateProjectDownloadURLOK, error)
+
 	KafeidoServiceCreateProjectPipeline(params *KafeidoServiceCreateProjectPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateProjectPipelineOK, error)
+
+	KafeidoServiceCreateProjectUploadURL(params *KafeidoServiceCreateProjectUploadURLParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateProjectUploadURLOK, error)
 
 	KafeidoServiceCreateUser(params *KafeidoServiceCreateUserParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateUserOK, error)
 
@@ -79,6 +85,8 @@ type ClientService interface {
 	KafeidoServiceDeleteModelInferenceJob(params *KafeidoServiceDeleteModelInferenceJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceDeleteModelInferenceJobOK, error)
 
 	KafeidoServiceDeleteProject(params *KafeidoServiceDeleteProjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceDeleteProjectOK, error)
+
+	KafeidoServiceDeleteProjectObject(params *KafeidoServiceDeleteProjectObjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceDeleteProjectObjectOK, error)
 
 	KafeidoServiceDeleteProjectPipeline(params *KafeidoServiceDeleteProjectPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceDeleteProjectPipelineOK, error)
 
@@ -92,13 +100,21 @@ type ClientService interface {
 
 	KafeidoServiceGetProjectPipeline(params *KafeidoServiceGetProjectPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceGetProjectPipelineOK, error)
 
+	KafeidoServiceGetProjectPipelineRun(params *KafeidoServiceGetProjectPipelineRunParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceGetProjectPipelineRunOK, error)
+
+	KafeidoServiceGetProjectPipelineRunLogs(params *KafeidoServiceGetProjectPipelineRunLogsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceGetProjectPipelineRunLogsOK, error)
+
 	KafeidoServiceGetUser(params *KafeidoServiceGetUserParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceGetUserOK, error)
+
+	KafeidoServiceListAPIKeys(params *KafeidoServiceListAPIKeysParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListAPIKeysOK, error)
 
 	KafeidoServiceListDataSource(params *KafeidoServiceListDataSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListDataSourceOK, error)
 
 	KafeidoServiceListModelInference(params *KafeidoServiceListModelInferenceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListModelInferenceOK, error)
 
 	KafeidoServiceListModelInferenceJob(params *KafeidoServiceListModelInferenceJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListModelInferenceJobOK, error)
+
+	KafeidoServiceListProjectObjects(params *KafeidoServiceListProjectObjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListProjectObjectsOK, error)
 
 	KafeidoServiceListProjectPipeline(params *KafeidoServiceListProjectPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListProjectPipelineOK, error)
 
@@ -107,6 +123,8 @@ type ClientService interface {
 	KafeidoServicePutProject(params *KafeidoServicePutProjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServicePutProjectOK, error)
 
 	KafeidoServicePutProjectPipeline(params *KafeidoServicePutProjectPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServicePutProjectPipelineOK, error)
+
+	KafeidoServiceRevokeAPIKey(params *KafeidoServiceRevokeAPIKeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceRevokeAPIKeyOK, error)
 
 	KafeidoServiceRunProjectPipeline(params *KafeidoServiceRunProjectPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceRunProjectPipelineOK, error)
 
@@ -117,7 +135,7 @@ type ClientService interface {
 KafeidoServiceAppLogin kafeido service app login API
 */
 func (a *Client) KafeidoServiceAppLogin(params *KafeidoServiceAppLoginParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceAppLoginOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceAppLoginParams()
 	}
@@ -137,17 +155,22 @@ func (a *Client) KafeidoServiceAppLogin(params *KafeidoServiceAppLoginParams, au
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceAppLoginOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceAppLoginDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -155,7 +178,7 @@ func (a *Client) KafeidoServiceAppLogin(params *KafeidoServiceAppLoginParams, au
 KafeidoServiceCancelModelInferenceJob kafeido service cancel model inference job API
 */
 func (a *Client) KafeidoServiceCancelModelInferenceJob(params *KafeidoServiceCancelModelInferenceJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCancelModelInferenceJobOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceCancelModelInferenceJobParams()
 	}
@@ -175,17 +198,72 @@ func (a *Client) KafeidoServiceCancelModelInferenceJob(params *KafeidoServiceCan
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceCancelModelInferenceJobOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceCancelModelInferenceJobDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+	KafeidoServiceCreateAPIKey APIs keys for external parties see docs architecture api key auth md
+
+	Project-scoped, so the existing /v1/projects/{id}/... authorization
+
+applies. NOTE that project authz is NOT sufficient on its own here: a
+READWRITE key holds the same business role as a human developer, so the
+policy layer cannot express "humans may manage keys, keys may not". That
+rule is enforced in the handler and tested there.
+*/
+func (a *Client) KafeidoServiceCreateAPIKey(params *KafeidoServiceCreateAPIKeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateAPIKeyOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewKafeidoServiceCreateAPIKeyParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "KafeidoService_CreateApiKey",
+		Method:             "POST",
+		PathPattern:        "/v1/projects/{projectId}/apikey",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &KafeidoServiceCreateAPIKeyReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*KafeidoServiceCreateAPIKeyOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*KafeidoServiceCreateAPIKeyDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -193,7 +271,7 @@ func (a *Client) KafeidoServiceCancelModelInferenceJob(params *KafeidoServiceCan
 KafeidoServiceCreateDataSource kafeido service create data source API
 */
 func (a *Client) KafeidoServiceCreateDataSource(params *KafeidoServiceCreateDataSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateDataSourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceCreateDataSourceParams()
 	}
@@ -213,17 +291,22 @@ func (a *Client) KafeidoServiceCreateDataSource(params *KafeidoServiceCreateData
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceCreateDataSourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceCreateDataSourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -231,7 +314,7 @@ func (a *Client) KafeidoServiceCreateDataSource(params *KafeidoServiceCreateData
 KafeidoServiceCreateModelInference kafeido service create model inference API
 */
 func (a *Client) KafeidoServiceCreateModelInference(params *KafeidoServiceCreateModelInferenceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateModelInferenceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceCreateModelInferenceParams()
 	}
@@ -251,17 +334,22 @@ func (a *Client) KafeidoServiceCreateModelInference(params *KafeidoServiceCreate
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceCreateModelInferenceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceCreateModelInferenceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -269,7 +357,7 @@ func (a *Client) KafeidoServiceCreateModelInference(params *KafeidoServiceCreate
 KafeidoServiceCreateModelInferenceJob kafeido service create model inference job API
 */
 func (a *Client) KafeidoServiceCreateModelInferenceJob(params *KafeidoServiceCreateModelInferenceJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateModelInferenceJobOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceCreateModelInferenceJobParams()
 	}
@@ -289,17 +377,22 @@ func (a *Client) KafeidoServiceCreateModelInferenceJob(params *KafeidoServiceCre
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceCreateModelInferenceJobOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceCreateModelInferenceJobDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -307,7 +400,7 @@ func (a *Client) KafeidoServiceCreateModelInferenceJob(params *KafeidoServiceCre
 KafeidoServiceCreatePrediction kafeido service create prediction API
 */
 func (a *Client) KafeidoServiceCreatePrediction(params *KafeidoServiceCreatePredictionParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreatePredictionOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceCreatePredictionParams()
 	}
@@ -327,17 +420,22 @@ func (a *Client) KafeidoServiceCreatePrediction(params *KafeidoServiceCreatePred
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceCreatePredictionOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceCreatePredictionDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -345,7 +443,7 @@ func (a *Client) KafeidoServiceCreatePrediction(params *KafeidoServiceCreatePred
 KafeidoServiceCreateProject kafeido service create project API
 */
 func (a *Client) KafeidoServiceCreateProject(params *KafeidoServiceCreateProjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateProjectOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceCreateProjectParams()
 	}
@@ -365,17 +463,80 @@ func (a *Client) KafeidoServiceCreateProject(params *KafeidoServiceCreateProject
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceCreateProjectOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceCreateProjectDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+	KafeidoServiceCreateProjectDownloadURL creates project download Url mints a short lived single object URL a browser can g e t to retrieve one object grandturks 990
+
+	The mirror of CreateProjectUploadUrl, and it exists for the same reason:
+
+the project's object-store key and secret are long-lived and must never
+reach a browser, so kafeido signs server-side. Before this, a file
+uploaded through the UI could only be got back with the CLI.
+
+POST, and nested under the project, for two reasons. Nesting is what
+gives it authorisation at all - the project resolver derives authz from
+the request path, so a top-level /v1/downloads would resolve to no
+project and inherit nothing (the same reasoning as
+GetProjectPipelineRun). And POST rather than GET-with-a-path-parameter
+because object keys contain slashes: "2026/08/data.csv" in a path
+segment needs `**` matching and double-escaping to survive the gateway,
+where a body carries it verbatim.
+*/
+func (a *Client) KafeidoServiceCreateProjectDownloadURL(params *KafeidoServiceCreateProjectDownloadURLParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateProjectDownloadURLOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewKafeidoServiceCreateProjectDownloadURLParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "KafeidoService_CreateProjectDownloadUrl",
+		Method:             "POST",
+		PathPattern:        "/v1/projects/{projectId}/downloads",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &KafeidoServiceCreateProjectDownloadURLReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*KafeidoServiceCreateProjectDownloadURLOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*KafeidoServiceCreateProjectDownloadURLDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -383,7 +544,7 @@ func (a *Client) KafeidoServiceCreateProject(params *KafeidoServiceCreateProject
 KafeidoServiceCreateProjectPipeline kafeido service create project pipeline API
 */
 func (a *Client) KafeidoServiceCreateProjectPipeline(params *KafeidoServiceCreateProjectPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateProjectPipelineOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceCreateProjectPipelineParams()
 	}
@@ -403,17 +564,70 @@ func (a *Client) KafeidoServiceCreateProjectPipeline(params *KafeidoServiceCreat
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceCreateProjectPipelineOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceCreateProjectPipelineDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+	KafeidoServiceCreateProjectUploadURL gets project pipeline run reports how a run started by run project pipeline is doing nested under the project deliberately the project resolver derives authorisation from the request path so a top level v1 runs run id would resolve to no project and inherit no authz grandturks 821 create project upload Url mints a short lived single object URL a browser can p u t to directly grandturks 828
+
+	The point is what it AVOIDS: the project's object-store key and secret
+
+are long-lived, already reachable on GET /v1/projects/{id}, and must
+never reach a browser. kafeido signs server-side instead.
+*/
+func (a *Client) KafeidoServiceCreateProjectUploadURL(params *KafeidoServiceCreateProjectUploadURLParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateProjectUploadURLOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewKafeidoServiceCreateProjectUploadURLParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "KafeidoService_CreateProjectUploadUrl",
+		Method:             "POST",
+		PathPattern:        "/v1/projects/{projectId}/uploads",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &KafeidoServiceCreateProjectUploadURLReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*KafeidoServiceCreateProjectUploadURLOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*KafeidoServiceCreateProjectUploadURLDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -421,7 +635,7 @@ func (a *Client) KafeidoServiceCreateProjectPipeline(params *KafeidoServiceCreat
 KafeidoServiceCreateUser kafeido service create user API
 */
 func (a *Client) KafeidoServiceCreateUser(params *KafeidoServiceCreateUserParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceCreateUserOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceCreateUserParams()
 	}
@@ -441,17 +655,22 @@ func (a *Client) KafeidoServiceCreateUser(params *KafeidoServiceCreateUserParams
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceCreateUserOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceCreateUserDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -459,7 +678,7 @@ func (a *Client) KafeidoServiceCreateUser(params *KafeidoServiceCreateUserParams
 KafeidoServiceDeleteDataSource kafeido service delete data source API
 */
 func (a *Client) KafeidoServiceDeleteDataSource(params *KafeidoServiceDeleteDataSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceDeleteDataSourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceDeleteDataSourceParams()
 	}
@@ -479,17 +698,22 @@ func (a *Client) KafeidoServiceDeleteDataSource(params *KafeidoServiceDeleteData
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceDeleteDataSourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceDeleteDataSourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -497,7 +721,7 @@ func (a *Client) KafeidoServiceDeleteDataSource(params *KafeidoServiceDeleteData
 KafeidoServiceDeleteModelInference kafeido service delete model inference API
 */
 func (a *Client) KafeidoServiceDeleteModelInference(params *KafeidoServiceDeleteModelInferenceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceDeleteModelInferenceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceDeleteModelInferenceParams()
 	}
@@ -517,17 +741,22 @@ func (a *Client) KafeidoServiceDeleteModelInference(params *KafeidoServiceDelete
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceDeleteModelInferenceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceDeleteModelInferenceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -535,7 +764,7 @@ func (a *Client) KafeidoServiceDeleteModelInference(params *KafeidoServiceDelete
 KafeidoServiceDeleteModelInferenceJob kafeido service delete model inference job API
 */
 func (a *Client) KafeidoServiceDeleteModelInferenceJob(params *KafeidoServiceDeleteModelInferenceJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceDeleteModelInferenceJobOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceDeleteModelInferenceJobParams()
 	}
@@ -555,17 +784,22 @@ func (a *Client) KafeidoServiceDeleteModelInferenceJob(params *KafeidoServiceDel
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceDeleteModelInferenceJobOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceDeleteModelInferenceJobDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -573,7 +807,7 @@ func (a *Client) KafeidoServiceDeleteModelInferenceJob(params *KafeidoServiceDel
 KafeidoServiceDeleteProject rpcs get project model get project model request returns get project model response option google api http get v1 projects project id model get
 */
 func (a *Client) KafeidoServiceDeleteProject(params *KafeidoServiceDeleteProjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceDeleteProjectOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceDeleteProjectParams()
 	}
@@ -593,17 +827,82 @@ func (a *Client) KafeidoServiceDeleteProject(params *KafeidoServiceDeleteProject
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceDeleteProjectOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceDeleteProjectDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+	KafeidoServiceDeleteProjectObject deletes project object removes one object from one of the project s own buckets grandturks 991
+
+	Upload was one-way until this: a wrong file, a wrong version, or
+
+something that should never have been uploaded stayed in the bucket,
+and neither the UI nor the CLI could remove it. The only remedy was an
+operator with admin credentials, which turns an ordinary mistake into a
+support request and means a user cannot remove their own data.
+
+Server-side for the same reason as the other three object endpoints:
+the project's object-store credentials must never reach a browser.
+
+DELETE with the object name in the QUERY, not the path. Object keys
+contain slashes - "raw/2026/data.csv" is one key, not three path
+segments - and a key in the path would have to survive double-encoding
+through grpc-gateway to come back intact. The bucket is a query
+parameter for the same reason as on the upload path: it is validated
+against the project rather than trusted.
+*/
+func (a *Client) KafeidoServiceDeleteProjectObject(params *KafeidoServiceDeleteProjectObjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceDeleteProjectObjectOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewKafeidoServiceDeleteProjectObjectParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "KafeidoService_DeleteProjectObject",
+		Method:             "DELETE",
+		PathPattern:        "/v1/projects/{projectId}/objects",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &KafeidoServiceDeleteProjectObjectReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*KafeidoServiceDeleteProjectObjectOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*KafeidoServiceDeleteProjectObjectDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -611,7 +910,7 @@ func (a *Client) KafeidoServiceDeleteProject(params *KafeidoServiceDeleteProject
 KafeidoServiceDeleteProjectPipeline kafeido service delete project pipeline API
 */
 func (a *Client) KafeidoServiceDeleteProjectPipeline(params *KafeidoServiceDeleteProjectPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceDeleteProjectPipelineOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceDeleteProjectPipelineParams()
 	}
@@ -631,17 +930,22 @@ func (a *Client) KafeidoServiceDeleteProjectPipeline(params *KafeidoServiceDelet
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceDeleteProjectPipelineOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceDeleteProjectPipelineDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -649,7 +953,7 @@ func (a *Client) KafeidoServiceDeleteProjectPipeline(params *KafeidoServiceDelet
 KafeidoServiceGetDataSource kafeido service get data source API
 */
 func (a *Client) KafeidoServiceGetDataSource(params *KafeidoServiceGetDataSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceGetDataSourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceGetDataSourceParams()
 	}
@@ -669,17 +973,22 @@ func (a *Client) KafeidoServiceGetDataSource(params *KafeidoServiceGetDataSource
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceGetDataSourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceGetDataSourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -687,7 +996,7 @@ func (a *Client) KafeidoServiceGetDataSource(params *KafeidoServiceGetDataSource
 KafeidoServiceGetModelInference kafeido service get model inference API
 */
 func (a *Client) KafeidoServiceGetModelInference(params *KafeidoServiceGetModelInferenceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceGetModelInferenceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceGetModelInferenceParams()
 	}
@@ -707,17 +1016,22 @@ func (a *Client) KafeidoServiceGetModelInference(params *KafeidoServiceGetModelI
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceGetModelInferenceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceGetModelInferenceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -725,7 +1039,7 @@ func (a *Client) KafeidoServiceGetModelInference(params *KafeidoServiceGetModelI
 KafeidoServiceGetModelInferenceJob kafeido service get model inference job API
 */
 func (a *Client) KafeidoServiceGetModelInferenceJob(params *KafeidoServiceGetModelInferenceJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceGetModelInferenceJobOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceGetModelInferenceJobParams()
 	}
@@ -745,17 +1059,22 @@ func (a *Client) KafeidoServiceGetModelInferenceJob(params *KafeidoServiceGetMod
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceGetModelInferenceJobOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceGetModelInferenceJobDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -763,7 +1082,7 @@ func (a *Client) KafeidoServiceGetModelInferenceJob(params *KafeidoServiceGetMod
 KafeidoServiceGetProject kafeido service get project API
 */
 func (a *Client) KafeidoServiceGetProject(params *KafeidoServiceGetProjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceGetProjectOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceGetProjectParams()
 	}
@@ -783,17 +1102,22 @@ func (a *Client) KafeidoServiceGetProject(params *KafeidoServiceGetProjectParams
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceGetProjectOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceGetProjectDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -801,7 +1125,7 @@ func (a *Client) KafeidoServiceGetProject(params *KafeidoServiceGetProjectParams
 KafeidoServiceGetProjectPipeline kafeido service get project pipeline API
 */
 func (a *Client) KafeidoServiceGetProjectPipeline(params *KafeidoServiceGetProjectPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceGetProjectPipelineOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceGetProjectPipelineParams()
 	}
@@ -821,17 +1145,113 @@ func (a *Client) KafeidoServiceGetProjectPipeline(params *KafeidoServiceGetProje
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceGetProjectPipelineOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceGetProjectPipelineDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+KafeidoServiceGetProjectPipelineRun kafeido service get project pipeline run API
+*/
+func (a *Client) KafeidoServiceGetProjectPipelineRun(params *KafeidoServiceGetProjectPipelineRunParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceGetProjectPipelineRunOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewKafeidoServiceGetProjectPipelineRunParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "KafeidoService_GetProjectPipelineRun",
+		Method:             "GET",
+		PathPattern:        "/v1/projects/{projectId}/pipelines/{namedPipelineId}/runs/{runId}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &KafeidoServiceGetProjectPipelineRunReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*KafeidoServiceGetProjectPipelineRunOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*KafeidoServiceGetProjectPipelineRunDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+	KafeidoServiceGetProjectPipelineRunLogs gets project pipeline run logs returns the log output archived for a run grandturks 822
+
+	Reads Argo's archived pod logs from the Kubeflow artifact store rather
+
+than from pods, so it answers for a run that has already finished - by
+which time its pods are gone.
+*/
+func (a *Client) KafeidoServiceGetProjectPipelineRunLogs(params *KafeidoServiceGetProjectPipelineRunLogsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceGetProjectPipelineRunLogsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewKafeidoServiceGetProjectPipelineRunLogsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "KafeidoService_GetProjectPipelineRunLogs",
+		Method:             "GET",
+		PathPattern:        "/v1/projects/{projectId}/pipelines/{namedPipelineId}/runs/{runId}/logs",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &KafeidoServiceGetProjectPipelineRunLogsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*KafeidoServiceGetProjectPipelineRunLogsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*KafeidoServiceGetProjectPipelineRunLogsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -839,7 +1259,7 @@ func (a *Client) KafeidoServiceGetProjectPipeline(params *KafeidoServiceGetProje
 KafeidoServiceGetUser kafeido service get user API
 */
 func (a *Client) KafeidoServiceGetUser(params *KafeidoServiceGetUserParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceGetUserOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceGetUserParams()
 	}
@@ -859,17 +1279,65 @@ func (a *Client) KafeidoServiceGetUser(params *KafeidoServiceGetUserParams, auth
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceGetUserOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceGetUserDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+KafeidoServiceListAPIKeys kafeido service list Api keys API
+*/
+func (a *Client) KafeidoServiceListAPIKeys(params *KafeidoServiceListAPIKeysParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListAPIKeysOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewKafeidoServiceListAPIKeysParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "KafeidoService_ListApiKeys",
+		Method:             "GET",
+		PathPattern:        "/v1/projects/{projectId}/apikey",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &KafeidoServiceListAPIKeysReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*KafeidoServiceListAPIKeysOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*KafeidoServiceListAPIKeysDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -877,7 +1345,7 @@ func (a *Client) KafeidoServiceGetUser(params *KafeidoServiceGetUserParams, auth
 KafeidoServiceListDataSource kafeido service list data source API
 */
 func (a *Client) KafeidoServiceListDataSource(params *KafeidoServiceListDataSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListDataSourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceListDataSourceParams()
 	}
@@ -897,17 +1365,22 @@ func (a *Client) KafeidoServiceListDataSource(params *KafeidoServiceListDataSour
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceListDataSourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceListDataSourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -915,7 +1388,7 @@ func (a *Client) KafeidoServiceListDataSource(params *KafeidoServiceListDataSour
 KafeidoServiceListModelInference kafeido service list model inference API
 */
 func (a *Client) KafeidoServiceListModelInference(params *KafeidoServiceListModelInferenceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListModelInferenceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceListModelInferenceParams()
 	}
@@ -935,17 +1408,22 @@ func (a *Client) KafeidoServiceListModelInference(params *KafeidoServiceListMode
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceListModelInferenceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceListModelInferenceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -953,7 +1431,7 @@ func (a *Client) KafeidoServiceListModelInference(params *KafeidoServiceListMode
 KafeidoServiceListModelInferenceJob kafeido service list model inference job API
 */
 func (a *Client) KafeidoServiceListModelInferenceJob(params *KafeidoServiceListModelInferenceJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListModelInferenceJobOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceListModelInferenceJobParams()
 	}
@@ -973,17 +1451,73 @@ func (a *Client) KafeidoServiceListModelInferenceJob(params *KafeidoServiceListM
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceListModelInferenceJobOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceListModelInferenceJobDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+	KafeidoServiceListProjectObjects lists project objects lists what is in one of the project s own buckets
+
+	Without it an upload cannot be confirmed: the browser gets a 200 from
+
+the object store and nothing else, and "the uploaded object appears in
+the project's listing" was an acceptance criterion of grandturks#828
+that no endpoint could satisfy. Listing server-side also keeps the
+project's object-store credentials off the browser, for the same reason
+CreateProjectUploadUrl exists.
+*/
+func (a *Client) KafeidoServiceListProjectObjects(params *KafeidoServiceListProjectObjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListProjectObjectsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewKafeidoServiceListProjectObjectsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "KafeidoService_ListProjectObjects",
+		Method:             "GET",
+		PathPattern:        "/v1/projects/{projectId}/objects",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &KafeidoServiceListProjectObjectsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*KafeidoServiceListProjectObjectsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*KafeidoServiceListProjectObjectsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -991,7 +1525,7 @@ func (a *Client) KafeidoServiceListModelInferenceJob(params *KafeidoServiceListM
 KafeidoServiceListProjectPipeline kafeido service list project pipeline API
 */
 func (a *Client) KafeidoServiceListProjectPipeline(params *KafeidoServiceListProjectPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListProjectPipelineOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceListProjectPipelineParams()
 	}
@@ -1011,17 +1545,22 @@ func (a *Client) KafeidoServiceListProjectPipeline(params *KafeidoServiceListPro
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceListProjectPipelineOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceListProjectPipelineDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -1029,7 +1568,7 @@ func (a *Client) KafeidoServiceListProjectPipeline(params *KafeidoServiceListPro
 KafeidoServiceListProjects kafeido service list projects API
 */
 func (a *Client) KafeidoServiceListProjects(params *KafeidoServiceListProjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceListProjectsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceListProjectsParams()
 	}
@@ -1049,17 +1588,22 @@ func (a *Client) KafeidoServiceListProjects(params *KafeidoServiceListProjectsPa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceListProjectsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceListProjectsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -1067,7 +1611,7 @@ func (a *Client) KafeidoServiceListProjects(params *KafeidoServiceListProjectsPa
 KafeidoServicePutProject kafeido service put project API
 */
 func (a *Client) KafeidoServicePutProject(params *KafeidoServicePutProjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServicePutProjectOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServicePutProjectParams()
 	}
@@ -1087,17 +1631,22 @@ func (a *Client) KafeidoServicePutProject(params *KafeidoServicePutProjectParams
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServicePutProjectOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServicePutProjectDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -1105,7 +1654,7 @@ func (a *Client) KafeidoServicePutProject(params *KafeidoServicePutProjectParams
 KafeidoServicePutProjectPipeline kafeido service put project pipeline API
 */
 func (a *Client) KafeidoServicePutProjectPipeline(params *KafeidoServicePutProjectPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServicePutProjectPipelineOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServicePutProjectPipelineParams()
 	}
@@ -1125,17 +1674,65 @@ func (a *Client) KafeidoServicePutProjectPipeline(params *KafeidoServicePutProje
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServicePutProjectPipelineOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServicePutProjectPipelineDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+KafeidoServiceRevokeAPIKey kafeido service revoke Api key API
+*/
+func (a *Client) KafeidoServiceRevokeAPIKey(params *KafeidoServiceRevokeAPIKeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceRevokeAPIKeyOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewKafeidoServiceRevokeAPIKeyParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "KafeidoService_RevokeApiKey",
+		Method:             "DELETE",
+		PathPattern:        "/v1/projects/{projectId}/apikey/{keyId}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &KafeidoServiceRevokeAPIKeyReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*KafeidoServiceRevokeAPIKeyOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*KafeidoServiceRevokeAPIKeyDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -1143,7 +1740,7 @@ func (a *Client) KafeidoServicePutProjectPipeline(params *KafeidoServicePutProje
 KafeidoServiceRunProjectPipeline kafeido service run project pipeline API
 */
 func (a *Client) KafeidoServiceRunProjectPipeline(params *KafeidoServiceRunProjectPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*KafeidoServiceRunProjectPipelineOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewKafeidoServiceRunProjectPipelineParams()
 	}
@@ -1163,17 +1760,22 @@ func (a *Client) KafeidoServiceRunProjectPipeline(params *KafeidoServiceRunProje
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*KafeidoServiceRunProjectPipelineOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*KafeidoServiceRunProjectPipelineDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

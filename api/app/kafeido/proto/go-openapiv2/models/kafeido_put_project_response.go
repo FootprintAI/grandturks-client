@@ -8,4 +8,4 @@ package models
 // KafeidoPutProjectResponse kafeido put project response
 //
 // swagger:model kafeidoPutProjectResponse
-type KafeidoPutProjectResponse interface{}
+type KafeidoPutProjectResponse any

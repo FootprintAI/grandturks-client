@@ -38,7 +38,7 @@ const (
 )
 
 // for schema
-var audioOutputFormatAudioFormatEnum []interface{}
+var audioOutputFormatAudioFormatEnum []any
 
 func init() {
 	var res []AudioOutputFormatAudioFormat

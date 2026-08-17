@@ -8,4 +8,4 @@ package models
 // KafeidoDeleteProjectPipelineResponse kafeido delete project pipeline response
 //
 // swagger:model kafeidoDeleteProjectPipelineResponse
-type KafeidoDeleteProjectPipelineResponse interface{}
+type KafeidoDeleteProjectPipelineResponse any

@@ -7,6 +7,7 @@ package kafeido_service
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -22,7 +23,7 @@ type KafeidoServiceDeleteModelInferenceJobReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *KafeidoServiceDeleteModelInferenceJobReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *KafeidoServiceDeleteModelInferenceJobReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewKafeidoServiceDeleteModelInferenceJobOK()
@@ -103,7 +104,7 @@ func (o *KafeidoServiceDeleteModelInferenceJobOK) GetPayload() models.KafeidoDel
 func (o *KafeidoServiceDeleteModelInferenceJobOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response payload
-	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -177,7 +178,7 @@ func (o *KafeidoServiceDeleteModelInferenceJobDefault) readResponse(response run
 	o.Payload = new(models.RPCStatus)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 

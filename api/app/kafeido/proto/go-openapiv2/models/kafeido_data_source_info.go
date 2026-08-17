@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -88,11 +89,15 @@ func (m *KafeidoDataSourceInfo) validateAudioFilesDataSource(formats strfmt.Regi
 
 	if m.AudioFilesDataSource != nil {
 		if err := m.AudioFilesDataSource.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("audioFilesDataSource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("audioFilesDataSource")
 			}
+
 			return err
 		}
 	}
@@ -107,11 +112,15 @@ func (m *KafeidoDataSourceInfo) validateImageURLDataSource(formats strfmt.Regist
 
 	if m.ImageURLDataSource != nil {
 		if err := m.ImageURLDataSource.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("imageUrlDataSource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("imageUrlDataSource")
 			}
+
 			return err
 		}
 	}
@@ -126,11 +135,15 @@ func (m *KafeidoDataSourceInfo) validatePhotoDataSource(formats strfmt.Registry)
 
 	if m.PhotoDataSource != nil {
 		if err := m.PhotoDataSource.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("photoDataSource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("photoDataSource")
 			}
+
 			return err
 		}
 	}
@@ -145,11 +158,15 @@ func (m *KafeidoDataSourceInfo) validateStreamingDataSource(formats strfmt.Regis
 
 	if m.StreamingDataSource != nil {
 		if err := m.StreamingDataSource.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("streamingDataSource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("streamingDataSource")
 			}
+
 			return err
 		}
 	}
@@ -164,11 +181,15 @@ func (m *KafeidoDataSourceInfo) validateType(formats strfmt.Registry) error {
 
 	if m.Type != nil {
 		if err := m.Type.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("type")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("type")
 			}
+
 			return err
 		}
 	}
@@ -183,11 +204,15 @@ func (m *KafeidoDataSourceInfo) validateVideoDataSource(formats strfmt.Registry)
 
 	if m.VideoDataSource != nil {
 		if err := m.VideoDataSource.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("videoDataSource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("videoDataSource")
 			}
+
 			return err
 		}
 	}
@@ -202,11 +227,15 @@ func (m *KafeidoDataSourceInfo) validateYoutubeDataSource(formats strfmt.Registr
 
 	if m.YoutubeDataSource != nil {
 		if err := m.YoutubeDataSource.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("youtubeDataSource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("youtubeDataSource")
 			}
+
 			return err
 		}
 	}
@@ -261,11 +290,15 @@ func (m *KafeidoDataSourceInfo) contextValidateAudioFilesDataSource(ctx context.
 		}
 
 		if err := m.AudioFilesDataSource.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("audioFilesDataSource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("audioFilesDataSource")
 			}
+
 			return err
 		}
 	}
@@ -282,11 +315,15 @@ func (m *KafeidoDataSourceInfo) contextValidateImageURLDataSource(ctx context.Co
 		}
 
 		if err := m.ImageURLDataSource.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("imageUrlDataSource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("imageUrlDataSource")
 			}
+
 			return err
 		}
 	}
@@ -303,11 +340,15 @@ func (m *KafeidoDataSourceInfo) contextValidatePhotoDataSource(ctx context.Conte
 		}
 
 		if err := m.PhotoDataSource.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("photoDataSource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("photoDataSource")
 			}
+
 			return err
 		}
 	}
@@ -324,11 +365,15 @@ func (m *KafeidoDataSourceInfo) contextValidateStreamingDataSource(ctx context.C
 		}
 
 		if err := m.StreamingDataSource.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("streamingDataSource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("streamingDataSource")
 			}
+
 			return err
 		}
 	}
@@ -345,11 +390,15 @@ func (m *KafeidoDataSourceInfo) contextValidateType(ctx context.Context, formats
 		}
 
 		if err := m.Type.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("type")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("type")
 			}
+
 			return err
 		}
 	}
@@ -366,11 +415,15 @@ func (m *KafeidoDataSourceInfo) contextValidateVideoDataSource(ctx context.Conte
 		}
 
 		if err := m.VideoDataSource.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("videoDataSource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("videoDataSource")
 			}
+
 			return err
 		}
 	}
@@ -387,11 +440,15 @@ func (m *KafeidoDataSourceInfo) contextValidateYoutubeDataSource(ctx context.Con
 		}
 
 		if err := m.YoutubeDataSource.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("youtubeDataSource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("youtubeDataSource")
 			}
+
 			return err
 		}
 	}

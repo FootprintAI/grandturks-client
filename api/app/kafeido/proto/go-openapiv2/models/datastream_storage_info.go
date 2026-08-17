@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -43,11 +44,15 @@ func (m *DatastreamStorageInfo) validateObjectStoreInfo(formats strfmt.Registry)
 
 	if m.ObjectStoreInfo != nil {
 		if err := m.ObjectStoreInfo.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("objectStoreInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("objectStoreInfo")
 			}
+
 			return err
 		}
 	}
@@ -78,11 +83,15 @@ func (m *DatastreamStorageInfo) contextValidateObjectStoreInfo(ctx context.Conte
 		}
 
 		if err := m.ObjectStoreInfo.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("objectStoreInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("objectStoreInfo")
 			}
+
 			return err
 		}
 	}

@@ -17,6 +17,22 @@ import (
 // swagger:model kafeidoGetProjectPipelineResponse
 type KafeidoGetProjectPipelineResponse struct {
 
+	// The parameters a caller MUST supply to run this pipeline
+	// (grandturks#1108).
+	//
+	// Distinct from run_parameters, which carries the values a pipeline was
+	// stored with and is empty for every system pipeline. Without this a
+	// client cannot know what a run needs: the webportal printed "No
+	// parameters. This pipeline can be run as it is" for a pipeline that
+	// cannot be, and the only way to learn the names was to start a run and
+	// read the refusal - one missing field per attempt.
+	//
+	// Excludes what the template already supplies (its static params, and
+	// `action`), so a client can render exactly these and nothing else.
+	// Empty for a non-system pipeline, whose requirements this service does
+	// not know.
+	CallerRequiredParameters []string `json:"callerRequiredParameters"`
+
 	// kf pipeline Id
 	KfPipelineID string `json:"kfPipelineId,omitempty"`
 

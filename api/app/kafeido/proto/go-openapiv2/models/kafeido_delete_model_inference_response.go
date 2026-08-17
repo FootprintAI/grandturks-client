@@ -8,4 +8,4 @@ package models
 // KafeidoDeleteModelInferenceResponse kafeido delete model inference response
 //
 // swagger:model kafeidoDeleteModelInferenceResponse
-type KafeidoDeleteModelInferenceResponse interface{}
+type KafeidoDeleteModelInferenceResponse any

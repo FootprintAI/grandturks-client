@@ -8,6 +8,7 @@ package kafeido_service
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -25,7 +26,7 @@ type KafeidoServiceCreateModelInferenceJobReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *KafeidoServiceCreateModelInferenceJobReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *KafeidoServiceCreateModelInferenceJobReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewKafeidoServiceCreateModelInferenceJobOK()
@@ -108,7 +109,7 @@ func (o *KafeidoServiceCreateModelInferenceJobOK) readResponse(response runtime.
 	o.Payload = new(models.KafeidoCreateModelInferenceJobResponse)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -182,7 +183,7 @@ func (o *KafeidoServiceCreateModelInferenceJobDefault) readResponse(response run
 	o.Payload = new(models.RPCStatus)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -253,11 +254,15 @@ func (o *KafeidoServiceCreateModelInferenceJobBody) validateAudioOutputFormat(fo
 
 	if o.AudioOutputFormat != nil {
 		if err := o.AudioOutputFormat.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "audioOutputFormat")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "audioOutputFormat")
 			}
+
 			return err
 		}
 	}
@@ -272,11 +277,15 @@ func (o *KafeidoServiceCreateModelInferenceJobBody) validateDataSinkConfig(forma
 
 	if o.DataSinkConfig != nil {
 		if err := o.DataSinkConfig.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "dataSinkConfig")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "dataSinkConfig")
 			}
+
 			return err
 		}
 	}
@@ -291,11 +300,15 @@ func (o *KafeidoServiceCreateModelInferenceJobBody) validateImageOutputFormat(fo
 
 	if o.ImageOutputFormat != nil {
 		if err := o.ImageOutputFormat.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "imageOutputFormat")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "imageOutputFormat")
 			}
+
 			return err
 		}
 	}
@@ -310,11 +323,15 @@ func (o *KafeidoServiceCreateModelInferenceJobBody) validateJobKind(formats strf
 
 	if o.JobKind != nil {
 		if err := o.JobKind.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "jobKind")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "jobKind")
 			}
+
 			return err
 		}
 	}
@@ -357,11 +374,15 @@ func (o *KafeidoServiceCreateModelInferenceJobBody) contextValidateAudioOutputFo
 		}
 
 		if err := o.AudioOutputFormat.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "audioOutputFormat")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "audioOutputFormat")
 			}
+
 			return err
 		}
 	}
@@ -378,11 +399,15 @@ func (o *KafeidoServiceCreateModelInferenceJobBody) contextValidateDataSinkConfi
 		}
 
 		if err := o.DataSinkConfig.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "dataSinkConfig")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "dataSinkConfig")
 			}
+
 			return err
 		}
 	}
@@ -399,11 +424,15 @@ func (o *KafeidoServiceCreateModelInferenceJobBody) contextValidateImageOutputFo
 		}
 
 		if err := o.ImageOutputFormat.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "imageOutputFormat")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "imageOutputFormat")
 			}
+
 			return err
 		}
 	}
@@ -420,11 +449,15 @@ func (o *KafeidoServiceCreateModelInferenceJobBody) contextValidateJobKind(ctx c
 		}
 
 		if err := o.JobKind.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "jobKind")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "jobKind")
 			}
+
 			return err
 		}
 	}

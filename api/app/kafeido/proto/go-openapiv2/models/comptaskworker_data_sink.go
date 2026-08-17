@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -64,11 +65,15 @@ func (m *ComptaskworkerDataSink) validateAppDataSink(formats strfmt.Registry) er
 
 	if m.AppDataSink != nil {
 		if err := m.AppDataSink.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("appDataSink")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("appDataSink")
 			}
+
 			return err
 		}
 	}
@@ -83,11 +88,15 @@ func (m *ComptaskworkerDataSink) validateObjectStoreDataSink(formats strfmt.Regi
 
 	if m.ObjectStoreDataSink != nil {
 		if err := m.ObjectStoreDataSink.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("objectStoreDataSink")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("objectStoreDataSink")
 			}
+
 			return err
 		}
 	}
@@ -102,11 +111,15 @@ func (m *ComptaskworkerDataSink) validateRedisDataSink(formats strfmt.Registry) 
 
 	if m.RedisDataSink != nil {
 		if err := m.RedisDataSink.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("redisDataSink")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("redisDataSink")
 			}
+
 			return err
 		}
 	}
@@ -121,11 +134,15 @@ func (m *ComptaskworkerDataSink) validateRestcolDataSink(formats strfmt.Registry
 
 	if m.RestcolDataSink != nil {
 		if err := m.RestcolDataSink.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("restcolDataSink")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("restcolDataSink")
 			}
+
 			return err
 		}
 	}
@@ -168,11 +185,15 @@ func (m *ComptaskworkerDataSink) contextValidateAppDataSink(ctx context.Context,
 		}
 
 		if err := m.AppDataSink.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("appDataSink")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("appDataSink")
 			}
+
 			return err
 		}
 	}
@@ -189,11 +210,15 @@ func (m *ComptaskworkerDataSink) contextValidateObjectStoreDataSink(ctx context.
 		}
 
 		if err := m.ObjectStoreDataSink.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("objectStoreDataSink")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("objectStoreDataSink")
 			}
+
 			return err
 		}
 	}
@@ -210,11 +235,15 @@ func (m *ComptaskworkerDataSink) contextValidateRedisDataSink(ctx context.Contex
 		}
 
 		if err := m.RedisDataSink.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("redisDataSink")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("redisDataSink")
 			}
+
 			return err
 		}
 	}
@@ -231,11 +260,15 @@ func (m *ComptaskworkerDataSink) contextValidateRestcolDataSink(ctx context.Cont
 		}
 
 		if err := m.RestcolDataSink.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("restcolDataSink")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("restcolDataSink")
 			}
+
 			return err
 		}
 	}

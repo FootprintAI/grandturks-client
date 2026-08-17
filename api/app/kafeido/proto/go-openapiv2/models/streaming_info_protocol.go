@@ -47,7 +47,7 @@ const (
 )
 
 // for schema
-var streamingInfoProtocolEnum []interface{}
+var streamingInfoProtocolEnum []any
 
 func init() {
 	var res []StreamingInfoProtocol
