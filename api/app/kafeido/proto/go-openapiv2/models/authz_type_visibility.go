@@ -46,7 +46,7 @@ const (
 )
 
 // for schema
-var authzTypeVisibilityEnum []interface{}
+var authzTypeVisibilityEnum []any
 
 func init() {
 	var res []AuthzTypeVisibility

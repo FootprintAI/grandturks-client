@@ -41,7 +41,7 @@ const (
 )
 
 // for schema
-var kafeidoTypePredictionDataEnum []interface{}
+var kafeidoTypePredictionDataEnum []any
 
 func init() {
 	var res []KafeidoTypePredictionData

@@ -7,6 +7,7 @@ package kafeido_service
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -22,7 +23,7 @@ type KafeidoServiceDeleteProjectPipelineReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *KafeidoServiceDeleteProjectPipelineReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *KafeidoServiceDeleteProjectPipelineReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewKafeidoServiceDeleteProjectPipelineOK()
@@ -103,7 +104,7 @@ func (o *KafeidoServiceDeleteProjectPipelineOK) GetPayload() models.KafeidoDelet
 func (o *KafeidoServiceDeleteProjectPipelineOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response payload
-	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -177,7 +178,7 @@ func (o *KafeidoServiceDeleteProjectPipelineDefault) readResponse(response runti
 	o.Payload = new(models.RPCStatus)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 

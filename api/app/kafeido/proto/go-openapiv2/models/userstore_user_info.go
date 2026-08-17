@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -19,7 +20,7 @@ import (
 type UserstoreUserInfo struct {
 
 	// app Id
-	AppID *UserstoreApplicationID `json:"appId,omitempty"`
+	AppID *KafeidocommonpbApplicationID `json:"appId,omitempty"`
 
 	// disabled
 	Disabled bool `json:"disabled,omitempty"`
@@ -61,11 +62,15 @@ func (m *UserstoreUserInfo) validateAppID(formats strfmt.Registry) error {
 
 	if m.AppID != nil {
 		if err := m.AppID.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("appId")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("appId")
 			}
+
 			return err
 		}
 	}
@@ -96,11 +101,15 @@ func (m *UserstoreUserInfo) contextValidateAppID(ctx context.Context, formats st
 		}
 
 		if err := m.AppID.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("appId")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("appId")
 			}
+
 			return err
 		}
 	}

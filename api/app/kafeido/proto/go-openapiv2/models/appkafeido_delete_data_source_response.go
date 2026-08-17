@@ -8,4 +8,4 @@ package models
 // AppkafeidoDeleteDataSourceResponse appkafeido delete data source response
 //
 // swagger:model appkafeidoDeleteDataSourceResponse
-type AppkafeidoDeleteDataSourceResponse interface{}
+type AppkafeidoDeleteDataSourceResponse any

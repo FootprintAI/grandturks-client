@@ -53,7 +53,7 @@ const (
 )
 
 // for schema
-var datastreamDataSourceEnum []interface{}
+var datastreamDataSourceEnum []any
 
 func init() {
 	var res []DatastreamDataSource

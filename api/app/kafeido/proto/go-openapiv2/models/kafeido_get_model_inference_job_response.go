@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -85,11 +86,15 @@ func (m *KafeidoGetModelInferenceJobResponse) validateJobKind(formats strfmt.Reg
 
 	if m.JobKind != nil {
 		if err := m.JobKind.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("jobKind")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("jobKind")
 			}
+
 			return err
 		}
 	}
@@ -128,11 +133,15 @@ func (m *KafeidoGetModelInferenceJobResponse) validateSinkDestination(formats st
 
 	if m.SinkDestination != nil {
 		if err := m.SinkDestination.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("sinkDestination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("sinkDestination")
 			}
+
 			return err
 		}
 	}
@@ -167,11 +176,15 @@ func (m *KafeidoGetModelInferenceJobResponse) contextValidateJobKind(ctx context
 		}
 
 		if err := m.JobKind.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("jobKind")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("jobKind")
 			}
+
 			return err
 		}
 	}
@@ -188,11 +201,15 @@ func (m *KafeidoGetModelInferenceJobResponse) contextValidateSinkDestination(ctx
 		}
 
 		if err := m.SinkDestination.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("sinkDestination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("sinkDestination")
 			}
+
 			return err
 		}
 	}

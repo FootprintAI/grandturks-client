@@ -62,7 +62,7 @@ KafeidoServiceCancelModelInferenceJobParams contains all the parameters to send 
 type KafeidoServiceCancelModelInferenceJobParams struct {
 
 	// Body.
-	Body interface{}
+	Body any
 
 	// ModelInferenceJobID.
 	ModelInferenceJobID string
@@ -124,13 +124,13 @@ func (o *KafeidoServiceCancelModelInferenceJobParams) SetHTTPClient(client *http
 }
 
 // WithBody adds the body to the kafeido service cancel model inference job params
-func (o *KafeidoServiceCancelModelInferenceJobParams) WithBody(body interface{}) *KafeidoServiceCancelModelInferenceJobParams {
+func (o *KafeidoServiceCancelModelInferenceJobParams) WithBody(body any) *KafeidoServiceCancelModelInferenceJobParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the kafeido service cancel model inference job params
-func (o *KafeidoServiceCancelModelInferenceJobParams) SetBody(body interface{}) {
+func (o *KafeidoServiceCancelModelInferenceJobParams) SetBody(body any) {
 	o.Body = body
 }
 

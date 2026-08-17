@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -43,11 +44,15 @@ func (m *KafeidoGetUserResponse) validateUserInfo(formats strfmt.Registry) error
 
 	if m.UserInfo != nil {
 		if err := m.UserInfo.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("userInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("userInfo")
 			}
+
 			return err
 		}
 	}
@@ -78,11 +83,15 @@ func (m *KafeidoGetUserResponse) contextValidateUserInfo(ctx context.Context, fo
 		}
 
 		if err := m.UserInfo.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("userInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("userInfo")
 			}
+
 			return err
 		}
 	}

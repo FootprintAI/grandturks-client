@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -56,11 +57,15 @@ func (m *KafeidoCreatePredictionResponse) validateAudioResponses(formats strfmt.
 
 		if m.AudioResponses[i] != nil {
 			if err := m.AudioResponses[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("audioResponses" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("audioResponses" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -82,11 +87,15 @@ func (m *KafeidoCreatePredictionResponse) validateImageResponses(formats strfmt.
 
 		if m.ImageResponses[i] != nil {
 			if err := m.ImageResponses[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("imageResponses" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("imageResponses" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -125,11 +134,15 @@ func (m *KafeidoCreatePredictionResponse) contextValidateAudioResponses(ctx cont
 			}
 
 			if err := m.AudioResponses[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("audioResponses" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("audioResponses" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -150,11 +163,15 @@ func (m *KafeidoCreatePredictionResponse) contextValidateImageResponses(ctx cont
 			}
 
 			if err := m.ImageResponses[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("imageResponses" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("imageResponses" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

@@ -8,4 +8,4 @@ package models
 // KafeidoCancelModelInferenceJobResponse kafeido cancel model inference job response
 //
 // swagger:model kafeidoCancelModelInferenceJobResponse
-type KafeidoCancelModelInferenceJobResponse interface{}
+type KafeidoCancelModelInferenceJobResponse any

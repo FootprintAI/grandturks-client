@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -53,11 +54,15 @@ func (m *DatastreamAudioOutputFormat) validateEncoding(formats strfmt.Registry) 
 
 	if m.Encoding != nil {
 		if err := m.Encoding.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("encoding")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("encoding")
 			}
+
 			return err
 		}
 	}
@@ -72,11 +77,15 @@ func (m *DatastreamAudioOutputFormat) validateFormat(formats strfmt.Registry) er
 
 	if m.Format != nil {
 		if err := m.Format.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("format")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("format")
 			}
+
 			return err
 		}
 	}
@@ -111,11 +120,15 @@ func (m *DatastreamAudioOutputFormat) contextValidateEncoding(ctx context.Contex
 		}
 
 		if err := m.Encoding.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("encoding")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("encoding")
 			}
+
 			return err
 		}
 	}
@@ -132,11 +145,15 @@ func (m *DatastreamAudioOutputFormat) contextValidateFormat(ctx context.Context,
 		}
 
 		if err := m.Format.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("format")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("format")
 			}
+
 			return err
 		}
 	}

@@ -20,6 +20,7 @@ func NewListCommand(logger log.Logger, ioStreams genericclioptions.IOStreams, ne
 	cmd.AddCommand(NewListInferenceJobCommand(logger, ioStreams))
 	cmd.AddCommand(NewListDataSourceCommand(logger, ioStreams))
 	cmd.AddCommand(NewListPipelineCommand(logger, ioStreams))
+	cmd.AddCommand(NewListApiKeyCommand(logger, ioStreams))
 	//cmd.AddCommand(NewListStorageCommand(logger, ioStreams))
 	for _, newCmdFunc := range newCmdFuncs {
 		cmd.AddCommand(newCmdFunc(logger, ioStreams))

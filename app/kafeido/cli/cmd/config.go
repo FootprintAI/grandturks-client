@@ -50,7 +50,23 @@ var (
 	ConfigKeyUserEmail       viperConfigKey = "userInfo.email"
 	ConfigKeyAuthToken       viperConfigKey = "authToken"
 	ConfigKeyRequestTimeout  viperConfigKey = "requestTimeout"
+	ConfigKeyApiKey          viperConfigKey = "apiKey"
 )
+
+// apiKeyEnvVar is how an integration supplies its credential.
+//
+// An api key exists so a machine can call the API without a human login
+// (#21), and a machine has no interactive step in which to write
+// ~/.kafeidoconfig.
+//
+// Read with os.Getenv in resolveAPIKey and deliberately NOT bound with
+// viper.BindEnv. initConfig calls viper.SafeWriteConfig() when no config file
+// exists, which writes every setting viper knows about - so a bound key meant
+// that one `KAFEIDO_API_KEY=gtk_... kafeido list project` on a fresh machine
+// wrote the credential to ~/.kafeidoconfig.json in plaintext. A key passed
+// through the environment is deliberately not on disk, and persisting it is
+// not this CLI's decision to make.
+const apiKeyEnvVar = "KAFEIDO_API_KEY"
 
 func init() {
 	viper.SetTypeByDefaultValue(true)

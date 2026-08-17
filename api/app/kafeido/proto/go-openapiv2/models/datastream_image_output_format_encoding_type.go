@@ -38,7 +38,7 @@ const (
 )
 
 // for schema
-var datastreamImageOutputFormatEncodingTypeEnum []interface{}
+var datastreamImageOutputFormatEncodingTypeEnum []any
 
 func init() {
 	var res []DatastreamImageOutputFormatEncodingType

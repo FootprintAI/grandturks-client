@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -52,11 +53,15 @@ func (m *DatastreamPhotoDataSource) validateStorageInfo(formats strfmt.Registry)
 
 	if m.StorageInfo != nil {
 		if err := m.StorageInfo.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("storageInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("storageInfo")
 			}
+
 			return err
 		}
 	}
@@ -87,11 +92,15 @@ func (m *DatastreamPhotoDataSource) contextValidateStorageInfo(ctx context.Conte
 		}
 
 		if err := m.StorageInfo.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("storageInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("storageInfo")
 			}
+
 			return err
 		}
 	}

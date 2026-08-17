@@ -2,7 +2,6 @@ package cmd
 
 import (
 	goflag "flag"
-	"fmt"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -10,7 +9,6 @@ import (
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/mitchellh/go-homedir"
 	commonhttp "github.com/sdinsure/agent/pkg/http"
 	"github.com/spf13/cobra"
@@ -181,6 +179,10 @@ func NewRootCommand(logger log.Logger, ioStreams genericclioptions.IOStreams, pc
 	cmd.AddCommand(NewCancelCommand(logger, ioStreams, plugableCommandOptions.cancelCommands...))
 
 	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kafeidoconfig)")
+	// Persistent, because authenticating as an integration has to work on
+	// every command - that is the point of having a key at all (#21).
+	cmd.PersistentFlags().StringVar(&apiKeyFlag, "api_key", "",
+		"api key to authenticate with, as gtk_<keyId>_<secret> (default: $"+apiKeyEnvVar+", then the config file)")
 	cmd.PersistentFlags().BoolVar(&debug, "debug", false, "debug flag (default: false)")
 	cmd.PersistentFlags().StringVar(&outputFormat, "format", "table", "output format(table, csv, json), (default: table)")
 	cmd.PersistentFlags().IntVar(&lintLength, "lint_length", 30, "lint length for each variable (default: 30 chars)")
@@ -295,14 +297,10 @@ func newRunCmd(logger log.Logger) (*RunCmd, error) {
 		[]string{hostUrl.Scheme},
 		httpClient,
 	), nil)
+	// Resolved per call rather than captured, so a login that writes the
+	// config mid-process is picked up by the next request.
 	authInformer := func() runtime.ClientAuthInfoWriter {
-		return runtime.ClientAuthInfoWriterFunc(func(clientRequest runtime.ClientRequest, registry strfmt.Registry) error {
-			authToken := ConfigKeyAuthToken.GetString()
-			if len(authToken) > 0 {
-				return clientRequest.SetHeaderParam("Authorization", fmt.Sprintf("Bearer %s", authToken))
-			}
-			return nil
-		})
+		return newAuthInformer(resolveAPIKey(), ConfigKeyAuthToken.GetString())
 	}
 	r := &RunCmd{
 		stub:           stub,

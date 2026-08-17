@@ -41,7 +41,7 @@ const (
 )
 
 // for schema
-var datastreamAudioOutputFormatEncodingTypeEnum []interface{}
+var datastreamAudioOutputFormatEncodingTypeEnum []any
 
 func init() {
 	var res []DatastreamAudioOutputFormatEncodingType

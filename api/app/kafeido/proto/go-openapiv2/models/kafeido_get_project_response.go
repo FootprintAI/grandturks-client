@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -70,11 +71,15 @@ func (m *KafeidoGetProjectResponse) validateVisibility(formats strfmt.Registry) 
 
 	if m.Visibility != nil {
 		if err := m.Visibility.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("visibility")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("visibility")
 			}
+
 			return err
 		}
 	}
@@ -105,11 +110,15 @@ func (m *KafeidoGetProjectResponse) contextValidateVisibility(ctx context.Contex
 		}
 
 		if err := m.Visibility.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("visibility")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("visibility")
 			}
+
 			return err
 		}
 	}

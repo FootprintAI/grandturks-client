@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -50,11 +51,15 @@ func (m *KafeidoAppLoginRequest) validateBasic(formats strfmt.Registry) error {
 
 	if m.Basic != nil {
 		if err := m.Basic.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("basic")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("basic")
 			}
+
 			return err
 		}
 	}
@@ -69,11 +74,15 @@ func (m *KafeidoAppLoginRequest) validateOauth2(formats strfmt.Registry) error {
 
 	if m.Oauth2 != nil {
 		if err := m.Oauth2.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("oauth2")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("oauth2")
 			}
+
 			return err
 		}
 	}
@@ -108,11 +117,15 @@ func (m *KafeidoAppLoginRequest) contextValidateBasic(ctx context.Context, forma
 		}
 
 		if err := m.Basic.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("basic")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("basic")
 			}
+
 			return err
 		}
 	}
@@ -129,11 +142,15 @@ func (m *KafeidoAppLoginRequest) contextValidateOauth2(ctx context.Context, form
 		}
 
 		if err := m.Oauth2.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("oauth2")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("oauth2")
 			}
+
 			return err
 		}
 	}

@@ -19,6 +19,7 @@ func NewDeleteCommand(logger log.Logger, ioStreams genericclioptions.IOStreams, 
 	cmd.AddCommand(NewDeleteInferenceCommand(logger, ioStreams))
 	cmd.AddCommand(NewDeleteDataSourceCommand(logger, ioStreams))
 	cmd.AddCommand(NewDeletePipelineCommand(logger, ioStreams))
+	cmd.AddCommand(NewDeleteApiKeyCommand(logger, ioStreams))
 	for _, newCmdFunc := range newCmdFuncs {
 		cmd.AddCommand(newCmdFunc(logger, ioStreams))
 	}

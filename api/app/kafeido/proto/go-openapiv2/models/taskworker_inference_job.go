@@ -41,7 +41,7 @@ const (
 )
 
 // for schema
-var taskworkerInferenceJobEnum []interface{}
+var taskworkerInferenceJobEnum []any
 
 func init() {
 	var res []TaskworkerInferenceJob

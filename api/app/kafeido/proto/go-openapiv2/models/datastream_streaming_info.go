@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -52,11 +53,15 @@ func (m *DatastreamStreamingInfo) validateProtocol(formats strfmt.Registry) erro
 
 	if m.Protocol != nil {
 		if err := m.Protocol.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("protocol")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("protocol")
 			}
+
 			return err
 		}
 	}
@@ -87,11 +92,15 @@ func (m *DatastreamStreamingInfo) contextValidateProtocol(ctx context.Context, f
 		}
 
 		if err := m.Protocol.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("protocol")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("protocol")
 			}
+
 			return err
 		}
 	}

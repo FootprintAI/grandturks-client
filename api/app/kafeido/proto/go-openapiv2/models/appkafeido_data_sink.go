@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -50,11 +51,15 @@ func (m *AppkafeidoDataSink) validateObjectStoreDataSink(formats strfmt.Registry
 
 	if m.ObjectStoreDataSink != nil {
 		if err := m.ObjectStoreDataSink.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("objectStoreDataSink")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("objectStoreDataSink")
 			}
+
 			return err
 		}
 	}
@@ -69,11 +74,15 @@ func (m *AppkafeidoDataSink) validateRedisDataSink(formats strfmt.Registry) erro
 
 	if m.RedisDataSink != nil {
 		if err := m.RedisDataSink.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("redisDataSink")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("redisDataSink")
 			}
+
 			return err
 		}
 	}
@@ -108,11 +117,15 @@ func (m *AppkafeidoDataSink) contextValidateObjectStoreDataSink(ctx context.Cont
 		}
 
 		if err := m.ObjectStoreDataSink.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("objectStoreDataSink")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("objectStoreDataSink")
 			}
+
 			return err
 		}
 	}
@@ -129,11 +142,15 @@ func (m *AppkafeidoDataSink) contextValidateRedisDataSink(ctx context.Context, f
 		}
 
 		if err := m.RedisDataSink.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("redisDataSink")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("redisDataSink")
 			}
+
 			return err
 		}
 	}

@@ -41,7 +41,7 @@ const (
 )
 
 // for schema
-var imageOutputFormatPhotoFormatEnum []interface{}
+var imageOutputFormatPhotoFormatEnum []any
 
 func init() {
 	var res []ImageOutputFormatPhotoFormat

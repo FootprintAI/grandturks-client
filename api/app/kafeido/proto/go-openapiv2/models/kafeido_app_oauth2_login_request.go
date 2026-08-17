@@ -17,6 +17,17 @@ import (
 // swagger:model kafeidoAppOauth2LoginRequest
 type KafeidoAppOauth2LoginRequest struct {
 
+	// The dex connector to send the user straight to, skipping dex's chooser
+	// page (grandturks#1048). Forwarded verbatim to
+	// AuthenticationService.LoginWithRedirect, which is the only thing that
+	// validates it.
+	//
+	// Passed through kafeido rather than called directly because the BROWSER
+	// is the caller here: components/authentication is not published in any
+	// deployment, and kafeido's gateway is the one origin the webportal
+	// already proxies to. Unset behaves exactly as before.
+	ConnectorID string `json:"connectorId,omitempty"`
+
 	// local redirect Url
 	LocalRedirectURL string `json:"localRedirectUrl,omitempty"`
 

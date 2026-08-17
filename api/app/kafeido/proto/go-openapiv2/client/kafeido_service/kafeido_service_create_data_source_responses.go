@@ -8,6 +8,7 @@ package kafeido_service
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -25,7 +26,7 @@ type KafeidoServiceCreateDataSourceReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *KafeidoServiceCreateDataSourceReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *KafeidoServiceCreateDataSourceReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewKafeidoServiceCreateDataSourceOK()
@@ -108,7 +109,7 @@ func (o *KafeidoServiceCreateDataSourceOK) readResponse(response runtime.ClientR
 	o.Payload = new(models.AppkafeidoCreateDataSourceResponse)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -182,7 +183,7 @@ func (o *KafeidoServiceCreateDataSourceDefault) readResponse(response runtime.Cl
 	o.Payload = new(models.RPCStatus)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -220,11 +221,15 @@ func (o *KafeidoServiceCreateDataSourceBody) validateDataSourceInfo(formats strf
 
 	if o.DataSourceInfo != nil {
 		if err := o.DataSourceInfo.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "dataSourceInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "dataSourceInfo")
 			}
+
 			return err
 		}
 	}
@@ -255,11 +260,15 @@ func (o *KafeidoServiceCreateDataSourceBody) contextValidateDataSourceInfo(ctx c
 		}
 
 		if err := o.DataSourceInfo.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "dataSourceInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "dataSourceInfo")
 			}
+
 			return err
 		}
 	}

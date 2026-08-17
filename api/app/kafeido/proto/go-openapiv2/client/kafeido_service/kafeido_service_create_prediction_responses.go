@@ -8,6 +8,7 @@ package kafeido_service
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -26,7 +27,7 @@ type KafeidoServiceCreatePredictionReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *KafeidoServiceCreatePredictionReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *KafeidoServiceCreatePredictionReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewKafeidoServiceCreatePredictionOK()
@@ -109,7 +110,7 @@ func (o *KafeidoServiceCreatePredictionOK) readResponse(response runtime.ClientR
 	o.Payload = new(models.KafeidoCreatePredictionResponse)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -183,7 +184,7 @@ func (o *KafeidoServiceCreatePredictionDefault) readResponse(response runtime.Cl
 	o.Payload = new(models.RPCStatus)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -246,11 +247,15 @@ func (o *KafeidoServiceCreatePredictionBody) validateAudioRequests(formats strfm
 
 		if o.AudioRequests[i] != nil {
 			if err := o.AudioRequests[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("body" + "." + "audioRequests" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("body" + "." + "audioRequests" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -272,11 +277,15 @@ func (o *KafeidoServiceCreatePredictionBody) validateImageRequests(formats strfm
 
 		if o.ImageRequests[i] != nil {
 			if err := o.ImageRequests[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("body" + "." + "imageRequests" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("body" + "." + "imageRequests" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -293,11 +302,15 @@ func (o *KafeidoServiceCreatePredictionBody) validateType(formats strfmt.Registr
 
 	if o.Type != nil {
 		if err := o.Type.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "type")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "type")
 			}
+
 			return err
 		}
 	}
@@ -338,11 +351,15 @@ func (o *KafeidoServiceCreatePredictionBody) contextValidateAudioRequests(ctx co
 			}
 
 			if err := o.AudioRequests[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("body" + "." + "audioRequests" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("body" + "." + "audioRequests" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -363,11 +380,15 @@ func (o *KafeidoServiceCreatePredictionBody) contextValidateImageRequests(ctx co
 			}
 
 			if err := o.ImageRequests[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("body" + "." + "imageRequests" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("body" + "." + "imageRequests" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -386,11 +407,15 @@ func (o *KafeidoServiceCreatePredictionBody) contextValidateType(ctx context.Con
 		}
 
 		if err := o.Type.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "type")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "type")
 			}
+
 			return err
 		}
 	}
