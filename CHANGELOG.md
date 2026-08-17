@@ -1,12 +1,15 @@
-## v2.4.0 (unreleased) ##
+## v2.4.0 ##
 
-The version this tree will be released as; see RELEASING.md. Nothing is
-published until the tag is pushed.
+The first release under the policy in RELEASING.md: tags are what consumers
+pin, and this one asserts that CI passed at the commit it names.
 
 * feat(cli): create, list, revoke and authenticate with api keys (#21)
 * ci: build/vet/test lane, the first CI this repository has had (#15)
 * fix(encryption): restore aes_test.go, which had not compiled since 2024 (#16)
-* chore: tagged releases are the consumable unit; `v2.3.0+rc0` never was (#22)
+* fix(encryption): Decode returns an error rather than panicking on malformed
+  ciphertext, which the oauth2 callback feeds from outside the process (#23)
+* chore: tagged releases are the consumable unit; `v2.3.0+rc0` never was, since
+  a Go module version may not carry build metadata (#22)
 
 ## v2.0.1 ##
 
