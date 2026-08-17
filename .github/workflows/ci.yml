@@ -1,0 +1,54 @@
+# The lane this repository did not have (#15).
+#
+# This module IS the kafeido CLI - grandturks' app/kafeido/cli/main.go builds
+# its root command from here, and the equivalent files in that repo are
+# commented-out duplicates (FootprintAI/grandturks#902) - so every command an
+# operator runs is code in this repository. Until now none of it was gated by
+# anything, which is how pkg/encryption/aes_test.go managed to stop compiling
+# in May 2024 and stay that way: `go build ./...` is green on a broken _test
+# file, so the breakage was invisible to everything except someone running
+# `go test ./...` by hand.
+#
+# Deliberately the three steps #15 asks for and nothing else. A lane that
+# builds, vets and tests is worth having today; formatting, linting and
+# release concerns are separate decisions and belong in their own lanes.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  # A new push to a PR makes the previous run's answer irrelevant.
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-vet-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          # Read from go.mod so the toolchain CI uses is the one the module
+          # declares, and bumping it is a go.mod change rather than a
+          # workflow change someone forgets.
+          go-version-file: go.mod
+          cache: true
+
+      - name: go build
+        run: go build ./...
+
+      # Runs before the tests on purpose: `go vet` also type-checks _test.go
+      # files, so it is what turns "the tests do not compile" into a failure
+      # with a readable message rather than a build error inside `go test`.
+      - name: go vet
+        run: go vet ./...
+
+      - name: go test
+        run: go test ./...
