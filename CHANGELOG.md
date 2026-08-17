@@ -1,3 +1,17 @@
+## v2.6.0 ##
+
+* feat(cli): the oauth2 login now asks for, and reads, an authenticated
+  callback credential (#29, steps 1-3). The CLI mints an ephemeral X25519
+  keypair per login and sends the public half; a server that understands it
+  seals the access token with AES-256-GCM, and one that does not returns the
+  legacy AES-CBC blob exactly as before. The format marker decides which
+  decoder runs, so no client and server have to be upgraded together.
+  Requires FootprintAI/grandturks#1210 server-side to take effect.
+* feat(encryption): HasCredentialMarker, for dispatching on the format rather
+  than on well-formedness - a truncated blob claiming the marker is now
+  rejected as a sealed credential instead of being handed to the legacy
+  decoder (#29)
+
 ## v2.5.0 ##
 
 * feat(encryption): authenticated oauth2 callback credential - ephemeral
