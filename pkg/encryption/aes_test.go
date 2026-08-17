@@ -168,12 +168,11 @@ func TestDecodeStrRejectsMalformedBase64(t *testing.T) {
 	}{
 		{"not base64", "not base64!!"},
 		{"base64 with standard-alphabet chars", "a+b/c="},
-		// A fourth case belongs here - {"truncated", "YWJj"}, valid base64url
-		// that decodes to 3 bytes - but Decode PANICS on it today
-		// ("crypto/cipher: input not full blocks") instead of returning an
-		// error, and so does any ciphertext that decrypts to garbage padding.
-		// Filed as grandturks-client#23 rather than fixed here, since #16 is
-		// about restoring these tests; the case goes in with that fix.
+		// Valid base64url that decodes to 3 bytes. This case was written as a
+		// comment when the tests were restored, because Decode PANICKED on it
+		// ("crypto/cipher: input not full blocks"); it is a live assertion now
+		// that grandturks-client#23 is fixed.
+		{"not a whole number of blocks", "YWJj"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			if _, err := f.encryption.DecodeStr(tc.input); err == nil {
@@ -203,5 +202,124 @@ func TestDecodeWithWrongInitialVector(t *testing.T) {
 	}
 	if bytes.Equal(got, message) {
 		t.Error("decoding with a different initial vector returned the plaintext")
+	}
+}
+
+// TestDecodeRejectsMalformedCiphertext covers the first of the two panics in
+// grandturks-client#23. cipher.CBCDecrypter.CryptBlocks panics outright on an
+// input that is not a whole number of blocks, before any code in this package
+// runs, so the length has to be checked rather than assumed.
+//
+// The input is not internal: cmd_login.go passes the `credentials` query
+// parameter of a request to the CLI's local oauth2 callback server straight
+// into DecodeStr, and handles the returned error as though this path existed.
+// It did not - the handler goroutine panicked and took the process down
+// mid-login.
+func TestDecodeRejectsMalformedCiphertext(t *testing.T) {
+	f := mustCipher(t, testKey256)
+
+	for _, tc := range []struct {
+		name       string
+		ciphertext []byte
+	}{
+		{"empty", []byte{}},
+		{"shorter than a block", []byte{0x01, 0x02, 0x03}},
+		{"one byte over a block", bytes.Repeat([]byte{0x01}, aes.BlockSize+1)},
+		{"one byte short of two blocks", bytes.Repeat([]byte{0x01}, 2*aes.BlockSize-1)},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := f.encryptor.Decode(tc.ciphertext)
+			if err == nil {
+				t.Fatalf("Decode(%d bytes) = %q, want an error", len(tc.ciphertext), got)
+			}
+			if got != nil {
+				t.Errorf("Decode returned %q alongside its error, want nil", got)
+			}
+		})
+	}
+}
+
+// TestDecodeWithTheWrongKeyNeverPanics covers the second panic. pKCS5Trimming
+// took the last decrypted byte as a padding length and sliced by it, so a
+// ciphertext that decrypts to garbage produced a negative index: measured at
+// 468 of 500 wrong-key decodes before the fix, with the remaining 32 returning
+// silently-wrong plaintext.
+//
+// Every iteration must now come back as an error or as a correctly-padded
+// value - never as a panic, and never as garbage passed off as plaintext.
+func TestDecodeWithTheWrongKeyNeverPanics(t *testing.T) {
+	block, err := aes.NewCipher([]byte(testKey256))
+	if err != nil {
+		t.Fatalf("aes.NewCipher: %v", err)
+	}
+	otherBlock, err := aes.NewCipher([]byte("fedcba9876543210fedcba9876543210"))
+	if err != nil {
+		t.Fatalf("aes.NewCipher: %v", err)
+	}
+	encryptor := NewAESEncryptor(block, testInitialVector)
+	attacker := NewAESEncryptor(otherBlock, testInitialVector)
+
+	// Enough iterations that the 1-in-16-ish chance of garbage that happens to
+	// look like valid padding cannot hide a regression.
+	const iterations = 500
+	rejected := 0
+	for i := 0; i < iterations; i++ {
+		message := []byte{byte(i), byte(i * 7), byte(i * 13)}
+		ciphertext, err := encryptor.Encode(message)
+		if err != nil {
+			t.Fatalf("Encode: %v", err)
+		}
+
+		got, err := attacker.Decode(ciphertext)
+		if err != nil {
+			rejected++
+			continue
+		}
+		// Surviving the padding check does not make it the plaintext.
+		if bytes.Equal(got, message) {
+			t.Fatalf("iteration %d: decoding with the wrong key returned the plaintext", i)
+		}
+	}
+	if rejected == 0 {
+		t.Errorf("no wrong-key decode out of %d was rejected - the padding is not being validated", iterations)
+	}
+	t.Logf("wrong-key decodes rejected: %d/%d", rejected, iterations)
+}
+
+// TestDecodeRejectsInvalidPadding drives the padding check directly, with
+// ciphertexts built so their final decrypted byte is a known bad length. A
+// wrong-key test cannot reach the boundaries deliberately; this can.
+func TestDecodeRejectsInvalidPadding(t *testing.T) {
+	block, err := aes.NewCipher([]byte(testKey256))
+	if err != nil {
+		t.Fatalf("aes.NewCipher: %v", err)
+	}
+	encryptor := NewAESEncryptor(block, testInitialVector)
+
+	for _, tc := range []struct {
+		name    string
+		padding byte
+	}{
+		{"zero padding length", 0x00},
+		{"padding longer than the block size", byte(aes.BlockSize + 1)},
+		{"padding longer than the message", 0xff},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			// One block whose plaintext ends in the bad padding byte. Encrypt
+			// it with Encode's own primitive so the ciphertext is genuine, and
+			// strip Encode's padding block so the crafted byte is last.
+			plaintext := make([]byte, aes.BlockSize)
+			plaintext[len(plaintext)-1] = tc.padding
+			ciphertext, err := encryptor.Encode(plaintext)
+			if err != nil {
+				t.Fatalf("Encode: %v", err)
+			}
+			ciphertext = ciphertext[:aes.BlockSize]
+
+			got, err := encryptor.Decode(ciphertext)
+			if err == nil {
+				t.Fatalf("Decode of a block padded with %#02x = %q, want an error", tc.padding, got)
+			}
+		})
 	}
 }
