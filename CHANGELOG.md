@@ -1,3 +1,16 @@
+## v2.5.0 (unreleased) ##
+
+* feat(encryption): authenticated oauth2 callback credential - ephemeral
+  X25519 + AES-256-GCM in a version-marked format, replacing unauthenticated
+  AES-CBC under a build-time key (#29, step 1 of the rollout in
+  docs/architecture/oauth2-callback-credential.md). Nothing calls it yet:
+  the login command and the authentication service move in later steps.
+* fix(encryption): Encryption reports "no encryptor configured" instead of
+  dereferencing a nil interface (#33)
+* fix(release): releases are library releases; no CLI binaries are attached,
+  because this module cannot build a working one (#33)
+* docs(architecture): the design for #29
+
 ## v2.4.0 ##
 
 The first release under the policy in RELEASING.md: tags are what consumers
