@@ -1,4 +1,4 @@
-## v2.5.0 (unreleased) ##
+## v2.5.0 ##
 
 * feat(encryption): authenticated oauth2 callback credential - ephemeral
   X25519 + AES-256-GCM in a version-marked format, replacing unauthenticated
