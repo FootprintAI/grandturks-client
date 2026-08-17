@@ -86,3 +86,20 @@ export KAFEIDO_API_KEY=gtk_...
 A key supplied through the environment is never written to the config file.
 The CLI sends it in the `X-Api-Key` header — an api key in `Authorization` is
 rejected at the ingress, which parses that header as a JWT.
+
+## Versioning
+
+Releases are semver tags — `v2.4.0` — and tags are what consumers pin:
+
+```
+go get github.com/footprintai/grandturks-client/v2@v2.4.0
+```
+
+A pseudo-version such as `v2.3.1-0.20260814134326-6255dd6e17fd` in a
+consumer's `go.mod` means the pin is an arbitrary commit rather than a
+release. Tags before `v2.4.0` predate this policy — `v2.3.0+rc0` in particular
+cannot be pinned at all, because Go module versions may not carry build
+metadata.
+
+[RELEASING.md](RELEASING.md) has the procedure and the rules a tag has to
+satisfy before the release workflow will publish it.

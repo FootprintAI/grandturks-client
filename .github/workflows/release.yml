@@ -1,0 +1,101 @@
+# Publishes a release for a pushed tag (#22).
+#
+# A tag is only worth pinning if it asserts something, so this lane refuses to
+# publish one that does not:
+#
+#   1. the tag must be a legal Go module version - the previous newest tag,
+#      v2.3.0+rc0, was not, and the proxy silently resolved it to a
+#      pseudo-version, which is how consumers ended up pinning commits
+#   2. the tag must match the version the module declares, so a release cannot
+#      ship a binary that reports a different number
+#   3. build, vet and test must pass at that commit - the same gate as ci.yml,
+#      re-run here because a tag can point anywhere
+#
+# Only then are binaries built and a GitHub Release created. Nothing here
+# creates a tag: cutting a release stays a human decision (see RELEASING.md).
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write # required to create the release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: the tag must be a legal Go module version
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          # Semver with a leading v, an optional pre-release, and NO build
+          # metadata. "+" is what made v2.3.0+rc0 unpinnable; a release
+          # candidate is v2.4.0-rc.0.
+          if ! printf '%s' "$tag" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::tag $tag is not a legal Go module version." \
+                 "Build metadata (+...) makes a tag invisible to the module proxy" \
+                 "- use a pre-release such as v2.4.0-rc.0 instead."
+            exit 1
+          fi
+          # This module is /v2, so its tags must stay in the v2 major series or
+          # consumers cannot resolve them at all.
+          case "$tag" in
+            v2.*) ;;
+            *) echo "::error::tag $tag does not match this module's /v2 import path"; exit 1 ;;
+          esac
+
+      - name: the tag must match the version the module declares
+        run: |
+          set -euo pipefail
+          declared="$(go run ./pkg/version/main)"
+          if [ "$declared" != "${GITHUB_REF_NAME}" ]; then
+            echo "::error::tag ${GITHUB_REF_NAME} disagrees with the module, which declares $declared." \
+                 "Bump declaredVersion in pkg/version/version.go and merge that before tagging."
+            exit 1
+          fi
+
+      - name: go build
+        run: go build ./...
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go test
+        run: go test ./...
+
+      - name: build the cli for every published platform
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64; do
+            os="${target%/*}"
+            arch="${target#*/}"
+            GOOS="$os" GOARCH="$arch" CGO_ENABLED=0 \
+              go build -trimpath -o "dist/kafeido-${GITHUB_REF_NAME}-${os}-${arch}" ./app/kafeido/cli
+          done
+          # The tags this repo published in 2024 carried binaries and the ones
+          # since carried nothing, which is half of why they stopped being
+          # consumed. Checksums so a download can be verified.
+          ( cd dist && sha256sum kafeido-* > SHA256SUMS )
+          ls -l dist
+
+      - name: publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes \
+            $( printf '%s' "${GITHUB_REF_NAME}" | grep -q -- '-' && echo --prerelease ) \
+            dist/*
