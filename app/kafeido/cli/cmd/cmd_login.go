@@ -102,13 +102,23 @@ func NewOauth2LoginCommand(logger log.Logger, ioStreams genericclioptions.IOStre
 		runCmd := mustNewRunCmd(logger)
 
 		currentRequestId := uuid.NewString()
+		// One keypair per login, held only for the seconds between asking for
+		// a login and the browser calling back (#29). The public half goes in
+		// the login request below; the private half never leaves this process
+		// and is never written to disk.
+		credentialKey, err := encryption.NewCredentialKey()
+		if err != nil {
+			return err
+		}
 		done := make(chan struct{})
 		testserver := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			defer func() {
 				done <- struct{}{}
 			}()
 			credentials := r.URL.Query().Get("credentials")
-			queryParams, err := encryption.NewEncryption(GetEncryptor()).DecodeStr(credentials)
+			// Sealed to credentialKey when the server understands #29, the
+			// legacy AES-CBC blob when it does not - see credential.go.
+			queryParams, err := decodeCallbackCredential(credentialKey, currentRequestId, credentials)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				w.Write([]byte(fmt.Sprintf("Oops! something wrong, details:%+v\n", err)))

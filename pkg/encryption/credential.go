@@ -189,8 +189,25 @@ func (k *CredentialKey) OpenCredential(requestID, encoded string) ([]byte, error
 	return plaintext, nil
 }
 
-// IsSealedCredential reports whether encoded is this format, so a caller can
-// route anything else to the legacy decoder.
+// HasCredentialMarker reports whether encoded claims to be this format,
+// without judging whether it is well formed.
+//
+// This is what a dispatcher should use. IsSealedCredential additionally
+// requires the blob to be long enough to be one, and the difference is a value
+// that carries the marker and is truncated: routing THAT to the legacy decoder
+// would report an error about the wrong format, and would give something
+// aiming for a downgrade a path to it. Claiming to be a sealed credential is
+// enough to be judged as one - and rejected as one.
+func HasCredentialMarker(encoded string) bool {
+	raw, err := base64.URLEncoding.DecodeString(encoded)
+	if err != nil {
+		return false
+	}
+	return len(raw) >= credentialMagicLen && string(raw[:credentialMagicLen]) == CredentialMagic
+}
+
+// IsSealedCredential reports whether encoded is a well-formed blob of this
+// format: the marker, and at least the fixed-size parts that must follow it.
 func IsSealedCredential(encoded string) bool {
 	raw, err := base64.URLEncoding.DecodeString(encoded)
 	if err != nil {
