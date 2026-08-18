@@ -2,8 +2,9 @@
 #
 # This module IS the kafeido CLI - grandturks' app/kafeido/cli/main.go builds
 # its root command from here, and the equivalent files in that repo are
-# commented-out duplicates (FootprintAI/grandturks#902) - so every command an
-# operator runs is code in this repository. Until now none of it was gated by
+# commented-out duplicates (every file in its app/kafeido/cli/cmd/ has exactly
+# one line of code, the package clause) - so every command an operator runs is
+# code in this repository. Until now none of it was gated by
 # anything, which is how pkg/encryption/aes_test.go managed to stop compiling
 # in May 2024 and stay that way: `go build ./...` is green on a broken _test
 # file, so the breakage was invisible to everything except someone running
