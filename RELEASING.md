@@ -79,8 +79,11 @@ the way its author intended.
    are attached, because this module cannot build a working one: the kafeido
    CLI is assembled in grandturks, whose `main` injects the oauth2 callback
    decryptor (the key is shared with the authentication service) and registers
-   the storage subcommands. See #33, and FootprintAI/grandturks#902 for
-   publishing the CLI itself.
+   the storage subcommands. See #33.
+
+   Publishing the CLI itself is grandturks' job, and is tracked nowhere: no
+   workflow there builds or publishes it, and the documented way to get one is
+   `copy-biries.sh`, which pulls the `v2.2.1` image from 2024.
 5. **Move the consumer.** In grandturks:
 
    ```bash

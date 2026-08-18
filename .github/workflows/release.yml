@@ -6,8 +6,9 @@
 # oauth2 callback decryptor (the key is shared with the authentication
 # service) and registers the storage subcommands. A binary built from THIS
 # module's four-line main has neither, so its `login` died in a handler
-# goroutine on a nil Encryptor. Publishing the CLI is grandturks' job and is
-# tracked as FootprintAI/grandturks#902.
+# goroutine on a nil Encryptor. Publishing the CLI is grandturks' job - and is
+# tracked nowhere: no workflow there builds or publishes it, and the documented
+# way to get one is copy-biries.sh pulling the v2.2.1 image from 2024.
 #
 # A tag is only worth pinning if it asserts something, so this lane refuses to
 # publish one that does not:
