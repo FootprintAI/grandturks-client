@@ -81,9 +81,10 @@ the way its author intended.
    decryptor (the key is shared with the authentication service) and registers
    the storage subcommands. See #33.
 
-   Publishing the CLI itself is grandturks' job, and is tracked nowhere: no
-   workflow there builds or publishes it, and the documented way to get one is
-   `copy-biries.sh`, which pulls the `v2.2.1` image from 2024.
+   Publishing the CLI itself is grandturks' job. It used to happen nowhere -
+   the build existed and no lane ran it, so the newest CLI obtainable was from
+   2024 (FootprintAI/grandturks#1221). Since that was fixed, every grandturks
+   release attaches the CLI binaries and `copy-biries.sh` fetches them.
 5. **Move the consumer.** In grandturks:
 
    ```bash
