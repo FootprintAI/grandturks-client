@@ -1,3 +1,27 @@
+## v2.7.0 ##
+
+Step 2 of moving the product API off `/api`, which it shares with the Kubeflow
+central dashboard (FootprintAI/manifests#308). Nothing moves in this release:
+the default is unchanged, and the point is to make the move possible at all.
+
+* feat(cli): the API base path is configurable - `endpoint.apiBasePath` in the
+  config file, `KAFEIDO_API_BASE_PATH` in the environment, or
+  `config set endpoint --api_base_path`. It was the literal `"api"` compiled
+  into root.go, so no deployment could serve the API anywhere else and no
+  binary already in the field could be pointed at a new prefix. **The default
+  is unchanged**: every existing config, scripted install and released binary
+  keeps talking to `/api` (FootprintAI/manifests#308)
+* feat(cli): every request now carries
+  `User-Agent: kafeido-cli/<version> (<commit>)`. Retiring the old prefix
+  blind would break whoever is still on it, and this repository had no way to
+  report which versions were deployed - the same gap that made
+  FootprintAI/grandturks#1251's committed key unrotatable. Istio's ingress
+  access log already records the User-Agent *and* the pre-rewrite path, so one
+  existing log now answers both "which prefix" and "which client", with no
+  server-side change
+* docs: fetch the CLI from where it is now published (#42)
+* docs: drop three references to an issue that is about something else (#41)
+
 ## v2.6.0 ##
 
 * feat(cli): the oauth2 login now asks for, and reads, an authenticated
