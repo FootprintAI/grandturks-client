@@ -32,6 +32,7 @@ func NewConfigSetEndpointCommand(logger log.Logger, ioStreams genericclioptions.
 	var (
 		apiEndpoint     string
 		storageEndpoint string
+		apiBasePath     string
 	)
 
 	var handler = func() error {
@@ -43,6 +44,14 @@ func NewConfigSetEndpointCommand(logger log.Logger, ioStreams genericclioptions.
 		}
 		ConfigKeyApiEndpoint.Set(apiEndpoint)
 		ConfigKeyStorageEndpoint.Set(storageEndpoint)
+		// Only when given. An unset flag must not overwrite a configured
+		// prefix with "" - `config set endpoint` is run to change the host,
+		// and silently resetting an unrelated setting while doing so is how a
+		// working install breaks for reasons nobody connects to the command
+		// they ran.
+		if apiBasePath != "" {
+			ConfigKeyApiBasePath.Set(strings.Trim(apiBasePath, "/"))
+		}
 		return viper.WriteConfig()
 	}
 
@@ -56,6 +65,8 @@ func NewConfigSetEndpointCommand(logger log.Logger, ioStreams genericclioptions.
 
 	cmd.Flags().StringVar(&apiEndpoint, "api_endpoint", "", "api endpoint (default: ''")
 	cmd.Flags().StringVar(&storageEndpoint, "storage_endpoint", "", "storage endpoint (default: ''")
+	cmd.Flags().StringVar(&apiBasePath, "api_base_path", "",
+		"path prefix the API is served under, between host and /v1 (default: \"api\"). Leave unset to keep the current value.")
 	cmd.MarkFlagRequired("api_endpoint")
 	cmd.MarkFlagRequired("storage_endpoint")
 	return cmd
@@ -132,6 +143,7 @@ func NewConfigGetEndpointCommand(logger log.Logger, ioStreams genericclioptions.
 	var handler = func() error {
 		fmt.Printf("endpoint.api: %s\n", ConfigKeyApiEndpoint.GetString())
 		fmt.Printf("endpoint.storage: %s\n", ConfigKeyStorageEndpoint.GetString())
+		fmt.Printf("endpoint.apiBasePath: %s\n", resolveApiBasePath())
 		return nil
 	}
 
