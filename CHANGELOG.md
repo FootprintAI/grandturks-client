@@ -1,3 +1,26 @@
+## v2.8.0 ##
+
+**This is the version a deployment enforcing a CLI floor should require, not
+v2.7.0.** v2.7.0 identifies itself, which is what lets a server refuse an old
+client; it cannot display the refusal. A v2.7.0 client refused by
+FootprintAI/grandturks#1280's `-min_kafeido_cli_version` sees
+`Bad Parameter.(details:<redacted>)` and has no way to know an upgrade is what
+is being asked of it.
+
+* fix(cli): a server-authored instruction reaches the user instead of a canned
+  string. `Parse` mapped HTTP status to generic text and put the real error in
+  `Details`, which is redacted unless `--debug` - so a message written for a
+  person was not merely buried, it was gone.
+
+  Gated on `FAILED_PRECONDITION` and on a 4xx status, both deliberately narrow.
+  `pkg/http/openapi/transport` FABRICATES an `RPCStatus` for bodies that were
+  never one, filling `Message` with raw upstream text - `token is expired`, or
+  a proxy's HTML error page - and marks them `INVALID_ARGUMENT`. Relaying those
+  instead of "Token Expired. Require Login first." would re-open
+  FootprintAI/grandturks#1092, which that layer exists to close. A 5xx is the
+  server's problem and its internals are not the caller's business even when it
+  says something (#46)
+
 ## v2.7.0 ##
 
 Step 2 of moving the product API off `/api`, which it shares with the Kubeflow
