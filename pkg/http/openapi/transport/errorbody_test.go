@@ -185,9 +185,15 @@ func TestWellFormedErrorBodiesAreUntouched(t *testing.T) {
 		_, _ = w.Write([]byte(`{"code":7,"message":"project 42 is not visible to you","details":[]}`))
 	})
 
-	assert.Contains(t, err.Error(), "Permission denied")
 	assert.Contains(t, err.Error(), "project 42 is not visible to you",
 		"the API's own message was replaced by the transport's reconstruction")
+	// Was also asserting "Permission denied", the canned 403 string.
+	// openapierrors.Parse now prefers a server-authored message on a 4xx over
+	// its own generic one, so a server that named the project displaces it -
+	// which is the point. The guard this test exists for is the line above:
+	// the transport must not rewrite a body the generated client can read.
+	assert.NotContains(t, err.Error(), "Permission denied. You either",
+		"a specific message from the server must not be reduced to the generic one")
 }
 
 // And a success must be untouched too - the normalizer only ever looks at
