@@ -23,6 +23,27 @@ type payloadCarrier interface {
 	GetPayload() *models.RPCStatus
 }
 
+// SynthesizedBodyMarker labels an RPCStatus that pkg/http/openapi/transport
+// invented, rather than one a server sent.
+//
+// It travels in `details` because that is the only field of RPCStatus that can
+// carry something extra without lying about the others: `code` is filled in
+// honestly by grpcCodeForHTTPStatus, and overloading it with a sentinel would
+// make a reader who quotes it quote something untrue.
+const SynthesizedBodyMarker = "kafeido.dev/synthesized-error-body"
+
+// isSynthesized reports whether the transport wrote this payload rather than a
+// server. Its Message is then the raw upstream body - an HTML page, a plain
+// sentence - and must not displace the canned text (grandturks#1092).
+func isSynthesized(payload *models.RPCStatus) bool {
+	for _, d := range payload.Details {
+		if d != nil && d.AtType == SynthesizedBodyMarker {
+			return true
+		}
+	}
+	return false
+}
+
 // serverPayload returns the RPCStatus the server sent, or nil.
 func serverPayload(err error) *models.RPCStatus {
 	carrier, ok := err.(payloadCarrier)
@@ -55,44 +76,38 @@ func Parse(err error, hasDetail bool) error {
 	openapierr := err.(openapiError)
 	code := openapierr.Code()
 
-	// A SERVER-AUTHORED INSTRUCTION WINS, and only that.
+	// A SERVER-AUTHORED MESSAGE WINS on a 4xx, unless the transport made it up.
 	//
 	// The strings below are generic by necessity: they are all this package
-	// knows when the server said nothing specific. But when the server wrote
-	// an instruction for a human, replacing it with "Bad Parameter." throws
-	// away the only actionable part - and Details is redacted unless --debug,
-	// so it was not merely buried, it was gone.
+	// knows when the server said nothing specific. When it did say something,
+	// replacing it throws away the only actionable part - and Details is
+	// redacted unless --debug, so the message was not buried, it was gone.
+	// Two real cases:
 	//
-	// The case that prompted this: a deployment enforcing a minimum CLI
-	// version answers with
+	//   pipeline.params: missing required field :model_name   -> "Bad Parameter."
+	//   kafeido CLI 2.6.0 is too old ... upgrade with ...     -> "Bad Parameter."
 	//
-	//   kafeido CLI 2.6.0 is too old for this deployment, which requires
-	//   2.7.0 or newer. Upgrade with: go install ...@v2.7.0
+	// WHY THE MARKER, rather than a code allow-list. pkg/http/openapi/transport
+	// FABRICATES an RPCStatus for responses whose body was never one, filling
+	// Message with the raw upstream text - "token is expired\n", or a proxy's
+	// HTML error page - and stamping it with grpcCodeForHTTPStatus, which maps
+	// 400 to INVALID_ARGUMENT. So a genuine INVALID_ARGUMENT from the server and
+	// a fabricated one are indistinguishable by code, and relaying the
+	// fabricated ones re-opens grandturks#1092.
 	//
-	// and the user saw "Bad Parameter.(details:<redacted>)".
+	// An earlier revision dodged that by allow-listing FAILED_PRECONDITION,
+	// which no synthesised body carries. That worked but only for the version
+	// check - it left "missing required field :model_name", the error a user
+	// is far likelier to hit, still reading "Bad Parameter." The transport now
+	// labels what it invents, so this can key on provenance rather than on a
+	// code that means two different things.
 	//
-	// NARROW ON PURPOSE - gated on FAILED_PRECONDITION, not on 4xx generally.
-	// I tried 4xx first and it broke pkg/http/openapi/transport's tests, which
-	// were right to fail it: that layer FABRICATES an RPCStatus for responses
-	// whose body was never RPCStatus at all, filling Message with the raw
-	// upstream body - "token is expired\n", or an entire HTML error page from
-	// a proxy. Surfacing those instead of "Token Expired. Require Login
-	// first." is strictly worse, and is the grandturks#1092 failure mode the
-	// transport exists to remove.
-	//
-	// FAILED_PRECONDITION distinguishes them without a marker or a heuristic:
-	// grpcCodeForHTTPStatus maps 400 to INVALID_ARGUMENT, so the transport
-	// never synthesises a 9. A 9 can only have come from a server that chose
-	// it - and it means precisely "the caller must change something before
-	// retrying", which is exactly when its own words are the useful ones.
-	// Both gates. The gRPC code says the server chose this deliberately; the
-	// HTTP status says it is the caller's to fix. A 5xx carrying a 9 is still
-	// the server's problem and its internals are still not the caller's
-	// business - which a test here caught me getting wrong.
-	const codeFailedPrecondition = 9
+	// 4xx ONLY. A 5xx is the server's problem, not the caller's, and its
+	// internals are not something to relay - which is what the canned
+	// "contact your system administrator" is for.
 	if code >= 400 && code < 500 {
 		if payload := serverPayload(err); payload != nil &&
-			payload.Code == codeFailedPrecondition && payload.Message != "" {
+			payload.Message != "" && !isSynthesized(payload) {
 			return newError(payload.Message, actualErr)
 		}
 	}

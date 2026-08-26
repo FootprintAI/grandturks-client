@@ -157,8 +157,15 @@ func TestFailedPreconditionInstructionReachesTheUser(t *testing.T) {
 // Relaying those would undo grandturks#1092.
 func TestASynthesisedPayloadDoesNotDisplaceTheCannedText(t *testing.T) {
 	err := Parse(fakePayloadError{
-		code:    400,
-		payload: &models.RPCStatus{Code: codeInvalidArgument, Message: "<html><body>403 Forbidden</body></html>"},
+		code: 400,
+		payload: &models.RPCStatus{
+			Code:    codeInvalidArgument,
+			Message: "<html><body>403 Forbidden</body></html>",
+			// The label the transport stamps on anything it invented. Keyed on
+			// provenance, not on code: a genuine INVALID_ARGUMENT from the
+			// server carries the same 3.
+			Details: []*models.ProtobufAny{{AtType: SynthesizedBodyMarker}},
+		},
 	}, false)
 
 	if !strings.Contains(err.Error(), "Bad Parameter.") {
@@ -190,5 +197,25 @@ func TestNoPayloadKeepsTheExistingBehaviour(t *testing.T) {
 	err := Parse(fakePayloadError{code: 403, payload: nil}, false)
 	if !strings.Contains(err.Error(), "Permission denied.") {
 		t.Errorf("expected the canned 403 text, got %q", err.Error())
+	}
+}
+
+// The gap this follow-up closes: the error a user is far likelier to hit than
+// a version refusal. It is INVALID_ARGUMENT, the same code the transport
+// stamps on anything it fabricates - which is why provenance, not code, is
+// what decides.
+func TestAGenuineInvalidArgumentMessageReachesTheUser(t *testing.T) {
+	const missing = "pipeline.params: missing required field :model_name"
+
+	err := Parse(fakePayloadError{
+		code:    400,
+		payload: &models.RPCStatus{Code: codeInvalidArgument, Message: missing},
+	}, false)
+
+	if !strings.Contains(err.Error(), missing) {
+		t.Errorf("the server named the missing field and the user was not told: %q", err.Error())
+	}
+	if strings.Contains(err.Error(), "Bad Parameter.") {
+		t.Errorf("the canned string replaced a message that named the problem: %q", err.Error())
 	}
 }

@@ -16,6 +16,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	openapierrors "github.com/footprintai/grandturks-client/v2/pkg/http/openapi/errors"
 )
 
 // maxNormalizedBody caps how much of an unreadable error body is carried into
@@ -168,6 +170,19 @@ func replaceBody(resp *http.Response, httpStatus int, message string) *http.Resp
 	// Marshalled rather than fmt-formatted, so a message containing a quote or
 	// a newline - an HTML page always does - cannot produce invalid JSON and
 	// land straight back in the failure being fixed.
+	// The details entry LABELS THIS BODY AS INVENTED, and that label is
+	// load-bearing (grandturks-client#46 and its follow-up).
+	//
+	// openapierrors.Parse surfaces a server-authored message on a 4xx instead
+	// of its own canned string, because a message written for a person is the
+	// only actionable part of the error. But `message` HERE is the raw
+	// upstream body - an HTML page, or a bare sentence from a proxy - and
+	// relaying that would undo the very thing this file exists to fix
+	// (grandturks#1092). Code cannot distinguish them: grpcCodeForHTTPStatus
+	// maps 400 to INVALID_ARGUMENT, which is exactly what appkafeido returns
+	// for a genuinely invalid argument.
+	//
+	// So provenance is recorded explicitly rather than inferred.
 	payload, err := json.Marshal(struct {
 		Code    int32  `json:"code"`
 		Message string `json:"message"`
@@ -175,7 +190,7 @@ func replaceBody(resp *http.Response, httpStatus int, message string) *http.Resp
 	}{
 		Code:    grpcCodeForHTTPStatus(httpStatus),
 		Message: message,
-		Details: []any{},
+		Details: []any{map[string]string{"@type": openapierrors.SynthesizedBodyMarker}},
 	})
 	if err != nil {
 		// Unreachable for these types; a bare object still deserializes, which
