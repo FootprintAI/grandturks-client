@@ -4,6 +4,8 @@ import (
 	"errors"
 	"strings"
 	"testing"
+
+	"github.com/footprintai/grandturks-client/v2/api/app/kafeido/proto/go-openapiv2/models"
 )
 
 // fakeOpenapiError satisfies the unexported openapiError interface, which is
@@ -106,5 +108,87 @@ func TestParsePassesThroughNonOpenapiErrors(t *testing.T) {
 func TestParseTreatsOKAsNoError(t *testing.T) {
 	if got := Parse(&fakeOpenapiError{code: 200, msg: "ok"}, true); got != nil {
 		t.Errorf("Parse(200) = %v, want nil", got)
+	}
+}
+
+// fakePayloadError also carries an RPCStatus, as every generated *XDefault
+// does. The canned strings above are what this package knows when the server
+// said nothing specific; a server that wrote an instruction for a human must
+// have it reach the human.
+type fakePayloadError struct {
+	code    int
+	payload *models.RPCStatus
+}
+
+func (f fakePayloadError) Code() int     { return f.code }
+func (f fakePayloadError) Error() string { return "generated-client error text" }
+func (f fakePayloadError) GetPayload() *models.RPCStatus {
+	return f.payload
+}
+
+const (
+	codeInvalidArgument    = 3
+	codeFailedPrecondition = 9
+)
+
+// The case this exists for: a deployment refusing an out-of-date CLI. Note
+// hasDetail=false - the message must survive WITHOUT --debug, or the person
+// who needs it never sees it.
+func TestFailedPreconditionInstructionReachesTheUser(t *testing.T) {
+	const upgrade = "kafeido CLI 2.6.0 is too old for this deployment, which requires 2.7.0 or newer."
+
+	err := Parse(fakePayloadError{
+		code:    400,
+		payload: &models.RPCStatus{Code: codeFailedPrecondition, Message: upgrade},
+	}, false)
+
+	if !strings.Contains(err.Error(), upgrade) {
+		t.Errorf("the server's instruction did not reach the user, got %q", err.Error())
+	}
+	if strings.Contains(err.Error(), "Bad Parameter.") {
+		t.Errorf("the canned string replaced a message written for a human: %q", err.Error())
+	}
+}
+
+// The mistake this guards against, and it is one I made: surfacing every 4xx
+// payload. pkg/http/openapi/transport FABRICATES an RPCStatus for bodies that
+// were never RPCStatus - filling Message with the raw upstream text, an HTML
+// page or "token is expired\n" - and marks them INVALID_ARGUMENT, never 9.
+// Relaying those would undo grandturks#1092.
+func TestASynthesisedPayloadDoesNotDisplaceTheCannedText(t *testing.T) {
+	err := Parse(fakePayloadError{
+		code:    400,
+		payload: &models.RPCStatus{Code: codeInvalidArgument, Message: "<html><body>403 Forbidden</body></html>"},
+	}, false)
+
+	if !strings.Contains(err.Error(), "Bad Parameter.") {
+		t.Errorf("a fabricated payload displaced the canned text: %q", err.Error())
+	}
+	if strings.Contains(err.Error(), "<html>") {
+		t.Errorf("raw upstream body reached the user: %q", err.Error())
+	}
+}
+
+// A 5xx is the server's problem, and its internals are not the caller's
+// business even when it says something.
+func TestServerInternalsAreNotRelayed(t *testing.T) {
+	err := Parse(fakePayloadError{
+		code:    500,
+		payload: &models.RPCStatus{Code: codeFailedPrecondition, Message: `pq: relation "projects" does not exist`},
+	}, false)
+
+	if !strings.Contains(err.Error(), "Internal error") {
+		t.Errorf("expected the canned 500 text, got %q", err.Error())
+	}
+	if strings.Contains(err.Error(), "does not exist") {
+		t.Errorf("a database error reached the user: %q", err.Error())
+	}
+}
+
+// And with no payload at all, nothing changes.
+func TestNoPayloadKeepsTheExistingBehaviour(t *testing.T) {
+	err := Parse(fakePayloadError{code: 403, payload: nil}, false)
+	if !strings.Contains(err.Error(), "Permission denied.") {
+		t.Errorf("expected the canned 403 text, got %q", err.Error())
 	}
 }
