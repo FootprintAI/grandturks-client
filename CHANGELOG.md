@@ -1,3 +1,29 @@
+## v2.8.1 ##
+
+Completes what v2.8.0 started. v2.8.0 surfaced a server's message only for
+`FAILED_PRECONDITION`, which covered the CLI-version refusal it was written for
+and missed the error a user is far likelier to meet:
+
+```
+$ kafeido run pipeline --project_id=38 --named_pipeline_id=176
+Error: Bad Parameter.(details:<redacted>)          # v2.8.0
+Error: pipeline.params: missing required field :model_name(...)   # v2.8.1
+```
+
+* fix(cli): any server-authored message on a 4xx now reaches the user, not
+  only `FAILED_PRECONDITION` ones. It could not simply widen to 4xx:
+  `pkg/http/openapi/transport` fabricates an `RPCStatus` for bodies that were
+  never one - raw upstream text, a proxy's HTML page - and stamps it
+  `INVALID_ARGUMENT`, the same code a server returns for a genuinely invalid
+  argument. The transport now labels what it invents and `Parse` keys on
+  provenance rather than on a code meaning two different things (#48)
+
+  **Behaviour change, wider than the two cases above.** Every server-authored
+  4xx message now displaces the canned string - "project 42 is not visible to
+  you" instead of "Permission denied. You either don't have enough permission
+  or haven't login first." 5xx still gets the canned text; a server's
+  internals are not the caller's business.
+
 ## v2.8.0 ##
 
 **This is the version a deployment enforcing a CLI floor should require, not
