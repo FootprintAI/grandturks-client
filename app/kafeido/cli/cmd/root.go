@@ -291,9 +291,28 @@ func newRunCmd(logger log.Logger) (*RunCmd, error) {
 	// Wrapping rather than replacing, so --debug keeps dumping the response
 	// the server actually sent.
 	httpClient.Transport = openapitransport.New(httpClient.Transport)
+	// Say which CLI this is, on every request.
+	//
+	// The API prefix above is now configurable, which is step one of moving
+	// the product API off /api (FootprintAI/manifests#308). Step two is
+	// retiring the old prefix, and that decision needs to rest on evidence
+	// rather than hope: FootprintAI/grandturks#1251 could not retire its
+	// committed AES key precisely because nothing reported which client
+	// versions were deployed, so the answer was "forever".
+	//
+	// appkafeido already logs request headers, so a User-Agent is all that is
+	// needed to answer "is anything still on the old prefix, and what is it".
+	// Before this, a CLI request was indistinguishable from any other caller.
+	httpClient.Transport = &userAgentTransport{rt: httpClient.Transport}
 	stub := swaggerclient.New(httptransport.NewWithClient(
 		hostUrl.Host,
-		filepath.Join("api", swaggerclient.DefaultBasePath),
+		// Was the literal "api". Configurable since
+		// FootprintAI/manifests#308, which needs the product API to stop
+		// sharing a prefix with the Kubeflow dashboard - a move that is
+		// impossible while every shipped binary has it compiled in. The
+		// default is unchanged, so this is a no-op until a deployment says
+		// otherwise.
+		filepath.Join(resolveApiBasePath(), swaggerclient.DefaultBasePath),
 		[]string{hostUrl.Scheme},
 		httpClient,
 	), nil)
